@@ -37,7 +37,7 @@ Senha.init(
     },
     senha_tempo_troca: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
   },
   {
