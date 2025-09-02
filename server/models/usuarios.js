@@ -24,12 +24,18 @@ Usuario.init(
       allowNull: false,
     },
     usuario_tipo: {
-      type: DataTypes.ENUM('adm','usuario'),
+      type: DataTypes.ENUM("adm", "usuario"),
       allowNull: false,
     },
     usuario_ativo: {
       type: DataTypes.TINYINT,
       allowNull: false,
+      defaultValue: 1,
+    },
+    usuario_troca_senha: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 1,
     },
   },
   {

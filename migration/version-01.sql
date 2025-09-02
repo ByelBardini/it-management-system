@@ -100,3 +100,6 @@ CREATE TABLE `it_management_system`.`senhas` (
 
 ALTER TABLE `it_management_system`.`usuarios` 
 ADD COLUMN `usuario_tipo` ENUM('adm', 'usuario') NOT NULL AFTER `usuario_senha`;
+
+ALTER TABLE `it_management_system`.`usuarios` 
+ADD COLUMN `usuario_troca_senha` TINYINT NOT NULL DEFAULT 1 AFTER `usuario_ativo`;

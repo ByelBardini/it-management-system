@@ -48,6 +48,7 @@ export async function login(req, res) {
       resposta: {
         ususario_tipo: usuario.usuario_tipo,
         usuario_nome: usuario.usuario_nome,
+        usuario_troca_senha: usuario.usuario_troca_senha,
       },
     });
   } catch (err) {}
