@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
+import usuarioRoutes from "./routes/usuarioRoutes.js";
 
 dotenv.config();
 
@@ -18,5 +19,6 @@ app.use(
 );
 
 app.use("/", authRoutes);
+app.use("/usuario", usuarioRoutes);
 
 export default app;
