@@ -35,7 +35,7 @@ export async function login(req, res) {
 
     const payload = {
       usuario_id: usuario.usuario_id,
-      ususario_tipo: usuario.usuario_tipo,
+      usuario_tipo: usuario.usuario_tipo,
       usuario_nome: usuario.usuario_nome,
     };
 
@@ -46,7 +46,7 @@ export async function login(req, res) {
     return res.status(200).json({
       token: token,
       resposta: {
-        ususario_tipo: usuario.usuario_tipo,
+        usuario_tipo: usuario.usuario_tipo,
         usuario_nome: usuario.usuario_nome,
         usuario_troca_senha: usuario.usuario_troca_senha,
       },

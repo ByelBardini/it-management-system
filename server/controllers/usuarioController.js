@@ -1,5 +1,5 @@
-import { Usuario } from "../models";
-import { ApiError } from "../middlewares/ApiError";
+import { Usuario } from "../models/index.js";
+import { ApiError } from "../middlewares/ApiError.js";
 import bcrypt from "bcrypt";
 
 export async function cadastrarUsuario(req, res) {

@@ -1,9 +1,9 @@
-import Anexo from "./anexos";
-import Caracteristica from "./caracteristicas";
-import Empresa from "./empresas";
-import Item from "./itens";
+import Anexo from "./anexos.js";
+import Caracteristica from "./caracteristicas.js";
+import Empresa from "./empresas.js";
+import Item from "./itens.js";
 import Senha from "./senhas.js";
-import Setor from "./setores";
+import Setor from "./setores.js";
 import Usuario from "./usuarios.js";
 
 //Foreign keys de Empresas e Setores
