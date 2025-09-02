@@ -51,5 +51,9 @@ export async function login(req, res) {
         usuario_troca_senha: usuario.usuario_troca_senha,
       },
     });
-  } catch (err) {}
+  } catch (err) {
+    console.error("Erro ao logar:", err);
+    if (err instanceof ApiError) throw err;
+    throw ApiError.internal("Erro ao validar usuário");
+  }
 }
