@@ -40,7 +40,7 @@ export default function Login() {
 
         setTimeout(() => {
           setNotificacao(false);
-          navigate("/home", { replace: true });
+          navigate("/empresas", { replace: true });
         }, 1000);
       } catch (err) {
         if (err.message.includes("obrigatórios")) {
@@ -70,7 +70,7 @@ export default function Login() {
         } else {
           setTipo("erro");
           setTitulo("Erro ao logar");
-          setDescricao(EvalError.message);
+          setDescricao(err.message);
           setNotificacao(true);
         }
       } finally {
