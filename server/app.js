@@ -3,6 +3,7 @@ import express from "express";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import usuarioRoutes from "./routes/usuarioRoutes.js";
+import empresaRoutes from "./routes/empresaRoutes.js";
 
 dotenv.config();
 
@@ -20,5 +21,6 @@ app.use(
 
 app.use("/", authRoutes);
 app.use("/usuario", usuarioRoutes);
+app.use("/empresas", empresaRoutes);
 
 export default app;
