@@ -5,6 +5,7 @@ import Loading from "../components/default/Loading.jsx";
 import { logar } from "../services/auth/authService.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AnimatePresence } from "motion/react";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ export default function Login() {
         setTimeout(() => {
           setNotificacao(false);
           navigate("/home", { replace: true });
-        }, 700);
+        }, 1000);
       } catch (err) {
         if (err.message.includes("obrigatórios")) {
           setTipo("erro");
@@ -80,16 +81,18 @@ export default function Login() {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
-      {notificacao && (
-        <Notificacao
-          tipo={tipo}
-          titulo={titulo}
-          mensagem={descricao}
-          onClick={() => {
-            setNotificacao(false);
-          }}
-        />
-      )}
+      <AnimatePresence mode="wait">
+        {notificacao && (
+          <Notificacao
+            tipo={tipo}
+            titulo={titulo}
+            mensagem={descricao}
+            onClick={() => {
+              setNotificacao(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
       {carregando && <Loading />}
       <img
         src={predios}

@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import { CheckCircle2, XCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Notificacao({
   tipo = "sucesso",
@@ -12,7 +14,13 @@ export default function Notificacao({
     <div className="fixed inset-0 z-[100]">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
 
-      <div className="relative mx-auto mt-24 sm:mt-32 w-[92%] max-w-md">
+      <motion.div
+        className="relative mx-auto mt-24 sm:mt-32 w-[92%] max-w-md"
+        initial={{ opacity: 0, y: -8, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -10, scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 340, damping: 26 }}
+      >
         <div
           role="dialog"
           aria-modal="true"
@@ -58,7 +66,7 @@ export default function Notificacao({
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
