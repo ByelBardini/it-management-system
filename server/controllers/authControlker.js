@@ -1,0 +1,54 @@
+import { Usuario } from "../models/index.js";
+import { ApiError } from "../middlewares/ApiError.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+dotenv.config();
+
+const CHAVE = process.env.SECRET_KEY_LOGIN;
+
+export async function login(req, res) {
+  const { usuario_login, usuario_senha } = req.body;
+
+  if (!usuario_login || !usuario_senha) {
+    throw ApiError.badRequest("Login e senha são obrigatórios.");
+  }
+
+  try {
+    const usuario = await Usuario.findOne({
+      where: { usuario_login: usuario_login },
+    });
+
+    if (!usuario) {
+      throw ApiError.unauthorized("Login incorreto");
+    }
+
+    if (usuario.usuario_ativo == 0) {
+      throw ApiError.unauthorized("Usuário inativo");
+    }
+
+    const match = await bcrypt.compare(usuario_senha, usuario.usuario_senha);
+
+    if (!match) {
+      throw ApiError.unauthorized("Senha incorreta");
+    }
+
+    const payload = {
+      usuario_id: usuario.usuario_id,
+      ususario_tipo: usuario.usuario_tipo,
+      usuario_nome: usuario.usuario_nome,
+    };
+
+    const token = jwt.sign(payload, CHAVE, {
+      expiresIn: "8h",
+    });
+
+    return res.status(200).json({
+      token: token,
+      resposta: {
+        ususario_tipo: usuario.usuario_tipo,
+        usuario_nome: usuario.usuario_nome,
+      },
+    });
+  } catch (err) {}
+}
