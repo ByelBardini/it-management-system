@@ -26,3 +26,15 @@ export async function postSetor(req, res) {
 
   return res.status(201).json({ message: "Setor criado com sucesso" });
 }
+
+export async function deleteSetor(req, res) {
+  const { id } = req.params;
+
+  if (!id) {
+    throw ApiError.badRequest("Id do setor é obrigatório");
+  }
+
+  await Setor.destroy({ where: { setor_id: id } });
+
+  return res.status(200).json({ message: "Setor excluído com sucesso" });
+}
