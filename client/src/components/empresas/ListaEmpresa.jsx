@@ -1,6 +1,7 @@
 export default function ListaEmpresa({ empresas, navigate }) {
-  function navega(id) {
+  function navega(id, nome) {
     localStorage.setItem("empresa_id", id);
+    localStorage.setItem("empresa_nome", nome);
     navigate("/app", { replace: true });
   }
 
@@ -14,7 +15,7 @@ export default function ListaEmpresa({ empresas, navigate }) {
              bg-white/5 ring-1 ring-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]
              transition
              hover:bg-white/7 hover:ring-white/20 active:scale-[0.997] focus:outline-none focus:ring-2 focus:ring-sky-400/50"
-            onClick={() => navega(empresa.empresa_id)}
+            onClick={() => navega(empresa.empresa_id, empresa.empresa_nome)}
           >
             <span
               className="pointer-events-none absolute inset-0 rounded-2xl
