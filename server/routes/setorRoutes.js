@@ -1,8 +1,9 @@
 import express from "express";
-import { getSetores } from "../controllers/setorController.js";
+import { getSetores, postSetor } from "../controllers/setorController.js";
 
 const router = express.Router();
 
 router.get("/:id", getSetores);
+router.post("/", postSetor);
 
 export default router;

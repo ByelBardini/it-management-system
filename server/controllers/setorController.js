@@ -14,3 +14,15 @@ export async function getSetores(req, res) {
 
   return res.status(200).json(setores);
 }
+
+export async function postSetor(req, res) {
+  const { setor_empresa_id, setor_nome } = req.body;
+
+  if (!setor_empresa_id || !setor_nome) {
+    throw ApiError.badRequest("Todos os dados são obrigatórios");
+  }
+
+  await Setor.create({ setor_empresa_id, setor_nome });
+
+  return res.status(201).json({ message: "Setor criado com sucesso" });
+}
