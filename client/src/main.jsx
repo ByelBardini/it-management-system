@@ -3,9 +3,13 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import "./index.css";
+import AppLayout from "./pages/AppLayout.jsx";
 import Login from "./pages/Login.jsx";
 import Empresas from "./pages/Empresas.jsx";
 import App from "./pages/App.jsx";
+import Inventario from "./pages/Inventario.jsx";
+import Manutencoes from "./pages/Manutencoes.jsx";
+import Senhas from "./pages/Senhas.jsx";
 
 const router = createBrowserRouter([
   {
@@ -18,7 +22,35 @@ const router = createBrowserRouter([
   },
   {
     path: "/app",
-    element: <App />,
+    element: (
+      <AppLayout>
+        <App />
+      </AppLayout>
+    ),
+  },
+  {
+    path: "/senha",
+    element: (
+      <AppLayout>
+        <Senhas />
+      </AppLayout>
+    ),
+  },
+  {
+    path: "/manutencao",
+    element: (
+      <AppLayout>
+        <Manutencoes />
+      </AppLayout>
+    ),
+  },
+  {
+    path: "/inventario",
+    element: (
+      <AppLayout>
+        <Inventario />
+      </AppLayout>
+    ),
   },
 ]);
 
