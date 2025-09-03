@@ -19,6 +19,10 @@ Item.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    item_workstation_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     item_tipo: {
       type: DataTypes.ENUM(
         "desktop",
@@ -47,9 +51,17 @@ Item.init(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
+    item_preco: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
     item_em_uso: {
       type: DataTypes.TINYINT,
       allowNull: false,
+    },
+    item_data_aquisicao: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
     item_ultima_manutencao: {
       type: DataTypes.DATE,

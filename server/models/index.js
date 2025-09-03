@@ -5,6 +5,7 @@ import Item from "./itens.js";
 import Senha from "./senhas.js";
 import Setor from "./setores.js";
 import Usuario from "./usuarios.js";
+import Workstation from "./workstations.js";
 
 //Foreign keys de Empresas e Setores
 Empresa.hasMany(Setor, {
@@ -40,6 +41,30 @@ Item.belongsTo(Empresa, {
   foreignKey: "item_empresa_id",
   targetKey: "empresa_id",
   as: "empresa",
+});
+
+//Foreign keys de Itens e Workstations
+Workstation.hasMany(Item, {
+  foreignKey: "item_workstation_id",
+  sourceKey: "workstation_id",
+  as: "itens",
+});
+Item.belongsTo(Workstation, {
+  foreignKey: "item_workstation_id",
+  targetKey: "workstation_id",
+  as: "workstation",
+});
+
+//Foreign keys de Workstations e Setores
+Setor.hasMany(Workstation, {
+  foreignKey: "workstation_setor_id",
+  sourceKey: "setor_id",
+  as: "workstations",
+});
+Workstation.belongsTo(Setor, {
+  foreignKey: "workstation_setor_id",
+  targetKey: "setor_id",
+  as: "setor",
 });
 
 //Foreign keys de Anexos e Empresas
@@ -78,4 +103,13 @@ Senha.belongsTo(Usuario, {
   as: "usuario",
 });
 
-export { Anexo, Caracteristica, Empresa, Item, Senha, Setor, Usuario };
+export {
+  Anexo,
+  Caracteristica,
+  Empresa,
+  Item,
+  Senha,
+  Setor,
+  Usuario,
+  Workstation,
+};
