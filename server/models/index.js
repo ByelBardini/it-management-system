@@ -67,6 +67,18 @@ Workstation.belongsTo(Setor, {
   as: "setor",
 });
 
+//Foreign keys de Workstation e Empresas
+Empresa.hasMany(Workstation, {
+  foreignKey: "workstation_empresa_id",
+  targetKey: "empresa_id",
+  as: "workstations"
+});
+Workstation.belongsTo(Empresa, {
+  foreignKey: "workstation_empresa_id",
+  targetKey: "empresa_id",
+  as: "empresa"
+})
+
 //Foreign keys de Anexos e Empresas
 Item.hasMany(Anexo, {
   foreignKey: "anexo_item_id",

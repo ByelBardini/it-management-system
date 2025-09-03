@@ -11,6 +11,10 @@ Workstation.init(
       autoIncrement: true,
       allowNull: false,
     },
+    workstation_empresa_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     workstation_setor_id: {
       type: DataTypes.INTEGER,
       allowNull: false,

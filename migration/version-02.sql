@@ -26,3 +26,17 @@ ADD CONSTRAINT `item_workstation_id`
   REFERENCES `it_management_system`.`workstations` (`workstation_id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
+
+ALTER TABLE `it_management_system`.`workstations` 
+ADD COLUMN `workstation_empresa_id` INT NOT NULL AFTER `workstation_setor_id`,
+ADD INDEX `workstation_empresa_id_idx` (`workstation_empresa_id` ASC) VISIBLE;
+;
+ALTER TABLE `it_management_system`.`workstations` 
+ADD CONSTRAINT `workstation_empresa_id`
+  FOREIGN KEY (`workstation_empresa_id`)
+  REFERENCES `it_management_system`.`empresas` (`empresa_id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `it_management_system`.`workstations` 
+CHANGE COLUMN `workstation_id` `workstation_id` INT NOT NULL AUTO_INCREMENT ;
