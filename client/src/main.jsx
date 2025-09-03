@@ -10,6 +10,8 @@ import App from "./pages/App.jsx";
 import Inventario from "./pages/Inventario.jsx";
 import Manutencoes from "./pages/Manutencoes.jsx";
 import Senhas from "./pages/Senhas.jsx";
+import Configuracoes from "./pages/Configuracoes.jsx";
+import Workstations from "./pages/Workstations.jsx"
 
 const router = createBrowserRouter([
   {
@@ -49,6 +51,22 @@ const router = createBrowserRouter([
     element: (
       <AppLayout>
         <Inventario />
+      </AppLayout>
+    ),
+  },
+  {
+    path: "/config",
+    element: (
+      <AppLayout>
+        <Configuracoes />
+      </AppLayout>
+    ),
+  },
+  {
+    path: "/workstations",
+    element: (
+      <AppLayout>
+        <Workstations />
       </AppLayout>
     ),
   },
