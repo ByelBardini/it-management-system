@@ -84,9 +84,7 @@ export default function AdicionaWorkstation({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      {/* container no mesmo estilo do outro modal */}
       <div className="w-full max-w-md rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl">
-        {/* header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Nova Workstation</h2>
           <button
@@ -98,9 +96,7 @@ export default function AdicionaWorkstation({
           </button>
         </div>
 
-        {/* conteúdo */}
         <div className="p-6 space-y-4">
-          {/* nome */}
           <label className="block">
             <span className="block text-sm text-white/70 mb-1">
               Nome da Workstation
@@ -114,7 +110,6 @@ export default function AdicionaWorkstation({
             />
           </label>
 
-          {/* setor + busca */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm text-white/70">Setor</span>
@@ -161,7 +156,6 @@ export default function AdicionaWorkstation({
           </div>
         </div>
 
-        {/* footer */}
         <div className="flex justify-end gap-3 px-6 py-4 border-t border-white/10">
           <button
             onClick={() => setAdicionando(false)}

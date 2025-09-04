@@ -1,6 +1,7 @@
 import AdicionaWorkstation from "../components/workstations/AdicionaWorkstation.jsx";
 import Notificacao from "../components/default/Notificacao.jsx";
 import Loading from "../components/default/Loading.jsx";
+import Filtro from "../components/workstations/Filtro.jsx";
 import { Plus, ChevronDown } from "lucide-react";
 import { getWorkstation } from "../services/api/workstationServices.js";
 import { useEffect } from "react";
@@ -8,6 +9,7 @@ import { useState } from "react";
 
 export default function Workstations() {
   const [workstations, setWorkstations] = useState([]);
+  const [workstationsFiltradas, setWorkstationsFiltradas] = useState([]);
   const [adicionando, setAdicionando] = useState(false);
 
   const [modificado, setModificado] = useState(false);
@@ -59,10 +61,12 @@ export default function Workstations() {
       <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Workstations</h2>
-          <div className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition">
-            <span className="text-sm font-medium">Filtrar por Setor</span>
-            <ChevronDown size={18} />
-          </div>
+
+          <Filtro
+            workstations={workstations}
+            setWorkstationsFiltradas={setWorkstationsFiltradas}
+          />
+
           <button
             onClick={() => setAdicionando(true)}
             className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
@@ -72,7 +76,7 @@ export default function Workstations() {
           </button>
         </div>
         <div className="overflow-x-auto grid grid-cols-3 gap-4 p-2">
-          {workstations.map((workstation) => (
+          {workstationsFiltradas.map((workstation) => (
             <div className="w-full rounded-xl bg-white/5 ring-1 ring-white/10 shadow-md p-4 hover:bg-white/10 transition">
               <h3 className="text-sm font-semibold text-white">
                 {workstation.workstation_nome}
