@@ -12,6 +12,7 @@ import Periferico from "./cadastro/Periferico.jsx";
 import Impressora from "./cadastro/Impressora.jsx";
 import NoBreak from "./cadastro/NoBreak.jsx";
 import Celular from "./cadastro/Celular.jsx";
+import Gerador from "./cadastro/Gerador.jsx";
 import { useEffect } from "react";
 
 export default function CadastroCaracteristica({
@@ -125,6 +126,14 @@ export default function CadastroCaracteristica({
     case "celular":
       return (
         <Celular
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
+        />
+      );
+    case "gerador":
+      return (
+        <Gerador
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
           setCaracteristicaValida={setCaracteristicaValida}
