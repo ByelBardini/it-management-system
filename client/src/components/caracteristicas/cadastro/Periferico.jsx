@@ -1,4 +1,4 @@
-export default function Periferico() {
+export default function Periferico({ setCaracteristicas }) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
@@ -6,14 +6,18 @@ export default function Periferico() {
         <input
           type="text"
           placeholder="Ex.: Teclado com fio"
+          onChange={(e) => setCaracteristicas("tipo", e.target.value)}
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">Marca/Modelo</label>
+        <label className="mb-1 block text-sm text-white/70">
+          Marca / Modelo
+        </label>
         <input
           type="text"
           placeholder={`Ex.: Logitec K120`}
+          onChange={(e) => setCaracteristicas("modelo", e.target.value)}
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>
@@ -22,6 +26,7 @@ export default function Periferico() {
         <textarea
           rows={3}
           placeholder="Observações gerais..."
+          onChange={(e) => setCaracteristicas("observacoes", e.target.value)}
           className="w-full resize-y rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         ></textarea>
       </div>

@@ -1,11 +1,14 @@
-export default function Movel() {
+export default function Movel({ setCaracteristicas }) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
-        <label className="mb-1 block text-sm text-white/70">Marca/Modelo</label>
+        <label className="mb-1 block text-sm text-white/70">
+          Marca / Modelo
+        </label>
         <input
           type="text"
           placeholder="Ex.: EPSON Multifuncional EcoTank L6270"
+          onChange={(e) => setCaracteristicas("modelo", e.target.value)}
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>
@@ -14,6 +17,7 @@ export default function Movel() {
         <input
           type="text"
           placeholder="Ex.: Tinta colorida"
+          onChange={(e) => setCaracteristicas("tipo", e.target.value)}
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>
@@ -22,6 +26,7 @@ export default function Movel() {
         <input
           type="text"
           placeholder="Ex.: 123.123.1.24"
+          onChange={(e) => setCaracteristicas("ip", e.target.value)}
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>
@@ -30,6 +35,7 @@ export default function Movel() {
         <input
           type="text"
           placeholder="Ex.: XX-XX-XX-XX-XX-XX-XX"
+          onChange={(e) => setCaracteristicas("mac", e.target.value)}
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>
@@ -38,6 +44,7 @@ export default function Movel() {
         <textarea
           rows={3}
           placeholder="Observações gerais..."
+          onChange={(e) => setCaracteristicas("observacoes", e.target.value)}
           className="w-full resize-y rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         ></textarea>
       </div>

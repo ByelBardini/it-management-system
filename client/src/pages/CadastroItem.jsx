@@ -4,6 +4,11 @@ import AdicionaAnexo from "../components/anexos/AdicionaAnexo.jsx";
 import { useState, useCallback } from "react";
 
 export default function CadastroItem() {
+  function teste() {
+    console.log(form);
+    console.log(caracteristicas);
+  }
+
   const [form, setForm] = useState({
     nome: "",
     tipo: "",
@@ -15,12 +20,27 @@ export default function CadastroItem() {
     intervalo: "",
     emUso: true,
   });
+  const [caracteristicas, setCaracteristicas] = useState([
+    {
+      nome: "",
+      valor: "",
+    },
+  ]);
 
   const updateForm = useCallback(
     (patch) => setForm((prev) => ({ ...prev, ...patch })),
     []
   );
 
+  const updateCaracteristica = (nome, valor) => {
+    setCaracteristicas((prev) => {
+      const i = prev.findIndex((c) => c.nome === nome);
+      if (i === -1) return [...prev, { nome, valor }];
+      const next = [...prev];
+      next[i] = { ...next[i], valor };
+      return next;
+    });
+  };
   return (
     <div className="relative min-h-screen bg-[#0A1633] text-white overflow-x-hidden">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -38,11 +58,11 @@ export default function CadastroItem() {
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-semibold text-white">Cadastro de Item</h1>
           <div className="flex items-center gap-3">
-            <button className="cursor-pointer rounded-lg bg-white/10 px-4 py-2 text-sm text-white/80 hover:bg-white/20">
+            <button
+              onClick={teste}
+              className="cursor-pointer rounded-lg bg-white/10 px-4 py-2 text-sm text-white/80 hover:bg-white/20"
+            >
               Voltar
-            </button>
-            <button className="cursor-pointer rounded-lg bg-white/10 px-4 py-2 text-sm text-white/80 hover:bg-white/20">
-              Cancelar
             </button>
           </div>
         </div>
@@ -60,7 +80,12 @@ export default function CadastroItem() {
             <h2 className="mb-4 text-base font-medium text-white">
               Características
             </h2>
-            <CadastroCaracteristica tipo={form.tipo} />
+            <CadastroCaracteristica
+              tipo={form.tipo}
+              setCaracteristicas={updateCaracteristica}
+              resetCaracteristicas={() => setCaracteristicas([])}
+              caracteristicas={caracteristicas}
+            />
           </section>
 
           <section className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Desktop from "./cadastro/Desktop.jsx";
 import Notebook from "./cadastro/Notebook.jsx";
 import Movel from "./cadastro/Movel.jsx";
@@ -11,35 +12,110 @@ import Periferico from "./cadastro/Periferico.jsx";
 import Impressora from "./cadastro/Impressora.jsx";
 import NoBreak from "./cadastro/NoBreak.jsx";
 import Celular from "./cadastro/Celular.jsx";
+import { useEffect } from "react";
 
-export default function CadastroCaracteristica({ tipo }) {
+export default function CadastroCaracteristica({
+  tipo,
+  setCaracteristicas,
+  resetCaracteristicas,
+  caracteristicas,
+}) {
+  useEffect(() => {
+    resetCaracteristicas();
+  }, [tipo]);
+
   const selecionado = tipo;
   switch (selecionado) {
     case "desktop":
-      return <Desktop />;
+      return (
+        <Desktop
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+        />
+      );
     case "notebook":
-      return <Notebook />;
+      return (
+        <Notebook
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+        />
+      );
     case "movel":
-      return <Movel />;
+      return (
+        <Movel
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+        />
+      );
     case "cadeira":
-      return <Cadeira />;
+      return (
+        <Cadeira
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+        />
+      );
     case "monitor":
-      return <Monitor />;
+      return (
+        <Monitor
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+        />
+      );
     case "ferramenta":
-      return <Ferramenta />;
+      return (
+        <Ferramenta
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+        />
+      );
     case "ap":
-      return <Ap />;
+      return (
+        <Ap
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+        />
+      );
     case "ar-condicionado":
-      return <ArCondicionado />;
+      return (
+        <ArCondicionado
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+        />
+      );
     case "switch":
-      return <Switch />;
+      return (
+        <Switch
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+        />
+      );
     case "periferico":
-      return <Periferico />;
+      return (
+        <Periferico
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+        />
+      );
     case "impressora":
-      return <Impressora />;
+      return (
+        <Impressora
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+        />
+      );
     case "no-break":
-      return <NoBreak />;
+      return (
+        <NoBreak
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+        />
+      );
     case "celular":
-      return <Celular />;
+      return (
+        <Celular
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+        />
+      );
   }
 }
