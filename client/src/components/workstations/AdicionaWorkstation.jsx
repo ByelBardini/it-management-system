@@ -1,4 +1,4 @@
-import { X, Save } from "lucide-react";
+import { X, Save, SearchX } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getSetores } from "../../services/api/setorServices.js";
 import { postWorkstation } from "../../services/api/workstationServices.js";
@@ -13,6 +13,8 @@ export default function AdicionaWorkstation({
   setCarregando,
 }) {
   const [setores, setSetores] = useState([]);
+  const [setoresFiltrados, setSetoresFiltrados] = useState([]);
+  const [filtro, setFiltro] = useState("");
 
   const [nome, setNome] = useState("");
   const [setor, setSetor] = useState("");
@@ -69,6 +71,17 @@ export default function AdicionaWorkstation({
     buscarSetores();
   }, []);
 
+  useEffect(() => {
+    if (filtro == "") {
+      setSetoresFiltrados(setores);
+    } else {
+      const filtrados = setores.filter((setor) =>
+        setor.setor_nome.toLowerCase().includes(filtro.toLowerCase())
+      );
+      setSetoresFiltrados(filtrados);
+    }
+  }, [filtro, setores]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div className="mx-4 w-full max-w-xl rounded-2xl bg-zinc-900 text-zinc-100 shadow-2xl ring-1 ring-white/10">
@@ -98,6 +111,7 @@ export default function AdicionaWorkstation({
             <div className="flex items-center justify-between">
               <span className="text-sm text-zinc-300">Setor</span>
               <input
+                onChange={(e) => setFiltro(e.target.value)}
                 type="text"
                 placeholder="Buscar setor..."
                 className="ml-auto w-48 rounded-lg border border-white/10 bg-zinc-800 px-3 py-1.5 text-sm placeholder:text-zinc-400 outline-none focus:ring-2 focus:ring-indigo-500"
@@ -106,20 +120,29 @@ export default function AdicionaWorkstation({
 
             <div className="max-h-48 overflow-auto rounded-xl border border-white/10 bg-zinc-950/30 p-1">
               <ul className="divide-y divide-white/5">
-                {setores.map((setor) => (
-                  <li key={setor.setor_id}>
-                    <label className="flex cursor-pointer items-center gap-3 p-2 hover:bg-white/5">
-                      <input
-                        onChange={(e) => setSetor(e.target.value)}
-                        type="radio"
-                        name="setor"
-                        className="h-4 w-4 accent-indigo-500"
-                        value={setor.setor_id}
-                      />
-                      <span className="text-sm">{setor.setor_nome}</span>
+                {setoresFiltrados.length > 0 ? (
+                  setoresFiltrados.map((setor) => (
+                    <li key={setor.setor_id}>
+                      <label className="flex cursor-pointer items-center gap-3 p-2 hover:bg-white/5">
+                        <input
+                          onChange={(e) => setSetor(e.target.value)}
+                          type="radio"
+                          name="setor"
+                          className="h-4 w-4 accent-indigo-500"
+                          value={setor.setor_id}
+                        />
+                        <span className="text-sm">{setor.setor_nome}</span>
+                      </label>
+                    </li>
+                  ))
+                ) : (
+                  <li>
+                    <label className="flex items-center gap-3 p-2 hover:bg-white/5">
+                      <SearchX size={18} />
+                      <span className="text-sm">Nenhum Setor Encontrado</span>
                     </label>
                   </li>
-                ))}
+                )}
               </ul>
             </div>
           </div>
