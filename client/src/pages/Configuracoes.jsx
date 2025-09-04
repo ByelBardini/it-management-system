@@ -92,6 +92,7 @@ export default function Configuracoes() {
           setDescricao={setDescricao}
           setNotificacao={setNotificacao}
           setCarregando={setCarregando}
+          setAv
         />
       )}
       {notificacao && (
@@ -129,7 +130,7 @@ export default function Configuracoes() {
                 </span>
                 <button
                   onClick={() => clicaDeleta(setor.setor_id)}
-                  className="p-2 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-500/10 transition"
+                  className="cursor-pointer p-2 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-500/10 transition"
                   title="Remover setor"
                 >
                   <Trash2 size={16} />

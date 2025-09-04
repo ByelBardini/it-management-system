@@ -10,3 +10,18 @@ export async function getWorkstation(id) {
     throw err;
   }
 }
+
+export async function postWorkstation(id_empresa, id_setor, workstation_nome) {
+  try {
+    const response = await api.post("/workstation", {
+      id_empresa,
+      id_setor,
+      workstation_nome,
+    });
+
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
