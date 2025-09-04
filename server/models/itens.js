@@ -37,7 +37,8 @@ Item.init(
         "periferico",
         "no-break",
         "impressora",
-        "gerador"
+        "gerador",
+        "celular"
       ),
       allowNull: false,
     },

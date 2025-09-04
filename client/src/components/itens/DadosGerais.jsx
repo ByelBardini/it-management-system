@@ -20,45 +20,72 @@ export default function DadosGerais({ value, onChange }) {
           <option value="" hidden className="bg-zinc-900">
             Selecione...
           </option>
-          <option value={"desktop"} className="bg-zinc-900">
-            Desktop
-          </option>
-          <option value={"notebook"} className="bg-zinc-900">
-            Notebook
-          </option>
-          <option value={"movel"} className="bg-zinc-900">
-            Movel
-          </option>
-          <option value={"cadeira"} className="bg-zinc-900">
-            Cadeira
-          </option>
-          <option value={"monitor"} className="bg-zinc-900">
-            Monitor
-          </option>
-          <option value={"ferramenta"} className="bg-zinc-900">
-            Ferramenta
-          </option>
-          <option value={"ap"} className="bg-zinc-900">
-            AP
-          </option>
-          <option value={"ar-condicionado"} className="bg-zinc-900">
-            Ar Condicionado
-          </option>
-          <option value={"switch"} className="bg-zinc-900">
-            Switch
-          </option>
-          <option value={"periferico"} className="bg-zinc-900">
-            Periférico
-          </option>
-          <option value={"no-break"} className="bg-zinc-900">
-            No-Break
-          </option>
-          <option value={"impressora"} className="bg-zinc-900">
-            Impressora
-          </option>
-          <option value={"gerador"} className="bg-zinc-900">
-            Gerador
-          </option>
+
+          <optgroup className="bg-zinc-700" label="Computadores">
+            <option value="desktop" className="bg-zinc-900">
+              Desktop
+            </option>
+            <option value="notebook" className="bg-zinc-900">
+              Notebook
+            </option>
+            <option value="monitor" className="bg-zinc-900">
+              Monitor
+            </option>
+          </optgroup>
+
+          <optgroup className="bg-zinc-700" label="Dispositivos móveis">
+            <option value="celular" className="bg-zinc-900">
+              Celular
+            </option>
+          </optgroup>
+
+          <optgroup className="bg-zinc-700" label="Rede">
+            <option value="ap" className="bg-zinc-900">
+              AP
+            </option>
+            <option value="switch" className="bg-zinc-900">
+              Switch
+            </option>
+          </optgroup>
+
+          <optgroup className="bg-zinc-700" label="Periféricos & Impressão">
+            <option value="periferico" className="bg-zinc-900">
+              Periférico
+            </option>
+            <option value="impressora" className="bg-zinc-900">
+              Impressora
+            </option>
+          </optgroup>
+
+          <optgroup className="bg-zinc-700" label="Energia">
+            <option value="no-break" className="bg-zinc-900">
+              No-Break
+            </option>
+            <option value="gerador" className="bg-zinc-900">
+              Gerador
+            </option>
+          </optgroup>
+
+          <optgroup className="bg-zinc-700" label="Climatização">
+            <option value="ar-condicionado" className="bg-zinc-900">
+              Ar Condicionado
+            </option>
+          </optgroup>
+
+          <optgroup className="bg-zinc-700" label="Mobiliário">
+            <option value="cadeira" className="bg-zinc-900">
+              Cadeira
+            </option>
+            <option value="movel" className="bg-zinc-900">
+              Móvel
+            </option>
+          </optgroup>
+
+          <optgroup className="bg-zinc-700" label="Ferramentas">
+            <option value="ferramenta" className="bg-zinc-900">
+              Ferramenta
+            </option>
+          </optgroup>
         </select>
       </div>
 

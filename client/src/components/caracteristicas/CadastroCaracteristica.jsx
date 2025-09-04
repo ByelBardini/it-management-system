@@ -10,6 +10,7 @@ import Switch from "./cadastro/Switch.jsx";
 import Periferico from "./cadastro/Periferico.jsx";
 import Impressora from "./cadastro/Impressora.jsx";
 import NoBreak from "./cadastro/NoBreak.jsx";
+import Celular from "./cadastro/Celular.jsx";
 
 export default function CadastroCaracteristica({ tipo }) {
   const selecionado = tipo;
@@ -38,5 +39,7 @@ export default function CadastroCaracteristica({ tipo }) {
       return <Impressora />;
     case "no-break":
       return <NoBreak />;
+    case "celular":
+      return <Celular />;
   }
 }

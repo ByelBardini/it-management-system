@@ -1,0 +1,68 @@
+export default function Celular() {
+  return (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div>
+        <label className="mb-1 block text-sm text-white/70">Marca/Modelo</label>
+        <input
+          type="text"
+          placeholder="Ex.: Xiaomi 13C"
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm text-white/70">RAM</label>
+        <input
+          type="text"
+          placeholder="Ex.: 4 GB"
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm text-white/70">Armazenamento</label>
+        <input
+          type="text"
+          placeholder="Ex.: 128 GB"
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm text-white/70">MAC</label>
+        <input
+          type="text"
+          placeholder="Ex.: AA:BB:CC:DD:EE:FF"
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm text-white/70">Números conectados</label>
+        <input
+          type="text"
+          placeholder="Ex.: Financeiro 1, Financeiro 2"
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm text-white/70">Local</label>
+        <input
+          type="text"
+          placeholder="Ex.: Deixado na empresa"
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        />
+      </div>
+
+      <div className="md:col-span-2">
+        <label className="mb-1 block text-sm text-white/70">Observações</label>
+        <textarea
+          rows={3}
+          placeholder="Observações gerais..."
+          className="w-full resize-y rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        ></textarea>
+      </div>
+    </div>
+  );
+}
