@@ -7,6 +7,7 @@ export default function CadastroItem() {
   function teste() {
     console.log(form);
     console.log(caracteristicas);
+    console.log(caracteristicaValida);
   }
 
   const [form, setForm] = useState({
@@ -26,6 +27,7 @@ export default function CadastroItem() {
       valor: "",
     },
   ]);
+  const [caracteristicaValida, setCaracteristicaValida] = useState(false);
 
   const updateForm = useCallback(
     (patch) => setForm((prev) => ({ ...prev, ...patch })),
@@ -85,6 +87,7 @@ export default function CadastroItem() {
               setCaracteristicas={updateCaracteristica}
               resetCaracteristicas={() => setCaracteristicas([])}
               caracteristicas={caracteristicas}
+              setCaracteristicaValida={setCaracteristicaValida}
             />
           </section>
 

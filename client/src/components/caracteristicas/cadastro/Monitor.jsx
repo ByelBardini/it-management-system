@@ -1,4 +1,31 @@
-export default function Monitor({ setCaracteristicas }) {
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from "react";
+
+export default function Monitor({
+  setCaracteristicas,
+  setCaracteristicaValida,
+  caracteristicas,
+}) {
+  const campos = [
+    "modelo",
+    "tamanho",
+    "resolucao",
+    "entradas",
+    "fonte",
+    "vesa",
+  ];
+  useEffect(() => {
+    const checagem = caracteristicas.filter(
+      (caracteristica) =>
+        campos.includes(caracteristica?.nome) &&
+        String(caracteristica?.valor ?? "").trim() !== ""
+    );
+    if (checagem.length == campos.length) {
+      setCaracteristicaValida(true);
+    } else {
+      setCaracteristicaValida(false);
+    }
+  }, [caracteristicas]);
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>

@@ -1,4 +1,24 @@
-export default function Ap({ setCaracteristicas }) {
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from "react";
+
+export default function Ap({
+  setCaracteristicas,
+  setCaracteristicaValida,
+  caracteristicas,
+}) {
+  const campos = ["modelo", "fonte", "poe", "mac", "ssid", "ip"];
+  useEffect(() => {
+    const checagem = caracteristicas.filter(
+      (caracteristica) =>
+        campos.includes(caracteristica?.nome) &&
+        String(caracteristica?.valor ?? "").trim() !== ""
+    );
+    if (checagem.length == campos.length) {
+      setCaracteristicaValida(true);
+    } else {
+      setCaracteristicaValida(false);
+    }
+  }, [caracteristicas]);
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>

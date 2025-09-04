@@ -19,6 +19,7 @@ export default function CadastroCaracteristica({
   setCaracteristicas,
   resetCaracteristicas,
   caracteristicas,
+  setCaracteristicaValida,
 }) {
   useEffect(() => {
     resetCaracteristicas();
@@ -31,6 +32,7 @@ export default function CadastroCaracteristica({
         <Desktop
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
         />
       );
     case "notebook":
@@ -38,6 +40,7 @@ export default function CadastroCaracteristica({
         <Notebook
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
         />
       );
     case "movel":
@@ -45,13 +48,14 @@ export default function CadastroCaracteristica({
         <Movel
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
         />
       );
     case "cadeira":
       return (
         <Cadeira
           setCaracteristicas={setCaracteristicas}
-          caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
         />
       );
     case "monitor":
@@ -59,6 +63,7 @@ export default function CadastroCaracteristica({
         <Monitor
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
         />
       );
     case "ferramenta":
@@ -66,6 +71,7 @@ export default function CadastroCaracteristica({
         <Ferramenta
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
         />
       );
     case "ap":
@@ -73,6 +79,7 @@ export default function CadastroCaracteristica({
         <Ap
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
         />
       );
     case "ar-condicionado":
@@ -80,6 +87,7 @@ export default function CadastroCaracteristica({
         <ArCondicionado
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
         />
       );
     case "switch":
@@ -87,6 +95,7 @@ export default function CadastroCaracteristica({
         <Switch
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
         />
       );
     case "periferico":
@@ -94,6 +103,7 @@ export default function CadastroCaracteristica({
         <Periferico
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
         />
       );
     case "impressora":
@@ -101,6 +111,7 @@ export default function CadastroCaracteristica({
         <Impressora
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
         />
       );
     case "no-break":
@@ -108,6 +119,7 @@ export default function CadastroCaracteristica({
         <NoBreak
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
         />
       );
     case "celular":
@@ -115,6 +127,7 @@ export default function CadastroCaracteristica({
         <Celular
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
         />
       );
   }

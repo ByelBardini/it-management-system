@@ -1,4 +1,23 @@
-export default function Celular({ setCaracteristicas }) {
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from "react";
+
+export default function Celular({ setCaracteristicas,
+  setCaracteristicaValida,
+  caracteristicas,
+}) {
+  const campos = ["modelo", "ram", "armazenamento", "mac", "numeros", "local"];
+  useEffect(() => {
+    const checagem = caracteristicas.filter(
+      (caracteristica) =>
+        campos.includes(caracteristica?.nome) &&
+        String(caracteristica?.valor ?? "").trim() !== ""
+    );
+    if (checagem.length == campos.length) {
+      setCaracteristicaValida(true);
+    } else {
+      setCaracteristicaValida(false);
+    }
+  }, [caracteristicas]);
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
