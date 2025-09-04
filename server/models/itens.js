@@ -35,7 +35,9 @@ Item.init(
         "ar-condicionado",
         "switch",
         "periferico",
-        "no-break"
+        "no-break",
+        "impressora",
+        "gerador"
       ),
       allowNull: false,
     },

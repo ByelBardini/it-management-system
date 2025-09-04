@@ -11,7 +11,8 @@ import Inventario from "./pages/Inventario.jsx";
 import Manutencoes from "./pages/Manutencoes.jsx";
 import Senhas from "./pages/Senhas.jsx";
 import Configuracoes from "./pages/Configuracoes.jsx";
-import Workstations from "./pages/Workstations.jsx"
+import Workstations from "./pages/Workstations.jsx";
+import CadastroItem from "./pages/CadastroItem.jsx";
 
 const router = createBrowserRouter([
   {
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
         <Workstations />
       </AppLayout>
     ),
+  },
+  {
+    path: "/cadastro",
+    element: <CadastroItem />,
   },
 ]);
 
