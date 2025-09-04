@@ -84,84 +84,100 @@ export default function AdicionaWorkstation({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="mx-4 w-full max-w-xl rounded-2xl bg-zinc-900 text-zinc-100 shadow-2xl ring-1 ring-white/10">
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
-          <h2 className="text-lg font-semibold">Nova Workstation</h2>
+      {/* container no mesmo estilo do outro modal */}
+      <div className="w-full max-w-md rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl">
+        {/* header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+          <h2 className="text-lg font-semibold text-white">Nova Workstation</h2>
           <button
             onClick={() => setAdicionando(false)}
-            className="cursor-pointer rounded-xl p-2 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="cursor-pointer p-2 rounded-lg hover:bg-white/10 text-white/70"
             aria-label="Fechar"
           >
-            <X className="h-5 w-5" />
+            <X size={20} />
           </button>
         </div>
 
-        <div className="grid gap-4 px-5 py-5">
-          <label className="grid gap-1">
-            <span className="text-sm text-zinc-300">Nome da Workstation</span>
+        {/* conteúdo */}
+        <div className="p-6 space-y-4">
+          {/* nome */}
+          <label className="block">
+            <span className="block text-sm text-white/70 mb-1">
+              Nome da Workstation
+            </span>
             <input
               onChange={(e) => setNome(e.target.value)}
               type="text"
               placeholder="Ex.: PC-Administrativo-01"
-              className="w-full rounded-xl border border-white/10 bg-zinc-800 px-3 py-2 text-sm placeholder:text-zinc-400 outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-lg bg-white/10 px-3 py-2 text-white text-sm placeholder-white/40 
+                         focus:outline-none focus:ring-2 focus:ring-sky-500/60 ring-1 ring-white/10"
             />
           </label>
 
-          <div className="grid gap-2">
+          {/* setor + busca */}
+          <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-zinc-300">Setor</span>
+              <span className="text-sm text-white/70">Setor</span>
               <input
                 onChange={(e) => setFiltro(e.target.value)}
                 type="text"
                 placeholder="Buscar setor..."
-                className="ml-auto w-48 rounded-lg border border-white/10 bg-zinc-800 px-3 py-1.5 text-sm placeholder:text-zinc-400 outline-none focus:ring-2 focus:ring-indigo-500"
+                className="ml-auto w-48 rounded-lg bg-white/10 px-3 py-2 text-white text-sm placeholder-white/40 
+                           focus:outline-none focus:ring-2 focus:ring-sky-500/60 ring-1 ring-white/10"
               />
             </div>
 
-            <div className="max-h-48 overflow-auto rounded-xl border border-white/10 bg-zinc-950/30 p-1">
-              <ul className="divide-y divide-white/5">
+            <div className="max-h-48 overflow-auto rounded-xl ring-1 ring-white/10 bg-white/5">
+              <ul className="divide-y divide-white/10">
                 {setoresFiltrados.length > 0 ? (
                   setoresFiltrados.map((setor) => (
                     <li key={setor.setor_id}>
-                      <label className="flex cursor-pointer items-center gap-3 p-2 hover:bg-white/5">
+                      <label className="flex cursor-pointer items-center gap-3 px-3 py-2 hover:bg-white/10">
                         <input
                           onChange={(e) => setSetor(e.target.value)}
                           type="radio"
                           name="setor"
-                          className="h-4 w-4 accent-indigo-500"
+                          className="h-4 w-4 accent-sky-500"
                           value={setor.setor_id}
                         />
-                        <span className="text-sm">{setor.setor_nome}</span>
+                        <span className="text-sm text-white">
+                          {setor.setor_nome}
+                        </span>
                       </label>
                     </li>
                   ))
                 ) : (
                   <li>
-                    <label className="flex items-center gap-3 p-2 hover:bg-white/5">
-                      <SearchX size={18} />
-                      <span className="text-sm">Nenhum Setor Encontrado</span>
+                    <label className="flex items-center gap-3 px-3 py-2">
+                      <SearchX size={18} className="text-white/70" />
+                      <span className="text-sm text-white/80">
+                        Nenhum Setor Encontrado
+                      </span>
                     </label>
                   </li>
                 )}
               </ul>
             </div>
           </div>
+        </div>
 
-          <div className="mt-2 flex items-center justify-end gap-2">
-            <button
-              onClick={() => setAdicionando(false)}
-              className="cursor-pointer rounded-xl px-4 py-2 text-sm text-zinc-300 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-zinc-500"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={adiciona}
-              className="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
-            >
+        {/* footer */}
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-white/10">
+          <button
+            onClick={() => setAdicionando(false)}
+            className="cursor-pointer px-4 py-2 rounded-lg bg-white/10 text-white/80 text-sm hover:bg-white/20"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={adiciona}
+            className="cursor-pointer px-4 py-2 rounded-lg bg-sky-600 text-white text-sm hover:bg-sky-500"
+          >
+            <div className="flex items-center gap-2">
               <Save className="h-4 w-4" />
-              Salvar
-            </button>
-          </div>
+              <span>Salvar</span>
+            </div>
+          </button>
         </div>
       </div>
     </div>
