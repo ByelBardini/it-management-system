@@ -5,50 +5,56 @@ export default function Ap() {
         <label className="mb-1 block text-sm text-white/70">Marca/Modelo</label>
         <input
           type="text"
-          placeholder="Ex.: TP-Link Omada - AX1800"
+          placeholder="Ex.: TP-Link Omada AX1800 (EAP610)"
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>
+
       <div>
         <label className="mb-1 block text-sm text-white/70">Fonte</label>
         <input
           type="text"
-          placeholder={`Ex.: `}
+          placeholder="Ex.: in: 100–240V AC | out: 12V 1.5A"
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>
+
       <div>
         <label className="mb-1 block text-sm text-white/70">POE</label>
         <input
           type="text"
-          placeholder="Ex: "
+          placeholder="Ex.: 802.3af/at (48V) via porta LAN 1"
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>
+
       <div>
         <label className="mb-1 block text-sm text-white/70">MAC</label>
         <input
           type="text"
-          placeholder="Ex: XX-XX-XX-XX-XX-XX-XX"
+          placeholder="Ex.: AA:BB:CC:DD:EE:FF"
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>
+
       <div>
         <label className="mb-1 block text-sm text-white/70">SSID</label>
         <input
           type="text"
-          placeholder="Ex: "
+          placeholder="Ex.: Empresa-AP01-5G"
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>
+
       <div>
         <label className="mb-1 block text-sm text-white/70">IP</label>
         <input
           type="text"
-          placeholder="Ex: 123.123.1.24"
+          placeholder="Ex.: 192.168.1.24"
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>
+
       <div className="md:col-span-2">
         <label className="mb-1 block text-sm text-white/70">Observações</label>
         <textarea

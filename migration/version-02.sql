@@ -43,3 +43,12 @@ CHANGE COLUMN `workstation_id` `workstation_id` INT NOT NULL AUTO_INCREMENT ;
 
 ALTER TABLE `it_management_system`.`itens` 
 CHANGE COLUMN `item_tipo` `item_tipo` ENUM('desktop', 'notebook', 'movel', 'cadeira', 'monitor', 'ferramenta', 'ap', 'ar-condicionado', 'switch', 'periferico', 'no-break', 'impressora', 'gerador') NOT NULL ;
+
+ALTER TABLE `it_management_system`.`itens` 
+DROP FOREIGN KEY `item_setor_id`;
+ALTER TABLE `it_management_system`.`itens` 
+CHANGE COLUMN `item_setor_id` `item_setor_id` INT NULL ;
+ALTER TABLE `it_management_system`.`itens` 
+ADD CONSTRAINT `item_setor_id`
+  FOREIGN KEY (`item_setor_id`)
+  REFERENCES `it_management_system`.`setores` (`setor_id`);

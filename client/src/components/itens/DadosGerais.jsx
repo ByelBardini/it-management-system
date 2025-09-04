@@ -1,0 +1,163 @@
+export default function DadosGerais({ value, onChange }) {
+  return (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div>
+        <label className="mb-1 block text-sm text-white/70">Nome</label>
+        <input
+          onChange={(e) => onChange({ nome: e.target.value })}
+          type="text"
+          placeholder="Ex.: Desktop Financeiro 01"
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm text-white/70">Tipo</label>
+        <select
+          onChange={(e) => onChange({ tipo: e.target.value })}
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        >
+          <option value="" hidden className="bg-zinc-900">
+            Selecione...
+          </option>
+          <option value={"desktop"} className="bg-zinc-900">
+            Desktop
+          </option>
+          <option value={"notebook"} className="bg-zinc-900">
+            Notebook
+          </option>
+          <option value={"movel"} className="bg-zinc-900">
+            Movel
+          </option>
+          <option value={"cadeira"} className="bg-zinc-900">
+            Cadeira
+          </option>
+          <option value={"monitor"} className="bg-zinc-900">
+            Monitor
+          </option>
+          <option value={"ferramenta"} className="bg-zinc-900">
+            Ferramenta
+          </option>
+          <option value={"ap"} className="bg-zinc-900">
+            AP
+          </option>
+          <option value={"ar-condicionado"} className="bg-zinc-900">
+            Ar Condicionado
+          </option>
+          <option value={"switch"} className="bg-zinc-900">
+            Switch
+          </option>
+          <option value={"periferico"} className="bg-zinc-900">
+            Periférico
+          </option>
+          <option value={"no-break"} className="bg-zinc-900">
+            No-Break
+          </option>
+          <option value={"impressora"} className="bg-zinc-900">
+            Impressora
+          </option>
+          <option value={"gerador"} className="bg-zinc-900">
+            Gerador
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm text-white/70">Etiqueta</label>
+        <input
+          onChange={(e) => onChange({ etiqueta: e.target.value })}
+          type="text"
+          placeholder="Ex.: INV-000123"
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm text-white/70">
+          Número de série
+        </label>
+        <input
+          onChange={(e) => onChange({ numSerie: e.target.value })}
+          type="text"
+          placeholder="Ex.: SN-9XYZA123"
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm text-white/70">Preço</label>
+        <input
+          onChange={(e) => onChange({ preco: e.target.value })}
+          type="text"
+          placeholder="Ex.: 3500,00"
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm text-white/70">
+          Data de aquisição
+        </label>
+        <input
+          onChange={(e) => onChange({ aquisicao: e.target.value })}
+          type="date"
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm text-white/70">
+          Última manutenção
+        </label>
+        <input
+          onChange={(e) => onChange({ manutencao: e.target.value })}
+          type="date"
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm text-white/70">
+          Intervalo de manutenção
+        </label>
+        <select
+          onChange={(e) => onChange({ intervalo: e.target.value })}
+          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+        >
+          <option value="" className="bg-zinc-900">
+            Selecione...
+          </option>
+          <option value={1} className="bg-zinc-900">
+            1 mês
+          </option>
+          <option value={3} className="bg-zinc-900">
+            3 meses
+          </option>
+          <option value={6} className="bg-zinc-900">
+            6 meses
+          </option>
+          <option value={12} className="bg-zinc-900">
+            1 ano
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <span className="mb-1 block text-sm text-white/70">Status</span>
+        <button
+          type="button"
+          onClick={() => onChange({ emUso: !value.emUso })}
+          className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium text-white transition ring-1
+                            ${
+                              value.emUso
+                                ? "bg-emerald-600 hover:bg-emerald-500 ring-emerald-700"
+                                : "bg-red-600 hover:bg-red-500 ring-red-700"
+                            }`}
+          aria-pressed={value.emUso}
+        >
+          {value.emUso ? "Em uso" : "Em estoque"}
+        </button>
+      </div>
+    </div>
+  );
+}
