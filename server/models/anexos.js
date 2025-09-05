@@ -19,6 +19,10 @@ Anexo.init(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
+    anexo_nome: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
     anexo_tipo: {
       type: DataTypes.ENUM("garantia", "manual", "anexo"),
       allowNull: false,

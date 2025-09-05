@@ -8,6 +8,7 @@ export default function CadastroItem() {
     console.log(form);
     console.log(caracteristicas);
     console.log(caracteristicaValida);
+    console.log(anexos);
   }
 
   const [form, setForm] = useState({
@@ -28,6 +29,7 @@ export default function CadastroItem() {
     },
   ]);
   const [caracteristicaValida, setCaracteristicaValida] = useState(false);
+  const [anexos, setAnexos] = useState([]);
 
   const updateForm = useCallback(
     (patch) => setForm((prev) => ({ ...prev, ...patch })),
@@ -94,7 +96,7 @@ export default function CadastroItem() {
           <section className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
             <h2 className="mb-4 text-base font-medium text-white">Anexos</h2>
 
-            <AdicionaAnexo />
+            <AdicionaAnexo anexo={anexos} setAnexo={setAnexos} />
           </section>
         </main>
       </div>

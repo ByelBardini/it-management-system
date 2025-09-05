@@ -52,3 +52,6 @@ ALTER TABLE `it_management_system`.`itens`
 ADD CONSTRAINT `item_setor_id`
   FOREIGN KEY (`item_setor_id`)
   REFERENCES `it_management_system`.`setores` (`setor_id`);
+
+ALTER TABLE `it_management_system`.`anexos` 
+ADD COLUMN `anexo_nome` VARCHAR(255) NOT NULL AFTER `anexo_caminho_id`;
