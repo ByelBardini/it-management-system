@@ -29,9 +29,12 @@ export default function NoBreak({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Marca / Modelo
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Marca / Modelo
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: APC Back-UPS 1400VA (BX1400U-BR)"
@@ -41,7 +44,10 @@ export default function NoBreak({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">Potência</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">Potência</label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: 1400 VA / 700 W"
@@ -51,9 +57,12 @@ export default function NoBreak({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Tensão de Entrada
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Tensão de Entrada
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: Bivolt 115/220 V (automático)"
@@ -63,9 +72,12 @@ export default function NoBreak({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Tensão de Saída
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Tensão de Saída
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: 115 V"
@@ -75,9 +87,12 @@ export default function NoBreak({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Tensão da Bateria
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Tensão da Bateria
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: 24 V (2x 12 V)"
@@ -87,9 +102,12 @@ export default function NoBreak({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Setores Alimentados
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Setores Alimentados
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: Sala de Servidores, Monitoramento, Recepção"

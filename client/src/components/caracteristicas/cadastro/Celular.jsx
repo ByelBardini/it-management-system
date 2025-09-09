@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 
-export default function Celular({ setCaracteristicas,
+export default function Celular({
+  setCaracteristicas,
   setCaracteristicaValida,
   caracteristicas,
 }) {
@@ -21,9 +22,12 @@ export default function Celular({ setCaracteristicas,
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Marca / Modelo
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Marca / Modelo
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: Xiaomi 13C"
@@ -33,7 +37,12 @@ export default function Celular({ setCaracteristicas,
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">RAM</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Memória RAM
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: 4 GB"
@@ -43,9 +52,12 @@ export default function Celular({ setCaracteristicas,
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Armazenamento
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Armazenamento
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: 128 GB"
@@ -55,7 +67,12 @@ export default function Celular({ setCaracteristicas,
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">MAC</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Endereço MAC
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: AA:BB:CC:DD:EE:FF"
@@ -65,9 +82,12 @@ export default function Celular({ setCaracteristicas,
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Números conectados
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Números Conectados
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: Financeiro 1, Financeiro 2"
@@ -77,7 +97,10 @@ export default function Celular({ setCaracteristicas,
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">Local</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">Local</label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: Deixado na empresa"

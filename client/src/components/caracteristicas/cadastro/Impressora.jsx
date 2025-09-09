@@ -22,9 +22,12 @@ export default function Movel({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Marca / Modelo
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Marca / Modelo
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: EPSON Multifuncional EcoTank L6270"
@@ -33,7 +36,10 @@ export default function Movel({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">Tipo</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">Tipo</label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: Tinta colorida"
@@ -42,7 +48,12 @@ export default function Movel({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">IP</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Endereço IP
+          </label>
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: 123.123.1.24"
@@ -51,7 +62,12 @@ export default function Movel({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">MAC</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Endereço MAC
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: XX-XX-XX-XX-XX-XX-XX"

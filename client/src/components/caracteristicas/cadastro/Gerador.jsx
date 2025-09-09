@@ -22,9 +22,12 @@ export default function Ferramenta({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Marca / Modelo
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Marca / Modelo
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex: Toyama TG10000CXE-XP-DR"
@@ -33,7 +36,10 @@ export default function Ferramenta({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">Tipo</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">Tipo</label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex: Diesel"

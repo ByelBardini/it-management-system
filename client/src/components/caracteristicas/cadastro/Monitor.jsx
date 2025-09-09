@@ -29,9 +29,12 @@ export default function Monitor({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Marca / Modelo
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Marca / Modelo
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: LG"
@@ -40,7 +43,10 @@ export default function Monitor({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">Tamanho</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">Tamanho</label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder={`Ex.: 24"`}
@@ -49,7 +55,10 @@ export default function Monitor({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">Resolução</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">Resolução</label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex: 1920x1080"
@@ -58,7 +67,10 @@ export default function Monitor({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">Entradas</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">Entradas</label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex: 1x HDMI; 1x DP"
@@ -67,7 +79,10 @@ export default function Monitor({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">Fonte</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">Fonte</label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex: Interna / Externa: in: 110v; out: 19v-5A"
@@ -76,7 +91,12 @@ export default function Monitor({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">Padrão VESA</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Padrão VESA
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex: 75x75"

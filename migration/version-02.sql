@@ -58,3 +58,6 @@ ADD COLUMN `anexo_nome` VARCHAR(255) NOT NULL AFTER `anexo_caminho_id`;
 
 ALTER TABLE `it_management_system`.`anexos` 
 CHANGE COLUMN `anexo_caminho_id` `anexo_caminho` VARCHAR(255) NOT NULL ;
+
+ALTER TABLE `it_management_system`.`itens` 
+CHANGE COLUMN `item_etiqueta` `item_etiqueta` VARCHAR(10) NOT NULL ;

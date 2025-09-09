@@ -22,9 +22,12 @@ export default function Ap({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Marca / Modelo
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Marca / Modelo
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: TP-Link Omada AX1800 (EAP610)"
@@ -34,7 +37,10 @@ export default function Ap({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">Fonte</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">Fonte</label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: in: 100–240V AC | out: 12V 1.5A"
@@ -44,7 +50,10 @@ export default function Ap({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">POE</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">POE</label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: 802.3af/at (48V) via porta LAN 1"
@@ -54,7 +63,12 @@ export default function Ap({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">MAC</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Endereço MAC
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: AA:BB:CC:DD:EE:FF"
@@ -64,7 +78,10 @@ export default function Ap({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">SSID</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">SSID</label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: Empresa-AP01-5G"
@@ -74,7 +91,12 @@ export default function Ap({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-white/70">IP</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Endereço IP
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: 192.168.1.24"

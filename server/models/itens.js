@@ -43,7 +43,7 @@ Item.init(
       allowNull: false,
     },
     item_etiqueta: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(10),
       allowNull: false,
     },
     item_num_serie: {

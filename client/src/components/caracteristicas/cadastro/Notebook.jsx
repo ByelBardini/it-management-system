@@ -31,9 +31,12 @@ export default function Notebook({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Sistema Operacional
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Sistema Operacional
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: Windows 11 Pro"
@@ -44,9 +47,12 @@ export default function Notebook({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Marca / Modelo
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Marca / Modelo
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Dell Inspiron 15 - ABC123"
@@ -55,7 +61,12 @@ export default function Notebook({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">Processador</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Processador
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: Intel i5-12400F"
@@ -64,7 +75,12 @@ export default function Notebook({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">Memória RAM</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Memória RAM
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: 16GB (2x8) DDR4 3200"
@@ -73,9 +89,12 @@ export default function Notebook({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">
-          Armazenamento
-        </label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Amazenamento
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: SSD NVMe 500GB + HDD 1TB"
@@ -84,7 +103,10 @@ export default function Notebook({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">Tela</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">Tela</label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder={`Ex.: 16"`}
@@ -93,7 +115,10 @@ export default function Notebook({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">Fonte</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">Fonte</label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: in: 110-220v / out: 19v 3.4A "
@@ -102,7 +127,12 @@ export default function Notebook({
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">MAC</label>
+        <div className="flex items-center gap-1">
+          <label className="mb-1 block text-sm text-white/70">
+            Endereço MAC
+          </label>{" "}
+          <span className="rounded text-xs text-red-400">*</span>
+        </div>
         <input
           type="text"
           placeholder="Ex.: XX-XX-XX-XX-XX-XX (Ethernet/Wi-fi)"
