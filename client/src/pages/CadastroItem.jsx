@@ -2,14 +2,63 @@ import CadastroCaracteristica from "../components/caracteristicas/CadastroCaract
 import DadosGerais from "../components/itens/DadosGerais.jsx";
 import AdicionaAnexo from "../components/anexos/AdicionaAnexo.jsx";
 import { useState, useCallback } from "react";
+import { postItem } from "../services/api/itemServices.js";
 
 export default function CadastroItem() {
-  function teste() {
+  async function cadastraItem() {
+    const id_empresa = localStorage.getItem("empresa_id");
+    if (
+      form.nome == "" ||
+      form.tipo == "" ||
+      form.etiqueta == "" ||
+      form.numSerie == "" ||
+      form.preco == "" ||
+      form.aquisicao == "" ||
+      form.manutencao == "" ||
+      form.intervalo == ""
+    ) {
+      alert("Preencha todos os campos obrigatórios");
+      return;
+    } else if (!caracteristicaValida) {
+      alert("Preencha todas as características");
+      return;
+    } else {
+      try {
+        const fd = new FormData();
+
+        fd.append("item_empresa_id", id_empresa);
+        fd.append("item_nome", form.nome);
+        fd.append("item_tipo", form.tipo);
+        fd.append("item_etiqueta", form.etiqueta);
+        fd.append("item_num_serie", form.numSerie);
+        fd.append("item_preco", String(form.preco));
+        fd.append("item_data_aquisicao", form.aquisicao);
+        fd.append("item_em_uso", String(!!form.emUso));
+        fd.append("item_ultima_manutencao", form.manutencao);
+        fd.append("item_intervalo_manutencao", String(form.intervalo));
+
+        fd.append("caracteristicas", JSON.stringify(caracteristicas || []));
+
+        (anexos || []).forEach((a) => {
+          fd.append("tipo[]", a.tipo ?? "");
+          fd.append("nome[]", a.nome ?? (a.file?.name || "arquivo"));
+          if (a.file) fd.append("arquivos", a.file);
+        });
+
+        await postItem(fd);
+      } catch (err) {
+        console.error("Erro ao adicionar item:", err);
+        alert("Falha ao salvar item");
+      }
+    }
+  }
+
+  /*function teste() {
     console.log(form);
     console.log(caracteristicas);
     console.log(caracteristicaValida);
     console.log(anexos);
-  }
+  }*/
 
   const [form, setForm] = useState({
     nome: "",
@@ -63,7 +112,7 @@ export default function CadastroItem() {
           <h1 className="text-xl font-semibold text-white">Cadastro de Item</h1>
           <div className="flex items-center gap-3">
             <button
-              onClick={teste}
+              onClick={cadastraItem}
               className="cursor-pointer rounded-lg bg-white/10 px-4 py-2 text-sm text-white/80 hover:bg-white/20"
             >
               Voltar
@@ -96,7 +145,7 @@ export default function CadastroItem() {
           <section className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
             <h2 className="mb-4 text-base font-medium text-white">Anexos</h2>
 
-            <AdicionaAnexo anexo={anexos} setAnexo={setAnexos} />
+            <AdicionaAnexo anexos={anexos} setAnexos={setAnexos} />
           </section>
         </main>
       </div>

@@ -46,7 +46,7 @@ Item.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    item_num_serir: {
+    item_num_serie: {
       type: DataTypes.STRING(255),
       allowNull: false,
     },

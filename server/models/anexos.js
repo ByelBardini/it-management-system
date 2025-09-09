@@ -15,7 +15,7 @@ Anexo.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    anexo_caminho_id: {
+    anexo_caminho: {
       type: DataTypes.STRING(255),
       allowNull: false,
     },

@@ -6,6 +6,7 @@ import usuarioRoutes from "./routes/usuarioRoutes.js";
 import empresaRoutes from "./routes/empresaRoutes.js";
 import setorRoutes from "./routes/setorRoutes.js";
 import workstationRoutes from "./routes/workstationRoutes.js";
+import itemRoutes from "./routes/itemRoutes.js";
 
 dotenv.config();
 
@@ -26,5 +27,6 @@ app.use("/usuario", usuarioRoutes);
 app.use("/empresa", empresaRoutes);
 app.use("/setor", setorRoutes);
 app.use("/workstation", workstationRoutes);
+app.use("/item", itemRoutes);
 
 export default app;
