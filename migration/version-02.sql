@@ -61,3 +61,6 @@ CHANGE COLUMN `anexo_caminho_id` `anexo_caminho` VARCHAR(255) NOT NULL ;
 
 ALTER TABLE `it_management_system`.`itens` 
 CHANGE COLUMN `item_etiqueta` `item_etiqueta` VARCHAR(10) NOT NULL ;
+
+ALTER TABLE `it_management_system`.`caracteristicas` 
+CHANGE COLUMN `caracteristica_valor` `caracteristica_valor` VARCHAR(255) NOT NULL ;
