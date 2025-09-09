@@ -48,7 +48,7 @@ export default function Filtro({ workstations, setWorkstationsFiltradas }) {
       );
       setWorkstationsFiltradas(filtrados);
     }
-  }, [selecionados]);
+  }, [selecionados, workstations]);
 
   return (
     <div className="relative inline-block text-left">
