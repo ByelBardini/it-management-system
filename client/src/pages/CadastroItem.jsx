@@ -77,6 +77,7 @@ export default function CadastroItem() {
         fd.append("caracteristicas", JSON.stringify(caracteristicas || []));
 
         (anexos || []).forEach((a) => {
+          fd.append("id[]", a.id ?? "");
           fd.append("tipo[]", a.tipo ?? "");
           fd.append("nome[]", a.nome ?? (a.file?.name || "arquivo"));
           if (a.file) fd.append("arquivos", a.file);

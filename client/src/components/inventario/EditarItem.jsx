@@ -1,5 +1,6 @@
 import tipos from "./tipos.js";
-import { X } from "lucide-react";
+import EditarAnexos from "../anexos/EditarAnexos.jsx";
+import { X, Paperclip } from "lucide-react";
 import { getSetoresWorkstations } from "../../services/api/empresaServices.js";
 import { useEffect, useState } from "react";
 import { putItem, inativaItem } from "../../services/api/itemServices.js";
@@ -25,6 +26,9 @@ export default function EditarItem({
   const [caracteristicas, setCaracteristicas] = useState(
     item.caracteristicas || []
   );
+  const [anexos, setAnexos] = useState(item.anexos || []);
+
+  const [abrirAnexos, setAbrirAnexos] = useState(false);
 
   function mudarCaracteristica(tipo, valor) {
     setCaracteristicas((prev) => {
@@ -73,14 +77,25 @@ export default function EditarItem({
     }
     setLoading(true);
     try {
-      await putItem(
-        id,
-        nome,
-        setor || null,
-        workstation || null,
-        emUso,
-        caracteristicas
-      );
+      const emUsonum = emUso ? 1 : 0;
+      const fd = new FormData();
+      fd.append("item_nome", nome);
+      fd.append("item_setor_id", setor || null);
+      fd.append("item_workstation_id", workstation || null);
+      fd.append("item_em_uso", emUsonum);
+
+      fd.append("caracteristicas", JSON.stringify(caracteristicas || []));
+
+      (anexos || []).forEach((a) => {
+        if (a.anexo_id) {
+          fd.append("id[]", a.anexo_id);
+        } else if (a.file) {
+          fd.append("tipo[]", a.anexo_tipo ?? "");
+          fd.append("nome[]", a.anexo_nome ?? (a.file?.name || "arquivo"));
+          fd.append("arquivos", a.file);
+        }
+      });
+      await putItem(id, fd);
 
       setNotificacao({
         show: true,
@@ -180,16 +195,23 @@ export default function EditarItem({
   }, []);
 
   return (
-    <div
-      className="fixed inset-0 flex items-center justify-center bg-black/70 z-[60]"
-      onClick={() => setEditarItem(false)}
-    >
+    <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-[60]">
       <div
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-4xl max-h-[90vh] bg-white/5 rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6 relative backdrop-blur-3xl overflow-y-auto"
       >
-        <div className="flex justify-between items-center top-0 bg-white/5 backdrop-blur-3xl pb-3 z-10 rounded-2xl p-2">
-          <h2 className="text-lg font-semibold text-white">Editar Item</h2>
+        <div className="flex items-center justify-between gap-2">
+          <button
+            onClick={() => setAbrirAnexos(true)}
+            className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm text-white"
+          >
+            <Paperclip className="w-4 h-4" />
+            Anexos
+            <span className="ml-1 px-1.5 py-0.5 rounded-full bg-white/20 text-[11px] leading-none">
+              {anexos.length}
+            </span>
+          </button>
+
           <button
             onClick={() => setEditarItem(false)}
             className="cursor-pointer text-white/60 hover:text-white text-lg"
@@ -359,6 +381,13 @@ export default function EditarItem({
           </div>
         </div>
       </div>
+      {abrirAnexos && (
+        <EditarAnexos
+          setAbrirAnexos={setAbrirAnexos}
+          anexos={anexos}
+          setAnexos={setAnexos}
+        />
+      )}
     </div>
   );
 }

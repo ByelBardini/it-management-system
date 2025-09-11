@@ -1,3 +1,6 @@
+import path from "path";
+import fs from "fs";
+import sequelize from "../config/database.js";
 import {
   Anexo,
   Caracteristica,
@@ -6,7 +9,6 @@ import {
   Workstation,
 } from "../models/index.js";
 import { ApiError } from "../middlewares/ApiError.js";
-import sequelize from "../config/database.js";
 
 export async function getItens(req, res) {
   const { id } = req.params;
@@ -218,14 +220,21 @@ export async function putItem(req, res) {
   if (!id) {
     throw ApiError.badRequest("ID do item é obrigatório");
   }
+  const b = req.body;
 
-  const {
-    item_nome,
-    item_setor_id,
-    item_workstation_id,
-    item_em_uso,
-    caracteristicas,
-  } = req.body;
+  const item_nome = b.item_nome;
+  const item_setor_id = b.item_setor_id;
+  const item_workstation_id = b.item_workstation_id;
+  const item_em_uso = b.item_em_uso;
+
+  let caracteristicas = [];
+  if (b.caracteristicas) {
+    try {
+      caracteristicas = JSON.parse(b.caracteristicas);
+    } catch {
+      throw new ApiError.badRequest("Características inválidas");
+    }
+  }
 
   const item = await Item.findByPk(id);
   if (!item) {
@@ -251,6 +260,43 @@ export async function putItem(req, res) {
         caracteristica_valor: c.caracteristica_valor,
       });
     }
+  }
+  const anexosBanco = await Anexo.findAll({ where: { anexo_item_id: id } });
+
+  const idsEnviados = (
+    Array.isArray(b["id[]"]) ? b["id[]"] : [b["id[]"]]
+  ).filter(Boolean);
+
+  for (const a of req.anexos) {
+    await Anexo.create({
+      anexo_item_id: id,
+      anexo_tipo: a.tipo,
+      anexo_nome: a.nome,
+      anexo_caminho: a.caminho,
+    });
+  }
+
+  const removidos = anexosBanco.filter(
+    (a) => !idsEnviados.includes(String(a.anexo_id))
+  );
+  for (const r of removidos) {
+    try {
+      const ROOT = process.cwd();
+      const BASE_DIR = path.join(ROOT, "uploads", "anexos");
+      const EXCLUIDOS_DIR = path.join(BASE_DIR, "excluidos");
+      fs.mkdirSync(EXCLUIDOS_DIR, { recursive: true });
+
+      const origem = path.join(ROOT, r.anexo_caminho);
+      const destino = path.join(EXCLUIDOS_DIR, path.basename(r.anexo_caminho));
+
+      if (fs.existsSync(origem)) {
+        fs.renameSync(origem, destino);
+      }
+    } catch (err) {
+      console.error("Erro movendo anexo para excluídos:", err);
+    }
+
+    await r.destroy();
   }
 
   return res.status(200).json({ message: "Item atualizado com sucesso" });

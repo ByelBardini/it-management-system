@@ -15,7 +15,7 @@ router.get("/:id", getItens);
 router.get("/inativos/:id", getItensInativos);
 router.get("/full/:id", getItemFull);
 router.post("/", anexosUpload, postItem);
-router.put("/:id", putItem);
+router.put("/:id", anexosUpload, putItem);
 router.put("/inativa/:id", inativaItem);
 
 export default router;
