@@ -1,4 +1,4 @@
-export default function TabelaItens({ itens }) {
+export default function TabelaItens({ itens, setCardItem }) {
   const tipos = {
     desktop: "Desktop",
     notebook: "Notebook",
@@ -15,6 +15,12 @@ export default function TabelaItens({ itens }) {
     gerador: "Gerador",
     celular: "Celular",
   };
+
+  function abreCard(id) {
+    localStorage.setItem("item_id", id);
+    setCardItem(true);
+  }
+
   return (
     <table className="min-w-full divide-y divide-white/10">
       <thead>
@@ -30,7 +36,11 @@ export default function TabelaItens({ itens }) {
       <tbody className="divide-y divide-white/5">
         {itens.map((item) => {
           return (
-            <tr key={item.item_id} className="hover:bg-white/5 transition">
+            <tr
+              key={item.item_id}
+              className="hover:bg-white/5 transition"
+              onDoubleClick={() => abreCard(item.item_id)}
+            >
               <td className="px-6 py-3 text-white/80">{item.item_etiqueta}</td>
               <td className="px-6 py-3 text-white">
                 {tipos[item.item_tipo] ?? item.item_tipo}

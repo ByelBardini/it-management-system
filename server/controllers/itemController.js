@@ -41,6 +41,57 @@ export async function getItens(req, res) {
   return res.status(200).json(itens);
 }
 
+export async function getItemFull(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("ID do item é obrigatório");
+  }
+
+  const item = await Item.findByPk(id, {
+    attributes: [
+      "item_id",
+      "item_nome",
+      "item_tipo",
+      "item_etiqueta",
+      "item_num_serie",
+      "item_preco",
+      "item_data_aquisicao",
+    ],
+    include: [
+      {
+        model: Setor,
+        as: "setor",
+        attributes: ["setor_id", "setor_nome"],
+      },
+      {
+        model: Workstation,
+        as: "workstation",
+        attributes: ["workstation_id", "workstation_nome"],
+      },
+      {
+        model: Caracteristica,
+        as: "caracteristicas",
+        attributes: [
+          "caracteristica_id",
+          "caracteristica_nome",
+          "caracteristica_valor",
+        ],
+        separate: true,
+        order: [["caracteristica_id", "ASC"]],
+      },
+      {
+        model: Anexo,
+        as: "anexos",
+        attributes: ["anexo_id", "anexo_caminho", "anexo_nome", "anexo_tipo"],
+        separate: true,
+        order: [["anexo_id", "ASC"]],
+      },
+    ],
+  });
+
+  return res.status(200).json(item);
+}
+
 export async function postItem(req, res) {
   const b = req.body;
 

@@ -1,4 +1,5 @@
 import TabelaItens from "../components/inventario/TabelaItens";
+import CardItem from "../components/inventario/CardItem";
 import { Plus } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -6,6 +7,7 @@ import { getItens } from "../services/api/itemServices";
 
 export default function Inventario() {
   const [itens, setItens] = useState([]);
+  const [cardItem, setCardItem] = useState(false);
 
   async function buscarItens() {
     const id_empresa = localStorage.getItem("empresa_id");
@@ -23,6 +25,7 @@ export default function Inventario() {
 
   return (
     <div className="p-6">
+      {cardItem && <CardItem setCardItem={setCardItem} />}
       <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Inventário</h2>
@@ -35,7 +38,7 @@ export default function Inventario() {
           </NavLink>
         </div>
         <div className="overflow-x-auto">
-          <TabelaItens itens={itens} />
+          <TabelaItens itens={itens} setCardItem={setCardItem} />
         </div>
       </div>
     </div>
