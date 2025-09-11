@@ -23,6 +23,15 @@ Item.init(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    item_ativo: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 1,
+    },
+    item_data_inativacao: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
     item_tipo: {
       type: DataTypes.ENUM(
         "desktop",
@@ -61,6 +70,7 @@ Item.init(
     item_em_uso: {
       type: DataTypes.TINYINT,
       allowNull: false,
+      defaultValue: 1,
     },
     item_data_aquisicao: {
       type: DataTypes.DATE,

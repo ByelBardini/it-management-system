@@ -3,6 +3,7 @@ import CardItem from "../components/inventario/CardItem";
 import EditarItem from "../components/inventario/EditarItem";
 import Loading from "../components/default/Loading";
 import Notificacao from "../components/default/Notificacao";
+import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import { Plus } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -23,6 +24,11 @@ export default function Inventario() {
     titulo: "",
     mensagem: "",
   });
+  const [confirmacao, setConfirmacao] = useState({
+    show: false,
+    texto: "",
+    onSim: null,
+  });
 
   async function buscarItens() {
     const id_empresa = localStorage.getItem("empresa_id");
@@ -42,6 +48,13 @@ export default function Inventario() {
   return (
     <div className="p-6">
       {loading && <Loading />}
+      {confirmacao.show && (
+        <ModalConfirmacao
+          texto={confirmacao.texto}
+          onNao={() => setConfirmacao({ show: false, texto: "", onSim: null })}
+          onSim={confirmacao.onSim}
+        />
+      )}
       {notificacao.show && (
         <Notificacao
           tipo={notificacao.tipo}
@@ -72,6 +85,7 @@ export default function Inventario() {
           item={itemSelecionado}
           setLoading={setLoading}
           setNotificacao={setNotificacao}
+          setConfirmacao={setConfirmacao}
         />
       )}
       <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">

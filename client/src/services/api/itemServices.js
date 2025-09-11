@@ -55,3 +55,13 @@ export async function putItem(
     throw err;
   }
 }
+
+export async function inativaItem(id) {
+  try {
+    const response = await api.put(`/item/inativa/${id}`);
+    return response.data;
+  } catch (err) {
+    console.error("Erro ao inativar item:", err);
+    throw err;
+  }
+}

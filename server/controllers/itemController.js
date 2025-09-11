@@ -22,7 +22,7 @@ export async function getItens(req, res) {
       "item_em_uso",
       "item_tipo",
     ],
-    where: { item_empresa_id: id },
+    where: { item_empresa_id: id, item_ativo: 1 },
     order: [["item_etiqueta", "ASC"]],
     include: [
       {
@@ -220,4 +220,19 @@ export async function putItem(req, res) {
   }
 
   return res.status(200).json({ message: "Item atualizado com sucesso" });
+}
+
+export async function inativaItem(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("ID do item é obrigatório");
+  }
+  const item = await Item.findByPk(id);
+  if (!item) {
+    throw ApiError.notFound("Item não encontrado");
+  }
+  item.item_ativo = 0;
+  item.item_data_inativacao = new Date(); 
+  await item.save();
+  return res.status(200).json({ message: "Item inativado com sucesso" });
 }

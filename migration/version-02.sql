@@ -64,3 +64,9 @@ CHANGE COLUMN `item_etiqueta` `item_etiqueta` VARCHAR(10) NOT NULL ;
 
 ALTER TABLE `it_management_system`.`caracteristicas` 
 CHANGE COLUMN `caracteristica_valor` `caracteristica_valor` VARCHAR(255) NOT NULL ;
+
+ALTER TABLE `it_management_system`.`itens` 
+ADD COLUMN `item_ativo` TINYINT NOT NULL DEFAULT 1 AFTER `item_workstation_id`;
+
+ALTER TABLE `it_management_system`.`itens` 
+ADD COLUMN `item_data_inativacao` DATE NULL AFTER `item_ativo`;

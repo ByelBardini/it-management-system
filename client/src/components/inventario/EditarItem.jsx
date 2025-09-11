@@ -2,7 +2,7 @@ import tipos from "./tipos.js";
 import { X } from "lucide-react";
 import { getSetoresWorkstations } from "../../services/api/empresaServices.js";
 import { useEffect, useState } from "react";
-import { putItem } from "../../services/api/itemServices.js";
+import { putItem, inativaItem } from "../../services/api/itemServices.js";
 
 export default function EditarItem({
   setEditarItem,
@@ -11,6 +11,7 @@ export default function EditarItem({
   item,
   setLoading,
   setNotificacao,
+  setConfirmacao,
 }) {
   const [setores, setSetores] = useState([]);
   const [workstations, setWorkstations] = useState([]);
@@ -104,6 +105,58 @@ export default function EditarItem({
         tipo: "erro",
         titulo: "Erro ao editar Item",
         mensagem: "Ocorreu um erro ao editar o item. Tente novamente.",
+      });
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function inativarItem() {
+    setLoading(true);
+    setConfirmacao({ show: false, texto: "", onSim: null });
+    const obs = caracteristicas.find(
+      (caracteristica) => caracteristica.caracteristica_nome == "observacoes"
+    );
+    if (!obs || !obs.caracteristica_valor) {
+      setLoading(false);
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Erro ao inativar Item",
+        mensagem:
+          "Para inativar um item, é necessário adicionar uma observação do motivo de sua inativação",
+      });
+      return;
+    }
+    try {
+      await inativaItem(item.item_id);
+      setNotificacao({
+        show: true,
+        tipo: "sucesso",
+        titulo: "Item inativado",
+        mensagem: "O item foi inativado com sucesso.",
+      });
+      setTimeout(() => {
+        setEditarItem(false);
+        setCardItem(false);
+        setEditado(true);
+        setNotificacao(
+          {
+            show: false,
+            tipo: "sucesso",
+            titulo: "",
+            mensagem: "",
+          },
+          700
+        );
+      });
+    } catch (err) {
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Erro ao inativar Item",
+        mensagem: "Ocorreu um erro ao inativar o item. Tente novamente.",
       });
       console.error(err);
     } finally {
@@ -266,16 +319,25 @@ export default function EditarItem({
             <button
               className={
                 emUso
-                  ? "px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white"
-                  : "px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white"
+                  ? "cursor-pointer px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white"
+                  : "cursor-pointer px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white"
               }
               onClick={() => setEmUso(!emUso)}
             >
               {emUso ? "Em uso" : "Em Estoque"}
             </button>
             <button
-              className="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white"
-              onClick={() => console.log("Inativar item")}
+              className="cursor-pointer px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white"
+              onClick={() =>
+                setConfirmacao({
+                  show: true,
+                  texto:
+                    "Tem certeza que deseja inativar este item? Esta ação não pode ser desfeita.",
+                  onSim: () => {
+                    inativarItem();
+                  },
+                })
+              }
             >
               Inativar item
             </button>
@@ -283,13 +345,13 @@ export default function EditarItem({
 
           <div className="flex gap-3">
             <button
-              className="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20"
+              className="cursor-pointer px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20"
               onClick={() => setEditarItem(false)}
             >
               Cancelar
             </button>
             <button
-              className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white"
+              className="cursor-pointer px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white"
               onClick={salvarItem}
             >
               Salvar
