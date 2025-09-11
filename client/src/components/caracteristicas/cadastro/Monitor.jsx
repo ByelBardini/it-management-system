@@ -44,13 +44,13 @@ export default function Monitor({
       </div>
       <div>
         <div className="flex items-center gap-1">
-          <label className="mb-1 block text-sm text-white/70">Tamanho</label>{" "}
+          <label className="mb-1 block text-sm text-white/70">Tamanho da Tela</label>{" "}
           <span className="rounded text-xs text-red-400">*</span>
         </div>
         <input
           type="text"
           placeholder={`Ex.: 24"`}
-          onChange={(e) => setCaracteristicas("tamanho", e.target.value)}
+          onChange={(e) => setCaracteristicas("tela", e.target.value)}
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>

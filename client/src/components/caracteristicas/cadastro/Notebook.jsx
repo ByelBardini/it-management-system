@@ -104,7 +104,7 @@ export default function Notebook({
       </div>
       <div>
         <div className="flex items-center gap-1">
-          <label className="mb-1 block text-sm text-white/70">Tela</label>{" "}
+          <label className="mb-1 block text-sm text-white/70">Tamanho da Tela</label>{" "}
           <span className="rounded text-xs text-red-400">*</span>
         </div>
         <input

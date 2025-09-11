@@ -51,7 +51,7 @@ export default function Ap({
 
       <div>
         <div className="flex items-center gap-1">
-          <label className="mb-1 block text-sm text-white/70">POE</label>{" "}
+          <label className="mb-1 block text-sm text-white/70">PoE</label>{" "}
           <span className="rounded text-xs text-red-400">*</span>
         </div>
         <input
