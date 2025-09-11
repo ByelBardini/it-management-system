@@ -32,3 +32,26 @@ export async function getItemFull(id) {
     throw err;
   }
 }
+
+export async function putItem(
+  id,
+  item_nome,
+  item_setor_id,
+  item_workstation_id,
+  item_em_uso,
+  caracteristicas
+) {
+  try {
+    const response = await api.put(`/item/${id}`, {
+      item_nome,
+      item_setor_id,
+      item_workstation_id,
+      item_em_uso,
+      caracteristicas,
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Erro ao adicionar item:", err);
+    throw err;
+  }
+}

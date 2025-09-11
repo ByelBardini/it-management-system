@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import tipos from "./tipos.js";
 import { useState } from "react";
 import { Download, X, Inbox } from "lucide-react";
@@ -5,7 +6,11 @@ import { getItemFull } from "../../services/api/itemServices.js";
 import { useEffect } from "react";
 import { formatToBRL, formatToDate } from "brazilian-values";
 
-export default function CardItem({ setCardItem }) {
+export default function CardItem({
+  setCardItem,
+  setEditarItem,
+  setItemSelecionado,
+}) {
   const [showAnexos, setShowAnexos] = useState(false);
   const [item, setItem] = useState([]);
 
@@ -13,6 +18,7 @@ export default function CardItem({ setCardItem }) {
     const id = localStorage.getItem("item_id");
     const dados = await getItemFull(id);
     setItem(dados);
+    setItemSelecionado(dados);
     console.log(dados);
   }
 
@@ -52,7 +58,10 @@ export default function CardItem({ setCardItem }) {
         <div className="flex justify-between items-center top-0 bg-white/5 backdrop-blur-3xl pb-3 z-10 rounded-2xl p-2">
           <h2 className="text-lg font-semibold text-white">Detalhes do Item</h2>
           <div className="flex gap-3">
-            <button className="cursor-pointer px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-sm text-white">
+            <button
+              onClick={() => setEditarItem(true)}
+              className="cursor-pointer px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-sm text-white"
+            >
               Editar
             </button>
             <button

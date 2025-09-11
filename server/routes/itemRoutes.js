@@ -4,12 +4,14 @@ import {
   postItem,
   getItens,
   getItemFull,
+  putItem,
 } from "../controllers/itemController.js";
 
 const router = Router();
 
-router.post("/", anexosUpload, postItem);
 router.get("/:id", getItens);
 router.get("/full/:id", getItemFull);
+router.post("/", anexosUpload, postItem);
+router.put("/:id", putItem);
 
 export default router;

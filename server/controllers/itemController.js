@@ -56,6 +56,7 @@ export async function getItemFull(req, res) {
       "item_num_serie",
       "item_preco",
       "item_data_aquisicao",
+      "item_em_uso",
     ],
     include: [
       {
@@ -176,4 +177,47 @@ export async function postItem(req, res) {
       .status(201)
       .json({ message: "Item criado com sucesso", item_id: item.item_id });
   });
+}
+
+export async function putItem(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("ID do item é obrigatório");
+  }
+
+  const {
+    item_nome,
+    item_setor_id,
+    item_workstation_id,
+    item_em_uso,
+    caracteristicas,
+  } = req.body;
+
+  const item = await Item.findByPk(id);
+  if (!item) {
+    throw ApiError.notFound("Item não encontrado");
+  }
+
+  item.item_nome = item_nome;
+  item.item_setor_id = item_setor_id || null;
+  item.item_workstation_id = item_workstation_id || null;
+  item.item_em_uso = item_em_uso;
+
+  item.save();
+
+  for (const c of caracteristicas) {
+    const caracteristica = await Caracteristica.findByPk(c.caracteristica_id);
+    if (caracteristica) {
+      caracteristica.caracteristica_valor = c.caracteristica_valor;
+      await caracteristica.save();
+    } else {
+      await Caracteristica.create({
+        caracteristica_item_id: id,
+        caracteristica_nome: c.caracteristica_nome,
+        caracteristica_valor: c.caracteristica_valor,
+      });
+    }
+  }
+
+  return res.status(200).json({ message: "Item atualizado com sucesso" });
 }
