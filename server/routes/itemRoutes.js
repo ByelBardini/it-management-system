@@ -6,11 +6,13 @@ import {
   getItemFull,
   putItem,
   inativaItem,
+  getItensInativos,
 } from "../controllers/itemController.js";
 
 const router = Router();
 
 router.get("/:id", getItens);
+router.get("/inativos/:id", getItensInativos);
 router.get("/full/:id", getItemFull);
 router.post("/", anexosUpload, postItem);
 router.put("/:id", putItem);

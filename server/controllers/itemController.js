@@ -41,6 +41,40 @@ export async function getItens(req, res) {
   return res.status(200).json(itens);
 }
 
+export async function getItensInativos(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("ID da empresa é obrigatório");
+  }
+
+  const itens = await Item.findAll({
+    attributes: [
+      "item_id",
+      "item_etiqueta",
+      "item_nome",
+      "item_data_inativacao",
+      "item_tipo",
+    ],
+    where: { item_empresa_id: id, item_ativo: 0 },
+    order: [["item_etiqueta", "ASC"]],
+    include: [
+      {
+        model: Caracteristica,
+        as: "caracteristicas",
+        attributes: [
+          "caracteristica_id",
+          "caracteristica_nome",
+          "caracteristica_valor",
+        ],
+        separate: true,
+        order: [["caracteristica_id", "ASC"]],
+      },
+    ],
+  });
+
+  return res.status(200).json(itens);
+}
+
 export async function getItemFull(req, res) {
   const { id } = req.params;
   if (!id) {
@@ -232,7 +266,10 @@ export async function inativaItem(req, res) {
     throw ApiError.notFound("Item não encontrado");
   }
   item.item_ativo = 0;
-  item.item_data_inativacao = new Date(); 
+  item.item_em_uso = 0;
+  item.item_setor_id = null;
+  item.item_workstation_id = null;
+  item.item_data_inativacao = new Date();
   await item.save();
   return res.status(200).json({ message: "Item inativado com sucesso" });
 }

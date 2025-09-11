@@ -1,4 +1,6 @@
-export default function TabelaItens({ itens, setCardItem }) {
+import { formatToDate } from "brazilian-values";
+
+export default function TabelaItens({ itens, setCardItem, inativos }) {
   const tipos = {
     desktop: "Desktop",
     notebook: "Notebook",
@@ -28,9 +30,13 @@ export default function TabelaItens({ itens, setCardItem }) {
           <th className="px-6 py-3 font-medium">Etiqueta</th>
           <th className="px-6 py-3 font-medium">Tipo</th>
           <th className="px-6 py-3 font-medium">Nome</th>
-          <th className="px-6 py-3 font-medium">Setor</th>
-          <th className="px-6 py-3 font-medium">Workstation</th>
-          <th className="px-6 py-3 font-medium">Em uso</th>
+          <th className="px-6 py-3 font-medium">
+            {inativos ? "Data de Inativação" : "Setor"}
+          </th>
+          <th className="px-6 py-3 font-medium">
+            {inativos ? "Observação" : "Workstation"}
+          </th>
+          {inativos ? "" : <th className="px-6 py-3 font-medium">Em uso</th>}
         </tr>
       </thead>
       <tbody className="divide-y divide-white/5">
@@ -47,24 +53,39 @@ export default function TabelaItens({ itens, setCardItem }) {
               </td>
               <td className="px-6 py-3 text-white">{item.item_nome}</td>
               <td className="px-6 py-3 text-white/70">
-                {item.setor == null ? "N/A" : item.setor.setor_nome}
+                {inativos
+                  ? formatToDate(
+                      new Date(item.item_data_inativacao + "T03:00:00Z")
+                    )
+                  : item.setor == null
+                  ? "N/A"
+                  : item.setor.setor_nome}
               </td>
               <td className="px-6 py-3 text-white/70">
-                {item.workstation == null
+                {inativos && item.caracteristicas != null
+                  ? item.caracteristicas.find(
+                      (caracteristica) =>
+                        caracteristica.caracteristica_nome === "observacoes"
+                    )?.caracteristica_valor || "N/A"
+                  : item.workstation == null
                   ? "N/A"
                   : item.workstation.workstation_nome}
               </td>
-              <td className="px-6 py-3">
-                {item.item_em_uso ? (
-                  <span className="px-3 py-1 rounded-lg bg-green-500/20 text-green-400 text-xs font-medium">
-                    Sim
-                  </span>
-                ) : (
-                  <span className="px-3 py-1 rounded-lg bg-red-500/20 text-red-400 text-xs font-medium">
-                    Não
-                  </span>
-                )}
-              </td>
+              {inativos ? (
+                ""
+              ) : (
+                <td className="px-6 py-3">
+                  {item.item_em_uso ? (
+                    <span className="px-3 py-1 rounded-lg bg-green-500/20 text-green-400 text-xs font-medium">
+                      Sim
+                    </span>
+                  ) : (
+                    <span className="px-3 py-1 rounded-lg bg-red-500/20 text-red-400 text-xs font-medium">
+                      Não
+                    </span>
+                  )}
+                </td>
+              )}
             </tr>
           );
         })}

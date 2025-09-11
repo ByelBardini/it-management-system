@@ -23,6 +23,16 @@ export async function getItens(id) {
   }
 }
 
+export async function getItensInativos(id) {
+  try {
+    const response = await api.get(`/item/inativos/${id}`);
+    return response.data;
+  } catch (err) {
+    console.error("Erro ao adicionar item:", err);
+    throw err;
+  }
+}
+
 export async function getItemFull(id) {
   try {
     const response = await api.get(`/item/full/${id}`);

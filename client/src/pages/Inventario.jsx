@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import TabelaItens from "../components/inventario/TabelaItens";
 import CardItem from "../components/inventario/CardItem";
 import EditarItem from "../components/inventario/EditarItem";
@@ -7,7 +8,7 @@ import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import { Plus } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getItens } from "../services/api/itemServices";
+import { getItens, getItensInativos } from "../services/api/itemServices";
 
 export default function Inventario() {
   const [itens, setItens] = useState([]);
@@ -30,11 +31,19 @@ export default function Inventario() {
     onSim: null,
   });
 
+  const [inativos, setInativos] = useState(false);
+
   async function buscarItens() {
     const id_empresa = localStorage.getItem("empresa_id");
     try {
-      const itens = await getItens(id_empresa);
-      setItens(itens);
+      if (!inativos) {
+        const itens = await getItens(id_empresa);
+        setItens(itens);
+      } else {
+        const itens = await getItensInativos(id_empresa);
+        setItens(itens);
+        console.log(itens);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -43,7 +52,7 @@ export default function Inventario() {
   useEffect(() => {
     buscarItens();
     setEditado(false);
-  }, [editado]);
+  }, [editado, inativos]);
 
   return (
     <div className="p-6">
@@ -75,6 +84,7 @@ export default function Inventario() {
           setCardItem={setCardItem}
           setEditarItem={setEditarItem}
           setItemSelecionado={setItemSelecionado}
+          inativos={inativos}
         />
       )}
       {editarItem && (
@@ -91,6 +101,25 @@ export default function Inventario() {
       <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Inventário</h2>
+
+          {inativos ? (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-white/70">
+                Total Itens Inativos:
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-rose-600/20 text-rose-400 text-sm font-medium">
+                {itens.length}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-white/70">Total Itens Ativos:</span>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-600/20 text-emerald-400 text-sm font-medium">
+                {itens.length}
+              </span>
+            </div>
+          )}
+
           <NavLink
             to={"/cadastro"}
             className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
@@ -100,8 +129,26 @@ export default function Inventario() {
           </NavLink>
         </div>
         <div className="overflow-x-auto">
-          <TabelaItens itens={itens} setCardItem={setCardItem} />
+          <TabelaItens
+            itens={itens}
+            setCardItem={setCardItem}
+            inativos={inativos}
+          />
         </div>
+      </div>
+      <div className="w-full justify-end flex">
+        <button
+          className={`cursor-pointer mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${
+            !inativos
+              ? "bg-red-600/50 ring-1 ring-red-600/10 text-white/80 hover:bg-red-600/70 transition"
+              : "bg-emerald-600/50 ring-1 ring-emerald-600/10 text-white/80 hover:bg-emerald-600/70 transition"
+          }`}
+          onClick={() => setInativos(!inativos)}
+        >
+          <span className="text-sm font-medium">
+            {!inativos ? "Listar Itens Inativos" : "Listar Itens Ativos"}
+          </span>
+        </button>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ export default function CardItem({
   setCardItem,
   setEditarItem,
   setItemSelecionado,
+  inativos,
 }) {
   const [showAnexos, setShowAnexos] = useState(false);
   const [item, setItem] = useState([]);
@@ -58,12 +59,16 @@ export default function CardItem({
         <div className="flex justify-between items-center top-0 bg-white/5 backdrop-blur-3xl pb-3 z-10 rounded-2xl p-2">
           <h2 className="text-lg font-semibold text-white">Detalhes do Item</h2>
           <div className="flex gap-3">
-            <button
-              onClick={() => setEditarItem(true)}
-              className="cursor-pointer px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-sm text-white"
-            >
-              Editar
-            </button>
+            {!inativos ? (
+              <button
+                onClick={() => setEditarItem(true)}
+                className="cursor-pointer px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-sm text-white"
+              >
+                Editar
+              </button>
+            ) : (
+              ""
+            )}
             <button
               className="cursor-pointer px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm text-white"
               onClick={() => setShowAnexos(!showAnexos)}
