@@ -1,3 +1,4 @@
+import tipos from "./tipos.js";
 import { useState } from "react";
 import { Download, X, Inbox } from "lucide-react";
 import { getItemFull } from "../../services/api/itemServices.js";
@@ -138,7 +139,7 @@ export default function CardItem({ setCardItem }) {
                 .map((caracteristica) => (
                   <div key={caracteristica.caractetistica_id}>
                     <label className="block text-sm text-white/60">
-                      {caracteristica.caracteristica_nome}
+                      {tipos[caracteristica.caracteristica_nome]}
                     </label>
                     <div className="rounded-lg bg-white/10 p-2 text-white">
                       {caracteristica.caracteristica_valor}
