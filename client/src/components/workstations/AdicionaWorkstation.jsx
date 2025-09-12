@@ -6,9 +6,6 @@ import { postWorkstation } from "../../services/api/workstationServices.js";
 export default function AdicionaWorkstation({
   setModificado,
   setAdicionando,
-  setTipo,
-  setTitulo,
-  setDescricao,
   setNotificacao,
   setCarregando,
 }) {
@@ -32,35 +29,44 @@ export default function AdicionaWorkstation({
   async function adiciona() {
     const id_empresa = localStorage.getItem("empresa_id");
     if (nome == "" || setor == "") {
-      setTipo("err");
-      setTitulo("Dados incompletos");
-      setDescricao(
-        "Tanto o nome do workstation quanto o setor são necessários, preencha-os e tente novamente"
-      );
-      setNotificacao("true");
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Dados incompletos",
+        mensagem:
+          "Tanto o nome do workstation quanto o setor são necessários, preencha-os e tente novamente",
+      });
     } else {
       setCarregando(true);
       try {
         await postWorkstation(id_empresa, setor, nome);
 
-        setTipo("sucesso");
-        setTitulo("Workstation criada com sucesso");
-        setDescricao(
-          "A workstation foi criada com sucesso, agora você poderá registrar equipamentos nele no menu de inventário"
-        );
-        setNotificacao(true);
+        setNotificacao({
+          show: true,
+          tipo: "sucesso",
+          titulo: "Workstation criada com sucesso",
+          mensagem:
+            "A workstation foi criada com sucesso, agora você poderá registrar equipamentos nele no menu de inventário",
+        });
         setModificado(true);
 
         setTimeout(() => {
-          setNotificacao(false);
+          setNotificacao({
+            show: false,
+            tipo: "sucesso",
+            titulo: "",
+            mensagem: "",
+          });
           setAdicionando(false);
         }, 1000);
       } catch (err) {
         console.error(err);
-        setTipo("erro");
-        setTitulo("Erro ao adicionar workstation");
-        setDescricao(err.message);
-        setNotificacao(true);
+        setNotificacao({
+          show: true,
+          tipo: "erro",
+          titulo: "Erro ao adicionar workstation",
+          mensagem: "err.message",
+        });
       } finally {
         setCarregando(false);
       }

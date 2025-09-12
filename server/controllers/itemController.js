@@ -129,6 +129,36 @@ export async function getItemFull(req, res) {
   return res.status(200).json(item);
 }
 
+export async function getItensWorkstation(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("ID do workstation é obrigatório");
+  }
+
+  const itens = await Item.findAll({
+    attributes: ["item_id", "item_etiqueta", "item_tipo", "item_nome"],
+    where: { item_workstation_id: id },
+    order: [["item_etiqueta", "ASC"]],
+  });
+
+  return res.status(200).json(itens);
+}
+
+export async function removerWorkstation(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("ID do item é obrigatório");
+  }
+
+  const item = await Item.findByPk(id);
+  item.item_workstation_id = null;
+  item.save();
+
+  return res
+    .status(200)
+    .json({ message: "Item removido do workstation com sucesso!" });
+}
+
 export async function postItem(req, res) {
   const b = req.body;
 

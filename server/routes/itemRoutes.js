@@ -7,15 +7,19 @@ import {
   putItem,
   inativaItem,
   getItensInativos,
+  getItensWorkstation,
+  removerWorkstation,
 } from "../controllers/itemController.js";
 
 const router = Router();
 
 router.get("/:id", getItens);
 router.get("/inativos/:id", getItensInativos);
+router.get("/workstation/:id", getItensWorkstation);
 router.get("/full/:id", getItemFull);
 router.post("/", anexosUpload, postItem);
 router.put("/:id", anexosUpload, putItem);
 router.put("/inativa/:id", inativaItem);
+router.put("/workstation/remover/:id", removerWorkstation);
 
 export default router;

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import tipos from "./tipos.js";
+import tipos from "./tiposCarac.js";
 import { useState } from "react";
 import { Download, X, Inbox } from "lucide-react";
 import { getItemFull } from "../../services/api/itemServices.js";
@@ -8,9 +8,9 @@ import { formatToBRL, formatToDate } from "brazilian-values";
 
 export default function CardItem({
   setCardItem,
-  setEditarItem,
-  setItemSelecionado,
-  inativos,
+  setEditarItem = () => {},
+  setItemSelecionado = () => {},
+  inativos = true,
 }) {
   const [showAnexos, setShowAnexos] = useState(false);
   const [item, setItem] = useState([]);

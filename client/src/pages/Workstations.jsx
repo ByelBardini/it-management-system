@@ -1,8 +1,11 @@
 import AdicionaWorkstation from "../components/workstations/AdicionaWorkstation.jsx";
+import ModalWorkstation from "../components/workstations/ModalWorkstation.jsx";
+import ModalConfirmacao from "../components/default/ModalConfirmacao.jsx";
+import CardItem from "../components/inventario/CardItem.jsx";
 import Notificacao from "../components/default/Notificacao.jsx";
 import Loading from "../components/default/Loading.jsx";
 import Filtro from "../components/workstations/Filtro.jsx";
-import { Plus, ChevronDown } from "lucide-react";
+import { Plus } from "lucide-react";
 import { getWorkstation } from "../services/api/workstationServices.js";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -14,12 +17,22 @@ export default function Workstations() {
 
   const [modificado, setModificado] = useState(false);
 
-  const [notificacao, setNotificacao] = useState(false);
-  const [tipo, setTipo] = useState("sucesso");
-  const [titulo, setTitulo] = useState("");
-  const [descricao, setDescricao] = useState("");
+  const [notificacao, setNotificacao] = useState({
+    show: false,
+    tipo: "sucesso",
+    titulo: "",
+    mensagem: "",
+  });
+  const [confirmacao, setConfirmacao] = useState({
+    show: false,
+    texto: "",
+    onSim: null,
+  });
 
   const [carregando, setCarregando] = useState(false);
+  const [cardWorkstation, setCardWorkstation] = useState(false);
+
+  const [cardItem, setCardItem] = useState(false);
 
   async function buscarWorkstations() {
     const id = localStorage.getItem("empresa_id");
@@ -31,6 +44,11 @@ export default function Workstations() {
     }
   }
 
+  function abreCard(id) {
+    localStorage.setItem("workstation_id", id);
+    setCardWorkstation(true);
+  }
+
   useEffect(() => {
     buscarWorkstations();
     setModificado(false);
@@ -38,23 +56,52 @@ export default function Workstations() {
 
   return (
     <div className="p-6">
+      {cardItem && <CardItem setCardItem={setCardItem} />}
+      {cardWorkstation && (
+        <ModalWorkstation
+          setCardWorkstation={setCardWorkstation}
+          setConfirmacao={setConfirmacao}
+          setNotificacao={setNotificacao}
+          setCarregando={setCarregando}
+          modificado={modificado}
+          setModificado={setModificado}
+          setCardItem={setCardItem}
+        />
+      )}
+      {confirmacao.show && (
+        <ModalConfirmacao
+          onNao={() =>
+            setConfirmacao({
+              show: false,
+              texto: "",
+              onSim: null,
+            })
+          }
+          onSim={confirmacao.onSim}
+          texto={confirmacao.texto}
+        />
+      )}
       {adicionando && (
         <AdicionaWorkstation
           setNotificacao={setNotificacao}
           setAdicionando={setAdicionando}
           setModificado={setModificado}
-          setTipo={setTipo}
-          setTitulo={setTitulo}
-          setDescricao={setDescricao}
           setCarregando={setCarregando}
         />
       )}
-      {notificacao && (
+      {notificacao.show && (
         <Notificacao
-          onClick={() => setNotificacao(false)}
-          tipo={tipo}
-          titulo={titulo}
-          mensagem={descricao}
+          onClick={() =>
+            setNotificacao({
+              show: false,
+              tipo: "sucesso",
+              titulo: "",
+              mensagem: "",
+            })
+          }
+          tipo={notificacao.tipo}
+          titulo={notificacao.titulo}
+          mensagem={notificacao.mensagem}
         />
       )}
       {carregando && <Loading />}
@@ -77,7 +124,11 @@ export default function Workstations() {
         </div>
         <div className="overflow-x-auto grid grid-cols-3 gap-4 p-2">
           {workstationsFiltradas.map((workstation) => (
-            <div className="w-full rounded-xl bg-white/5 ring-1 ring-white/10 shadow-md p-4 hover:bg-white/10 transition">
+            <div
+              key={workstation.workstation_id}
+              onDoubleClick={() => abreCard(workstation.workstation_id)}
+              className="w-full rounded-xl bg-white/5 ring-1 ring-white/10 shadow-md p-4 hover:bg-white/10 transition"
+            >
               <h3 className="text-sm font-semibold text-white">
                 {workstation.workstation_nome}
               </h3>

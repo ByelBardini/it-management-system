@@ -5,7 +5,7 @@ export async function getItens(id) {
     const response = await api.get(`/item/${id}`);
     return response.data;
   } catch (err) {
-    console.error("Erro ao adicionar item:", err);
+    console.error("Erro ao buscar itens:", err);
     throw err;
   }
 }
@@ -15,7 +15,17 @@ export async function getItensInativos(id) {
     const response = await api.get(`/item/inativos/${id}`);
     return response.data;
   } catch (err) {
-    console.error("Erro ao adicionar item:", err);
+    console.error("Erro ao buscar itens:", err);
+    throw err;
+  }
+}
+
+export async function getItensWorkstation(id) {
+  try {
+    const response = await api.get(`/item/workstation/${id}`);
+    return response.data;
+  } catch (err) {
+    console.log("Erro ao buscar itens:", err);
     throw err;
   }
 }
@@ -25,7 +35,7 @@ export async function getItemFull(id) {
     const response = await api.get(`/item/full/${id}`);
     return response.data;
   } catch (err) {
-    console.error("Erro ao adicionar item:", err);
+    console.error("Erro ao buscar item:", err);
     throw err;
   }
 }
@@ -50,7 +60,18 @@ export async function putItem(id, fd) {
     });
     return response.data;
   } catch (err) {
-    console.error("Erro ao adicionar item:", err);
+    console.error("Erro ao modificar item:", err);
+    throw err;
+  }
+}
+
+export async function removerWorkstation(id) {
+  try {
+    const response = await api.put(`/item/workstation/remover/${id}`);
+
+    return response.data;
+  } catch (err) {
+    console.error("Erro ao desvincular do workstation", err);
     throw err;
   }
 }

@@ -1,0 +1,167 @@
+import tipos from "../inventario/tiposItens.js";
+import { X, Trash2, ExternalLink } from "lucide-react";
+import {
+  getItensWorkstation,
+  removerWorkstation,
+} from "../../services/api/itemServices.js";
+import { useState } from "react";
+import { useEffect } from "react";
+
+export default function ModalWorkstation({
+  setCardWorkstation,
+  setNotificacao,
+  setConfirmacao,
+  setCarregando,
+  setCardItem,
+}) {
+  const [itens, setItens] = useState([]);
+
+  function abreItem(id) {
+    localStorage.setItem("item_id", id);
+    setCardItem(true);
+  }
+
+  async function buscaItens() {
+    const id = localStorage.getItem("workstation_id");
+    try {
+      const itens = await getItensWorkstation(id);
+
+      setItens(itens);
+    } catch (err) {
+      console.error("Erro ao buscar itens:", err);
+    }
+  }
+
+  async function removerItem(id) {
+    setConfirmacao({
+      show: false,
+      texto: "",
+      onSim: null,
+    });
+    setCarregando(true);
+    try {
+      await removerWorkstation(id);
+
+      setNotificacao({
+        show: true,
+        tipo: "sucesso",
+        titulo: "Operação realizada com sucesso!",
+        mensagem: "Item desvinculado com sucesso!",
+      });
+
+      setTimeout(() => {
+        setNotificacao({
+          show: false,
+          tipo: "sucesso",
+          titulo: "",
+          mensagem: "",
+        });
+        buscaItens();
+      }, 1000);
+    } catch (err) {
+      setNotificacao({
+        show: false,
+        tipo: "erro",
+        titulo: "Erro ao desvincular item",
+        mensagem: err.message,
+      });
+      console.error("Erro ao desvincular do workstation:", err);
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  useEffect(() => {
+    buscaItens();
+  }, []);
+
+  return (
+    <div
+      onClick={() => setCardWorkstation(false)}
+      className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-4xl max-h-[85vh] overflow-y-auto bg-white/5 backdrop-blur-2xl rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6"
+      >
+        <div className="flex justify-between items-center border-b border-white/20 pb-3">
+          <h2 className="text-lg font-semibold text-white">
+            Itens da Workstation
+          </h2>
+          <button
+            onClick={() => setCardWorkstation(false)}
+            className="cursor-pointer text-white/60 hover:text-white"
+          >
+            <X />
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {itens.map((item) => (
+            <div
+              key={item.item_id}
+              className="grid grid-cols-4 items-center gap-6 rounded-lg bg-white/5 px-4 py-3 ring-1 ring-white/10"
+            >
+              <div>
+                <p className="text-[11px] uppercase tracking-wide text-white/50">
+                  Etiqueta
+                </p>
+                <p className="text-sm font-medium text-white">
+                  {item.item_etiqueta}
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-wide text-white/50">
+                  Tipo
+                </p>
+                <p className="text-sm font-medium text-white">
+                  {tipos[item.item_tipo] ?? item.item_tipo}
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-wide text-white/50">
+                  Nome
+                </p>
+                <p className="text-sm font-medium text-white">
+                  {item.item_nome}
+                </p>
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => abreItem(item.item_id)}
+                  className="cursor-pointer inline-flex items-center justify-center rounded-md px-2 py-2 text-sm bg-sky-600 hover:bg-sky-500 text-white"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() =>
+                    setConfirmacao({
+                      show: true,
+                      texto:
+                        "Você tem certeza que deseja desvincular este item do workstation?",
+                      onSim: () => removerItem(item.item_id),
+                    })
+                  }
+                  className="cursor-pointer inline-flex items-center justify-center rounded-md px-2 py-2 text-sm bg-red-600 hover:bg-red-500 text-white"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+          {itens.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-12 rounded-xl bg-white/5 ring-1 ring-white/10 text-center">
+              <p className="text-lg font-medium text-white/80">
+                Nenhum item vinculado!
+              </p>
+              <p className="text-sm text-white/50 mt-1">
+                Esta workstation ainda não possui itens associados.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

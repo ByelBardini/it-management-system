@@ -1,23 +1,7 @@
+import tipos from "./tiposItens.js";
 import { formatToDate } from "brazilian-values";
 
 export default function TabelaItens({ itens, setCardItem, inativos }) {
-  const tipos = {
-    desktop: "Desktop",
-    notebook: "Notebook",
-    movel: "Móvel",
-    cadeira: "Cadeira",
-    monitor: "Monitor",
-    ferramenta: "Ferramenta",
-    ap: "Acess Point",
-    "ar-condicionado": "Ar Condicionado",
-    switch: "Switch",
-    periferico: "Periférico",
-    "no-break": "No Break",
-    impressora: "Impressora",
-    gerador: "Gerador",
-    celular: "Celular",
-  };
-
   function abreCard(id) {
     localStorage.setItem("item_id", id);
     setCardItem(true);

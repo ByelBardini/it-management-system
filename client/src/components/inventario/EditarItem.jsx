@@ -1,4 +1,4 @@
-import tipos from "./tipos.js";
+import tipos from "./tiposCarac.js";
 import EditarAnexos from "../anexos/EditarAnexos.jsx";
 import { X, Paperclip } from "lucide-react";
 import { getSetoresWorkstations } from "../../services/api/empresaServices.js";
@@ -242,9 +242,7 @@ export default function EditarItem({
               value={setor}
               className="w-full rounded-lg bg-white/10 p-2 text-white focus:outline-none"
             >
-              <option value={""}>
-                Nenhum
-              </option>
+              <option value={""}>Nenhum</option>
               {setores.map((setor) => (
                 <option key={setor.setor_id} value={setor.setor_id}>
                   {setor.setor_nome}
@@ -259,9 +257,7 @@ export default function EditarItem({
               value={workstation}
               className="w-full rounded-lg bg-white/10 p-2 text-white focus:outline-none"
             >
-              <option value={""}>
-                Nenhum
-              </option>
+              <option value={""}>Nenhum</option>
               {setor == ""
                 ? workstations.map((workstation) => (
                     <option
