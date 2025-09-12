@@ -20,6 +20,13 @@ export default function Login() {
   const [login, setLogin] = useState("");
   const [senha, setSenha] = useState("");
 
+  function enter(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      logarSistema();
+    }
+  }
+
   async function logarSistema() {
     if (login == "" || senha == "") {
       setTipo("erro");
@@ -120,6 +127,7 @@ export default function Login() {
             <input
               type="password"
               placeholder="Senha"
+              onKeyDown={enter}
               onChange={(e) => setSenha(e.target.value)}
               className="p-3 rounded-md bg-[#0F1A36] border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
