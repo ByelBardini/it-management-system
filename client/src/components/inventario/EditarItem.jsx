@@ -54,7 +54,11 @@ export default function EditarItem({
 
   async function salvarItem() {
     const id = item.item_id;
-    if (!nome || setor.setor_id != workstation.workstation_setor_id) {
+    if (
+      !nome ||
+      setor.setor_id != workstation.workstation_setor_id ||
+      (!emUso && (setor != "" || workstation != ""))
+    ) {
       setNotificacao({
         show: true,
         tipo: "erro",
@@ -238,8 +242,8 @@ export default function EditarItem({
               value={setor}
               className="w-full rounded-lg bg-white/10 p-2 text-white focus:outline-none"
             >
-              <option value={""} hidden>
-                Selecione...
+              <option value={""}>
+                Nenhum
               </option>
               {setores.map((setor) => (
                 <option key={setor.setor_id} value={setor.setor_id}>
@@ -255,8 +259,8 @@ export default function EditarItem({
               value={workstation}
               className="w-full rounded-lg bg-white/10 p-2 text-white focus:outline-none"
             >
-              <option value={""} hidden>
-                Selecione...
+              <option value={""}>
+                Nenhum
               </option>
               {setor == ""
                 ? workstations.map((workstation) => (

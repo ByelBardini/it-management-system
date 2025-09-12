@@ -242,8 +242,16 @@ export async function putItem(req, res) {
   }
 
   item.item_nome = item_nome;
-  item.item_setor_id = item_setor_id || null;
-  item.item_workstation_id = item_workstation_id || null;
+  if (item_setor_id != "null") {
+    item.item_setor_id = item_setor_id;
+  } else {
+    item.item_setor_id = null;
+  }
+  if (item_workstation_id != "null") {
+    item.item_workstation_id = item_workstation_id;
+  } else {
+    item.item_workstation_id = null;
+  }
   item.item_em_uso = item_em_uso;
 
   item.save();
