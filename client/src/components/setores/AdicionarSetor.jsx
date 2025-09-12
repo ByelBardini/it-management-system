@@ -4,11 +4,18 @@ import { useState } from "react";
 
 export default function AdicionarSetor({
   setAdicionando,
-  setModificado,
+  buscarDados,
   setNotificacao,
   setCarregando,
 }) {
   const [nomeSetor, setNomeSetor] = useState("");
+
+  function enter(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      adicionaSetor();
+    }
+  }
 
   async function adicionaSetor() {
     if (nomeSetor == "") {
@@ -31,7 +38,7 @@ export default function AdicionarSetor({
           mensagem:
             "O setor foi inserido com sucesso, você será redirecionado novamente à aba de configuração",
         });
-        setModificado(true);
+        buscarDados();
 
         setTimeout(() => {
           setNotificacao(false);
@@ -74,6 +81,7 @@ export default function AdicionarSetor({
                 setNomeSetor(e.target.value);
               }}
               type="text"
+              onKeyDown={enter}
               placeholder="Digite o nome..."
               className="w-full rounded-lg bg-white/10 px-3 py-2 text-white text-sm placeholder-white/40 
                          focus:outline-none focus:ring-2 focus:ring-sky-500/60 ring-1 ring-white/10"

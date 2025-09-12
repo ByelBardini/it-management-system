@@ -6,13 +6,15 @@ import ModalConfirmacao from "../components/default/ModalConfirmacao.jsx";
 import { Plus, Building2, SearchX, Trash2, Layers } from "lucide-react";
 import { useState } from "react";
 import { getSetores, deleteSetor } from "../services/api/setorServices.js";
-import { getPlataformas } from "../services/api/plataformaServices.js";
+import {
+  getPlataformas,
+  deletePlataforma,
+} from "../services/api/plataformaServices.js";
 import { useEffect } from "react";
 
 export default function Configuracoes() {
   const [adicionandoSetor, setAdicionandoSetor] = useState(false);
   const [adicionandoPlataforma, setAdicionandoPlataforma] = useState(false);
-  const [modificado, setModificado] = useState(false);
 
   const [setores, setSetores] = useState([]);
   const [plataformas, setPlataformas] = useState([]);
@@ -33,6 +35,11 @@ export default function Configuracoes() {
 
   async function deletarSetor(id) {
     setCarregando(true);
+    setConfirmacao({
+      show: false,
+      texto: "",
+      onSim: null,
+    });
     try {
       await deleteSetor(id);
 
@@ -43,9 +50,15 @@ export default function Configuracoes() {
         mensagem:
           "O setor foi excluído com sucesso, não irá mais aparecer nas seleções de setor",
       });
-      setModificado(true);
+      buscarDados();
 
       setTimeout(() => {
+        setNotificacao({
+          show: false,
+          tipo: "sucesso",
+          titulo: "",
+          mensagem: "",
+        });
         setNotificacao(false);
       }, 1000);
     } catch (err) {
@@ -54,6 +67,47 @@ export default function Configuracoes() {
         show: true,
         tipo: "erro",
         titulo: "Erro ao deletar setor",
+        mensagem: err.message,
+      });
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  async function deletarPlataforma(id) {
+    setCarregando(true);
+    setConfirmacao({
+      show: false,
+      texto: "",
+      onSim: null,
+    });
+    try {
+      await deletePlataforma(id);
+
+      setNotificacao({
+        show: true,
+        tipo: "sucesso",
+        titulo: "Plataforma deletada com sucesso",
+        mensagem:
+          "A plataforma foi excluída com sucesso, não irá mais aparecer nas seleções de plataforma",
+      });
+      buscarDados();
+
+      setTimeout(() => {
+        setNotificacao(false);
+        setNotificacao({
+          show: false,
+          tipo: "sucesso",
+          titulo: "",
+          mensagem: "",
+        });
+      }, 1000);
+    } catch (err) {
+      console.error(err);
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Erro ao deletar plataforma",
         mensagem: err.message,
       });
     } finally {
@@ -73,11 +127,10 @@ export default function Configuracoes() {
       console.error(err);
     }
   }
-  
+
   useEffect(() => {
     buscarDados();
-    setModificado(false);
-  }, [modificado]);
+  }, []);
 
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
@@ -97,7 +150,7 @@ export default function Configuracoes() {
       {adicionandoPlataforma && (
         <AdicionarPlataforma
           setAdicionando={setAdicionandoPlataforma}
-          setModificado={setModificado}
+          buscarDados={buscarDados}
           setNotificacao={setNotificacao}
           setCarregando={setCarregando}
         />
@@ -105,7 +158,7 @@ export default function Configuracoes() {
       {adicionandoSetor && (
         <AdicionarSetor
           setAdicionando={setAdicionandoSetor}
-          setModificado={setModificado}
+          buscarDados={buscarDados}
           setNotificacao={setNotificacao}
           setCarregando={setCarregando}
         />
@@ -203,7 +256,19 @@ export default function Configuracoes() {
                 <span className="text-white/80 text-sm">
                   {plataforma.plataforma_nome}
                 </span>
-                <button className="cursor-pointer p-2 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-500/10 transition">
+                <button
+                  onClick={() =>
+                    setConfirmacao({
+                      show: true,
+                      texto:
+                        "Você tem certeza que deseja excluir essa plataforma? Essa ação é IRREVERSÍVEL",
+                      onSim: () => {
+                        deletarPlataforma(plataforma.plataforma_id);
+                      },
+                    })
+                  }
+                  className="cursor-pointer p-2 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-500/10 transition"
+                >
                   <Trash2 size={16} />
                 </button>
               </div>
