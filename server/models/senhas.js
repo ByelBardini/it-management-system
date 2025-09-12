@@ -15,11 +15,11 @@ Senha.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    senha_usuario: {
-      type: DataTypes.STRING(255),
+    senha_plataforma_id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    senha_plataforma: {
+    senha_usuario: {
       type: DataTypes.STRING(255),
       allowNull: false,
     },

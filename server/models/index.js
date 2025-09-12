@@ -6,6 +6,7 @@ import Senha from "./senhas.js";
 import Setor from "./setores.js";
 import Usuario from "./usuarios.js";
 import Workstation from "./workstations.js";
+import Plataforma from "./plataformas.js";
 
 //Foreign keys de Empresas e Setores
 Empresa.hasMany(Setor, {
@@ -71,13 +72,13 @@ Workstation.belongsTo(Setor, {
 Empresa.hasMany(Workstation, {
   foreignKey: "workstation_empresa_id",
   targetKey: "empresa_id",
-  as: "workstations"
+  as: "workstations",
 });
 Workstation.belongsTo(Empresa, {
   foreignKey: "workstation_empresa_id",
   targetKey: "empresa_id",
-  as: "empresa"
-})
+  as: "empresa",
+});
 
 //Foreign keys de Anexos e Empresas
 Item.hasMany(Anexo, {
@@ -115,6 +116,18 @@ Senha.belongsTo(Usuario, {
   as: "usuario",
 });
 
+//Foregign keys de Plataformas e Senhas
+Plataforma.hasMany(Senha, {
+  foreignKey: "senha_plataforma_id",
+  sourceKey: "plataforma_id",
+  as: "senhas",
+});
+Senha.belongsTo(Plataforma, {
+  foreignKey: "senha_plataforma_id",
+  targetKey: "plataforma_id",
+  as: "plataforma",
+});
+
 export {
   Anexo,
   Caracteristica,
@@ -124,4 +137,5 @@ export {
   Setor,
   Usuario,
   Workstation,
+  Plataforma,
 };
