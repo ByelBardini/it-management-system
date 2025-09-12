@@ -1,46 +1,48 @@
 import AdicionarSetor from "../components/setores/AdicionarSetor.jsx";
+import AdicionarPlataforma from "../components/plataforma/AdicionarPlataforma.jsx";
 import Notificacao from "../components/default/Notificacao.jsx";
 import Loading from "../components/default/Loading.jsx";
 import ModalConfirmacao from "../components/default/ModalConfirmacao.jsx";
-import { Plus, Building2, SearchX, Trash2 } from "lucide-react";
+import { Plus, Building2, SearchX, Trash2, Layers } from "lucide-react";
 import { useState } from "react";
 import { getSetores, deleteSetor } from "../services/api/setorServices.js";
+import { getPlataformas } from "../services/api/plataformaServices.js";
 import { useEffect } from "react";
 
 export default function Configuracoes() {
-  const [adicionando, setAdicionando] = useState(false);
+  const [adicionandoSetor, setAdicionandoSetor] = useState(false);
+  const [adicionandoPlataforma, setAdicionandoPlataforma] = useState(false);
   const [modificado, setModificado] = useState(false);
+
   const [setores, setSetores] = useState([]);
+  const [plataformas, setPlataformas] = useState([]);
 
-  const [confirmacao, setConfirmacao] = useState(false);
-  const [onSim, setOnSim] = useState(null);
-
-  const [notificacao, setNotificacao] = useState(false);
-  const [tipo, setTipo] = useState("sucesso");
-  const [titulo, setTitulo] = useState("");
-  const [descricao, setDescricao] = useState("");
+  const [notificacao, setNotificacao] = useState({
+    show: false,
+    tipo: "sucesso",
+    titulo: "",
+    mensagem: "",
+  });
+  const [confirmacao, setConfirmacao] = useState({
+    show: false,
+    texto: "",
+    onSim: null,
+  });
 
   const [carregando, setCarregando] = useState(false);
-
-  function clicaDeleta(id) {
-    setConfirmacao(true);
-    setOnSim(() => () => {
-      setConfirmacao(false);
-      deletarSetor(id);
-    });
-  }
 
   async function deletarSetor(id) {
     setCarregando(true);
     try {
       await deleteSetor(id);
 
-      setTipo("sucesso");
-      setTitulo("Setor deletado com sucesso");
-      setDescricao(
-        "O setor foi excluído com sucesso, não irá mais aparecer nas seleções de setor"
-      );
-      setNotificacao(true);
+      setNotificacao({
+        show: true,
+        tipo: "sucesso",
+        titulo: "Setor deletado com sucesso",
+        mensagem:
+          "O setor foi excluído com sucesso, não irá mais aparecer nas seleções de setor",
+      });
       setModificado(true);
 
       setTimeout(() => {
@@ -48,69 +50,89 @@ export default function Configuracoes() {
       }, 1000);
     } catch (err) {
       console.error(err);
-      setTipo("erro");
-      setTitulo("Erro ao deletar setor");
-      setDescricao(err.message);
-      setNotificacao(true);
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Erro ao deletar setor",
+        mensagem: err.message,
+      });
     } finally {
       setCarregando(false);
     }
   }
 
-  async function buscarSetores() {
+  async function buscarDados() {
     try {
       const setores = await getSetores(localStorage.getItem("empresa_id"));
-      setSetores(setores);
+      const plataformas = await getPlataformas();
+      setSetores(setores || []);
+      setPlataformas(plataformas || []);
+      console.log(plataformas);
       console.log(setores);
     } catch (err) {
       console.error(err);
     }
   }
-
+  
   useEffect(() => {
-    buscarSetores();
+    buscarDados();
     setModificado(false);
   }, [modificado]);
 
   return (
-    <div className="p-6">
-      {confirmacao && (
+    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+      {confirmacao.show && (
         <ModalConfirmacao
-          texto={
-            "Você tem certeza que deseja excluir esse setor? Essa ação é IRREVERSÍVEL"
+          texto={confirmacao.texto}
+          onNao={() =>
+            setConfirmacao({
+              show: false,
+              texto: "",
+              onSim: null,
+            })
           }
-          onNao={() => setConfirmacao(false)}
-          onSim={onSim}
+          onSim={confirmacao.onSim}
         />
       )}
-      {adicionando && (
-        <AdicionarSetor
-          setAdicionando={setAdicionando}
+      {adicionandoPlataforma && (
+        <AdicionarPlataforma
+          setAdicionando={setAdicionandoPlataforma}
           setModificado={setModificado}
-          setTipo={setTipo}
-          setTitulo={setTitulo}
-          setDescricao={setDescricao}
           setNotificacao={setNotificacao}
           setCarregando={setCarregando}
-          setAv
         />
       )}
-      {notificacao && (
+      {adicionandoSetor && (
+        <AdicionarSetor
+          setAdicionando={setAdicionandoSetor}
+          setModificado={setModificado}
+          setNotificacao={setNotificacao}
+          setCarregando={setCarregando}
+        />
+      )}
+      {notificacao.show && (
         <Notificacao
-          onClick={() => setNotificacao(false)}
-          tipo={tipo}
-          titulo={titulo}
-          mensagem={descricao}
+          onClick={() =>
+            setNotificacao({
+              show: false,
+              tipo: "sucesso",
+              titulo: "",
+              mensagem: "",
+            })
+          }
+          tipo={notificacao.tipo}
+          titulo={notificacao.titulo}
+          mensagem={notificacao.mensagem}
         />
       )}
       {carregando && <Loading />}
-      <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
+      <div className="h-auto rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white flex items-center gap-2">
             <Building2 size={20} /> Setores da Empresa
           </h2>
           <button
-            onClick={() => setAdicionando(true)}
+            onClick={() => setAdicionandoSetor(true)}
             className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-sky-600 text-white text-sm hover:bg-sky-500 transition"
           >
             <Plus size={18} />
@@ -129,7 +151,16 @@ export default function Configuracoes() {
                   {setor.setor_nome}
                 </span>
                 <button
-                  onClick={() => clicaDeleta(setor.setor_id)}
+                  onClick={() =>
+                    setConfirmacao({
+                      show: true,
+                      texto:
+                        "Você tem certeza que deseja excluir esse setor? Essa ação é IRREVERSÍVEL",
+                      onSim: () => {
+                        deletarSetor(setor.setor_id);
+                      },
+                    })
+                  }
                   className="cursor-pointer p-2 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-500/10 transition"
                   title="Remover setor"
                 >
@@ -141,6 +172,46 @@ export default function Configuracoes() {
             <div className="p-6 flex items-center justify-center gap-2 px-6 py-3 hover:bg-white/5 transition">
               <SearchX size={18} />
               Nenhum setor encontrado
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="h-auto rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+            <Layers size={20} /> Plataformas
+          </h2>
+          <button
+            onClick={() => {
+              setAdicionandoPlataforma(true);
+            }}
+            className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white text-sm hover:bg-indigo-500 transition"
+          >
+            <Plus size={18} />
+            Adicionar Plataforma
+          </button>
+        </div>
+
+        <div className="divide-y divide-white/10">
+          {plataformas.length > 0 ? (
+            plataformas.map((plataforma) => (
+              <div
+                key={plataforma.plataforma_id}
+                className="flex items-center justify-between px-6 py-3 hover:bg-white/5 transition"
+              >
+                <span className="text-white/80 text-sm">
+                  {plataforma.plataforma_nome}
+                </span>
+                <button className="cursor-pointer p-2 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-500/10 transition">
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))
+          ) : (
+            <div className="p-6 flex items-center justify-center gap-2 text-white/60">
+              <SearchX size={18} />
+              Nenhuma plataforma encontrada
             </div>
           )}
         </div>

@@ -5,9 +5,6 @@ import { useState } from "react";
 export default function AdicionarSetor({
   setAdicionando,
   setModificado,
-  setTipo,
-  setTitulo,
-  setDescricao,
   setNotificacao,
   setCarregando,
 }) {
@@ -15,22 +12,25 @@ export default function AdicionarSetor({
 
   async function adicionaSetor() {
     if (nomeSetor == "") {
-      setTipo("erro");
-      setTitulo("Insira todos os dados");
-      setDescricao("O nome do setor é obrigatório");
-      setNotificacao(true);
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Insira todos os dados",
+        mensagem: "O nome do setor é obrigatório",
+      });
     } else {
       setCarregando(true);
       try {
         const id = localStorage.getItem("empresa_id");
         await postSetor(nomeSetor, id);
 
-        setTipo("sucesso");
-        setTitulo("Setor inserido com sucesso");
-        setDescricao(
-          "O setor foi inserido com sucesso, você será redirecionado novamente à aba de setores"
-        );
-        setNotificacao(true);
+        setNotificacao({
+          show: true,
+          tipo: "sucesso",
+          titulo: "Setor inserido com sucesso",
+          mensagem:
+            "O setor foi inserido com sucesso, você será redirecionado novamente à aba de configuração",
+        });
         setModificado(true);
 
         setTimeout(() => {
@@ -38,11 +38,13 @@ export default function AdicionarSetor({
           setAdicionando(false);
         }, 1000);
       } catch (err) {
+        setNotificacao({
+          show: true,
+          tipo: "erro",
+          titulo: "Erro ao inserir setor",
+          mensagem: err.message,
+        });
         console.error(err);
-        setTipo("erro");
-        setTitulo("Erro ao inserir setor");
-        setDescricao(err.message);
-        setNotificacao(true);
       } finally {
         setCarregando(false);
       }
