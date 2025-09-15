@@ -128,6 +128,18 @@ Senha.belongsTo(Plataforma, {
   as: "plataforma",
 });
 
+//Foregign keys de Empresas e Senhas
+Empresa.hasMany(Senha, {
+  foreignKey: "senha_empresa_id",
+  sourceKey: "empresa_id",
+  as: "senhas",
+});
+Senha.belongsTo(Empresa, {
+  foreignKey: "senha_empresa_id",
+  targetKey: "empresa_id",
+  as: "empresas",
+});
+
 export {
   Anexo,
   Caracteristica,

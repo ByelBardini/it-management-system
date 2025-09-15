@@ -9,6 +9,7 @@ import workstationRoutes from "./routes/workstationRoutes.js";
 import itemRoutes from "./routes/itemRoutes.js";
 import downloadRoutes from "./routes/downloadRoutes.js";
 import plataformaRoutes from "./routes/plataformaRoutes.js";
+import senhaRoutes from "./routes/senhaRoutes.js";
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use("/setor", setorRoutes);
 app.use("/workstation", workstationRoutes);
 app.use("/item", itemRoutes);
 app.use("/plataforma", plataformaRoutes);
+app.use("/senha", senhaRoutes);
 app.use("/", downloadRoutes);
 
 export default app;
