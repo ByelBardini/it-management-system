@@ -5,7 +5,15 @@ import {
   formatarIntervaloTabela,
 } from "../default/funcoes.js";
 
-export default function TabelaManutencoes({ itens }) {
+export default function TabelaManutencoes({
+  itens,
+  setVisualizando,
+  setSelecionado,
+}) {
+  function abreVisualiza(item) {
+    setSelecionado(item);
+    setVisualizando(true);
+  }
   return (
     <table className="w-full text-left border-collapse">
       <thead>
@@ -30,6 +38,7 @@ export default function TabelaManutencoes({ itens }) {
           return (
             <tr
               key={item.item_id}
+              onDoubleClick={() => abreVisualiza(item)}
               className="text-sm text-white/80 hover:bg-white/5 transition"
             >
               <td className="px-6 py-3 font-medium text-white">

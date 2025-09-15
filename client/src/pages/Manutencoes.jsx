@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
-import TabelaManutencoes from "../components/manutencoes/TabelaManutencoes.jsx";
 import { getManutencoes } from "../services/api/manutencaoServices.js";
+import TabelaManutencoes from "../components/manutencoes/TabelaManutencoes.jsx";
+import ExibirManutencao from "../components/manutencoes/ExibirManutencao.jsx";
 
 export default function Manutencoes() {
   const [itens, setItens] = useState([]);
   const [atrasadas, setAtrasadas] = useState("");
+
+  const [visualizando, setVisualizando] = useState(false);
+  const [selecionado, setSelecionado] = useState({});
 
   async function buscarItens() {
     const id = localStorage.getItem("empresa_id");
@@ -37,6 +41,12 @@ export default function Manutencoes() {
   }, []);
   return (
     <div>
+      {visualizando && (
+        <ExibirManutencao
+          setVisualizando={setVisualizando}
+          item={selecionado}
+        />
+      )}
       <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Senhas</h2>
@@ -47,7 +57,11 @@ export default function Manutencoes() {
             </span>
           </p>
         </div>
-        <TabelaManutencoes itens={itens} />
+        <TabelaManutencoes
+          itens={itens}
+          setSelecionado={setSelecionado}
+          setVisualizando={setVisualizando}
+        />
       </div>
     </div>
   );
