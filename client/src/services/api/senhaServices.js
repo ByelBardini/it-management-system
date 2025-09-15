@@ -48,3 +48,14 @@ export async function postSenha(
     throw err;
   }
 }
+
+export async function deleteSenha(id) {
+  try {
+    const response = await api.delete(`/senha/${id}`);
+
+    return response.data;
+  } catch (err) {
+    console.error("Erro ao excluir senha:", err);
+    throw err;
+  }
+}

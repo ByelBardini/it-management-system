@@ -1,36 +1,89 @@
-import { X, Edit, KeyRound, Eye } from "lucide-react";
-import { getSenhaFull } from "../../services/api/senhaServices.js";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { X, Edit, KeyRound, Eye, Trash2 } from "lucide-react";
+import { getSenhaFull, deleteSenha } from "../../services/api/senhaServices.js";
 import { useEffect, useState } from "react";
 import { formatToDate } from "brazilian-values";
 
-export default function CardSenha({ setCardSenha }) {
-  const [senha, setSenha] = useState([]);
+export default function CardSenha({
+  setCardSenha,
+  setNotificacao,
+  setConfirmacao,
+  buscaSenhas,
+  setLoading,
+}) {
+  const [senha, setSenha] = useState({});
 
   const [exibeSenha, setExibeSenha] = useState(false);
 
-  async function buscaDados() {
+  async function buscaDadosSenha() {
     const id = localStorage.getItem("senha_id");
-
+    setLoading(true);
     try {
       const senha = await getSenhaFull(id);
-
-      console.log(senha);
+      setLoading(false);
 
       setSenha(senha);
     } catch (err) {
+      setLoading(false);
       console.error(err);
-      alert(err.message);
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Erro ao cadastrar senha",
+        mensagem: err.message,
+      });
+    }
+  }
+
+  async function excluiSenha() {
+    setConfirmacao({
+      show: false,
+      texto: "",
+      onSim: null,
+    });
+    const id = localStorage.getItem("senha_id");
+    setLoading(true);
+    try {
+      await deleteSenha(id);
+
+      setLoading(false);
+      setNotificacao({
+        show: true,
+        tipo: "sucesso",
+        titulo: "Senha excluída com sucesso",
+        mensagem:
+          "A senha foi excluída com sucesso, e não irá mais aparecer na listagem",
+      });
+      await buscaSenhas();
+      setTimeout(() => {
+        setNotificacao({
+          show: false,
+          tipo: "erro",
+          titulo: "",
+          mensagem: "",
+        });
+        setCardSenha(false);
+      }, 700);
+    } catch (err) {
+      setLoading(false);
+      console.error(err);
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Erro ao excluir senha",
+        mensagem: err.message,
+      });
     }
   }
 
   useEffect(() => {
-    buscaDados();
+    buscaDadosSenha();
   }, []);
 
   return (
     <div
       onClick={() => setCardSenha(false)}
-      className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center"
+      className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center"
     >
       <div
         onClick={(e) => e.stopPropagation()}
@@ -53,7 +106,7 @@ export default function CardSenha({ setCardSenha }) {
             <label className="text-sm text-white/60">Nome</label>
             <input
               type="text"
-              value={senha.senha_nome}
+              value={senha.senha_nome || ""}
               disabled
               className="w-full mt-1 rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white text-sm"
             />
@@ -85,9 +138,11 @@ export default function CardSenha({ setCardSenha }) {
               <label className="text-sm text-white/60">Última troca</label>
               <input
                 type="text"
-                value={formatToDate(
-                  new Date(senha.senha_ultima_troca + "T03:00:00Z")
-                )}
+                value={
+                  formatToDate(
+                    new Date(senha.senha_ultima_troca + "T03:00:00Z")
+                  ) || ""
+                }
                 disabled
                 className="w-full mt-1 rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white text-sm"
               />
@@ -111,7 +166,7 @@ export default function CardSenha({ setCardSenha }) {
             <label className="text-sm text-white/60">Usuário</label>
             <input
               type="text"
-              value={senha.senha_usuario}
+              value={senha.senha_usuario || ""}
               disabled
               className="w-full mt-1 rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white text-sm"
             />
@@ -122,7 +177,7 @@ export default function CardSenha({ setCardSenha }) {
             <div className="relative mt-1">
               <input
                 type={exibeSenha ? "text" : "password"}
-                value={senha.senha_descriptografada}
+                value={senha.senha_descriptografada || ""}
                 disabled
                 className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white font-mono tracking-wider text-sm"
               />
@@ -136,15 +191,31 @@ export default function CardSenha({ setCardSenha }) {
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 border-t border-white/10 pt-4">
-          <button className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-sm transition">
-            <Edit size={16} />
-            Editar
+        <div className="flex gap-3 border-t border-white/10 pt-4 place-content-between ">
+          <button
+            onClick={() =>
+              setConfirmacao({
+                show: true,
+                texto:
+                  "Tem certeza que deseja excluir essa senha? Essa ação é irreversível",
+                onSim: () => excluiSenha(),
+              })
+            }
+            className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm transition"
+          >
+            <Trash2 size={16} />
+            Excluir Senha
           </button>
-          <button className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm transition">
-            <KeyRound size={16} />
-            Alterar Senha
-          </button>
+          <div className="flex gap-2">
+            <button className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-sm transition">
+              <Edit size={16} />
+              Editar
+            </button>
+            <button className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm transition">
+              <KeyRound size={16} />
+              Alterar Senha
+            </button>
+          </div>
         </div>
       </div>
     </div>

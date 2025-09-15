@@ -130,3 +130,17 @@ export async function postSenha(req, res) {
 
   return res.status(201).json({ message: "Senha cadastrada com sucesso!" });
 }
+
+export async function deletaSenha(req, res) {
+  const { id } = req.params;
+
+  if (!id) {
+    throw ApiError.badRequest("Necessári id da senha a ser excluída");
+  }
+
+  const senha = await Senha.findByPk(id);
+
+  await senha.destroy();
+
+  return res.status(200).json({ message: "Senha excluída com sucesso." });
+}

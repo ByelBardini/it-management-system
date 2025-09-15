@@ -68,7 +68,15 @@ export default function Senhas() {
           setLoading={setLoading}
         />
       )}
-      {cardSenha && <CardSenha setCardSenha={setCardSenha} />}
+      {cardSenha && (
+        <CardSenha
+          setNotificacao={setNotificacao}
+          setCardSenha={setCardSenha}
+          setConfirmacao={setConfirmacao}
+          buscaSenhas={buscaSenhas}
+          setLoading={setLoading}
+        />
+      )}
 
       {confirmacao.show && (
         <ModalConfirmacao
