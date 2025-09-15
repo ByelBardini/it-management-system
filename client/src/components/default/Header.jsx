@@ -39,7 +39,7 @@ export default function Header() {
 
             <div className="mx-3 hidden h-6 w-px bg-white/10 sm:block" />
 
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden md:flex items-center gap-2">
               <NavButton to="/inventario">Inventário</NavButton>
               <NavButton to="/workstations">Workstations</NavButton>
               <NavButton to="/senha">Senhas</NavButton>
