@@ -30,7 +30,7 @@ Item.init(
     },
     item_data_inativacao: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: true,
     },
     item_tipo: {
       type: DataTypes.ENUM(

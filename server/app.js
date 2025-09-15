@@ -10,6 +10,7 @@ import itemRoutes from "./routes/itemRoutes.js";
 import downloadRoutes from "./routes/downloadRoutes.js";
 import plataformaRoutes from "./routes/plataformaRoutes.js";
 import senhaRoutes from "./routes/senhaRoutes.js";
+import manutencoesRoutes from "./routes/manutencoesRoutes.js";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use(
 );
 
 app.use("/", authRoutes);
+app.use("/", downloadRoutes);
 app.use("/usuario", usuarioRoutes);
 app.use("/empresa", empresaRoutes);
 app.use("/setor", setorRoutes);
@@ -33,6 +35,6 @@ app.use("/workstation", workstationRoutes);
 app.use("/item", itemRoutes);
 app.use("/plataforma", plataformaRoutes);
 app.use("/senha", senhaRoutes);
-app.use("/", downloadRoutes);
+app.use("/manutencao", manutencoesRoutes);
 
 export default app;
