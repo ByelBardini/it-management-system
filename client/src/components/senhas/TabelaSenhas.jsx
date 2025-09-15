@@ -30,7 +30,7 @@ export default function TabelaSenhas({ senhas, setCardSenha }) {
             <tr
               onDoubleClick={() => abreCard(senha.senha_id)}
               key={senha.senha_id}
-              className="text-sm text-white/80 hover:bg-red-500/10 transition"
+              className="text-sm text-white/80 hover:bg-white/5 transition"
             >
               <td className="px-6 py-3 font-medium text-white">
                 {senha.senha_nome}
