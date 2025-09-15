@@ -1,4 +1,8 @@
 import { formatToDate } from "brazilian-values";
+import {
+  formatarIntervalo,
+  formatarIntervaloTabela,
+} from "../default/funcoes.js";
 
 export default function TabelaSenhas({ senhas, setCardSenha }) {
   function abreCard(id) {
@@ -43,27 +47,12 @@ export default function TabelaSenhas({ senhas, setCardSenha }) {
                 )}
               </td>
               <td
-                className={`px-6 py-3 ${
-                  senha.senha_tempo_troca == 0
-                    ? "text-green-400"
-                    : diffDias < 0
-                    ? "text-red-400 font-semibold"
-                    : diffDias <= 5
-                    ? "text-yellow-400 font-semibold"
-                    : "text-green-400"
-                }`}
+                className={`px-6 py-3 ${formatarIntervaloTabela(
+                  senha.senha_tempo_troca,
+                  diffDias
+                )}`}
               >
-                {senha.senha_tempo_troca == 0
-                  ? "Não Expira"
-                  : diffDias == 0
-                  ? `0 dias`
-                  : diffDias == -1
-                  ? `Atrasado 1 dia`
-                  : diffDias < -1
-                  ? `Atrasado ${diffDias * -1} dias`
-                  : diffDias == 1
-                  ? `1 dia`
-                  : `${diffDias} dias`}
+                {formatarIntervalo(senha.senha_tempo_troca, diffDias)}
               </td>
             </tr>
           );
