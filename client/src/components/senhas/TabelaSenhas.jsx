@@ -20,11 +20,10 @@ export default function TabelaSenhas({ senhas }) {
             ultima.getTime() + prazo * 24 * 60 * 60 * 1000
           );
           const hoje = new Date();
-          console.log(hoje);
           const diffDias = Math.ceil((proxima - hoje) / (1000 * 60 * 60 * 24));
           return (
             <tr
-              key={senha.id}
+              key={senha.senha_id}
               className="text-sm text-white/80 hover:bg-red-500/10 transition"
             >
               <td className="px-6 py-3 font-medium text-white">

@@ -150,6 +150,9 @@ export default function ModalRegistraSenha({ setAdicionaSenha }) {
               onChange={(e) => setTempoTroca(e.target.value)}
               className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
             >
+              <option hidden value={""}>
+                Selecione...
+              </option>
               <option value={0}>Nunca</option>
               <option value={30}>30 dias</option>
               <option value={60}>60 dias</option>
