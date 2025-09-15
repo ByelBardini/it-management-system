@@ -22,12 +22,12 @@ export default function AtualizarSenha({
   }, [senha, confirmaSenha]);
 
   async function atualizar() {
-    if (!senhaValida) {
+    if (!senhaValida || senha == "") {
       setNotificacao({
         show: true,
         tipo: "erro",
         titulo: "Senha inválida",
-        mensagem: "As duas senhas devem ser iguais",
+        mensagem: "As duas senhas devem ser iguais e não podem estar em branco",
       });
       return;
     }
@@ -58,6 +58,7 @@ export default function AtualizarSenha({
       }, 700);
     } catch (err) {
       setLoading(false);
+      console.error(err);
       setNotificacao({
         show: true,
         tipo: "erro",
@@ -133,9 +134,10 @@ export default function AtualizarSenha({
         <div className="flex gap-3 border-t border-white/10 pt-4 place-content-end">
           <button
             onClick={atualizar}
+            disabled={!senhaValida || senha == ""}
             className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg 
                         ${
-                          senhaValida
+                          senhaValida && senha != ""
                             ? "cursor-pointer bg-sky-600 hover:bg-sky-500"
                             : "cursor-not-allowed bg-white/10 text-white/40"
                         }`}
