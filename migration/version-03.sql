@@ -27,3 +27,6 @@ ADD CONSTRAINT `senha_empresa_id`
   REFERENCES `it_management_system`.`empresas` (`empresa_id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
+
+ALTER TABLE `it_management_system`.`itens` 
+CHANGE COLUMN `item_tipo` `item_tipo` ENUM('desktop', 'notebook', 'movel', 'cadeira', 'monitor', 'ferramenta', 'ap', 'ar-condicionado', 'switch', 'periferico', 'no-break', 'impressora', 'gerador', 'celular', 'outros') NOT NULL ;

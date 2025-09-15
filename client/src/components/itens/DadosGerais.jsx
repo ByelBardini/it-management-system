@@ -100,6 +100,12 @@ export default function DadosGerais({ value, onChange }) {
               Ferramenta
             </option>
           </optgroup>
+
+          <optgroup className="bg-zinc-700" label="Outros">
+            <option value="outros" className="bg-zinc-900">
+              Outros
+            </option>
+          </optgroup>
         </select>
       </div>
 

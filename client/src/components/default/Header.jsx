@@ -1,3 +1,4 @@
+import logoEmpresa from "../../assets/logo-empresa.png";
 import { Building2, Undo2 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 
@@ -31,7 +32,9 @@ export default function Header() {
         <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg">
           <div className="flex h-16 items-center gap-3 px-3 sm:px-4">
             <NavButton to="/app" className="flex items-center gap-2">
-              <span className="h-8 w-8 rounded-xl bg-gradient-to-br from-sky-500/60 to-blue-600/60 ring-1 ring-white/20 shadow-inner" />
+              <span className="h-8 w-8">
+                <img src={logoEmpresa}></img>
+              </span>
               <span className="hidden sm:block font-semibold text-white">
                 InfraHub
               </span>

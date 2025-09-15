@@ -13,6 +13,7 @@ const tipos = {
   impressora: "Impressora",
   gerador: "Gerador",
   celular: "Celular",
+  outros: "Outros",
 };
 
 export default tipos;

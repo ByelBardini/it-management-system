@@ -47,7 +47,8 @@ Item.init(
         "no-break",
         "impressora",
         "gerador",
-        "celular"
+        "celular",
+        "outros"
       ),
       allowNull: false,
     },
