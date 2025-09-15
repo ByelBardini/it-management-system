@@ -49,6 +49,17 @@ export async function postSenha(
   }
 }
 
+export async function atualizaSenha(id, nova_senha) {
+  try {
+    const response = await api.put(`/senha/atualiza/${id}`, { nova_senha });
+
+    return response.data;
+  } catch (err) {
+    console.error("Erro ao atualizar senha:", err);
+    throw err;
+  }
+}
+
 export async function deleteSenha(id) {
   try {
     const response = await api.delete(`/senha/${id}`);

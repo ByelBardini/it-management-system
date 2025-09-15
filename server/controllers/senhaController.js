@@ -131,6 +131,33 @@ export async function postSenha(req, res) {
   return res.status(201).json({ message: "Senha cadastrada com sucesso!" });
 }
 
+export async function atualizaSenha(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("Necessário informar ID da senhas");
+  }
+  const { nova_senha } = req.body;
+  if (!nova_senha) {
+    throw ApiError.badRequest("Necessário informar nova senha");
+  }
+
+  const iv = crypto.randomBytes(16);
+
+  const cifra = crypto.createCipheriv(ALGORITMO, CHAVE, iv);
+  let senhaCriptografada = cifra.update(nova_senha, "utf-8", "hex");
+  senhaCriptografada += cifra.final("hex");
+
+  const senha = await Senha.findByPk(id);
+
+  senha.senha_criptografada = senhaCriptografada;
+  senha.senha_iv = iv.toString("hex");
+  senha.senha_ultima_troca = new Date();
+
+  await senha.save();
+
+  return res.status(200).json({ message: "Senha atualizada com sucesso" });
+}
+
 export async function deletaSenha(req, res) {
   const { id } = req.params;
 

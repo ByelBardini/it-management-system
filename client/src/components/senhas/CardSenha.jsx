@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import AtualizarSenha from "./AtualizarSenha.jsx";
 import { X, Edit, KeyRound, Eye, Trash2 } from "lucide-react";
 import { getSenhaFull, deleteSenha } from "../../services/api/senhaServices.js";
 import { useEffect, useState } from "react";
@@ -11,6 +12,7 @@ export default function CardSenha({
   buscaSenhas,
   setLoading,
 }) {
+  const [novaSenha, setNovaSenha] = useState(false);
   const [senha, setSenha] = useState({});
 
   const [exibeSenha, setExibeSenha] = useState(false);
@@ -81,10 +83,16 @@ export default function CardSenha({
   }, []);
 
   return (
-    <div
-      onClick={() => setCardSenha(false)}
-      className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center"
-    >
+    <div className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center">
+      {novaSenha && (
+        <AtualizarSenha
+          setNovaSenha={setNovaSenha}
+          setNotificacao={setNotificacao}
+          setLoading={setLoading}
+          buscaSenhas={buscaSenhas}
+          buscaDadosSenha={buscaDadosSenha}
+        />
+      )}
       <div
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-lg bg-white/5 backdrop-blur-2xl rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6"
@@ -211,7 +219,10 @@ export default function CardSenha({
               <Edit size={16} />
               Editar
             </button>
-            <button className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm transition">
+            <button
+              onClick={() => setNovaSenha(true)}
+              className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm transition"
+            >
               <KeyRound size={16} />
               Alterar Senha
             </button>
