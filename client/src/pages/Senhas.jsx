@@ -1,6 +1,9 @@
 import TabelaSenhas from "../components/senhas/TabelaSenhas.jsx";
 import CardSenha from "../components/senhas/CardSenha.jsx";
 import ModalRegistraSenha from "../components/senhas/ModalRegistraSenha.jsx";
+import Loading from "../components/default/Loading";
+import Notificacao from "../components/default/Notificacao";
+import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import { useEffect, useState } from "react";
 import { getSenhas } from "../services/api/senhaServices.js";
 
@@ -10,6 +13,19 @@ export default function Senhas() {
 
   const [adicionaSenha, setAdicionaSenha] = useState(false);
   const [cardSenha, setCardSenha] = useState(false);
+
+  const [notificacao, setNotificacao] = useState({
+    show: false,
+    tipo: "sucesso",
+    titulo: "",
+    mensagem: "",
+  });
+  const [confirmacao, setConfirmacao] = useState({
+    show: false,
+    texto: "",
+    onSim: null,
+  });
+  const [loading, setLoading] = useState(false);
 
   async function buscaSenhas() {
     const id = localStorage.getItem("empresa_id");
@@ -45,9 +61,38 @@ export default function Senhas() {
   return (
     <div className="p-6">
       {adicionaSenha && (
-        <ModalRegistraSenha setAdicionaSenha={setAdicionaSenha} />
+        <ModalRegistraSenha
+          setAdicionaSenha={setAdicionaSenha}
+          setNotificacao={setNotificacao}
+          buscaSenhas={buscaSenhas}
+          setLoading={setLoading}
+        />
       )}
       {cardSenha && <CardSenha setCardSenha={setCardSenha} />}
+
+      {confirmacao.show && (
+        <ModalConfirmacao
+          texto={confirmacao.texto}
+          onNao={() => setConfirmacao({ show: false, texto: "", onSim: null })}
+          onSim={confirmacao.onSim}
+        />
+      )}
+      {notificacao.show && (
+        <Notificacao
+          tipo={notificacao.tipo}
+          titulo={notificacao.titulo}
+          mensagem={notificacao.mensagem}
+          onClick={() =>
+            setNotificacao({
+              show: false,
+              tipo: "sucesso",
+              titulo: "",
+              mensagem: "",
+            })
+          }
+        />
+      )}
+      {loading && <Loading />}
       <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Senhas</h2>

@@ -3,7 +3,12 @@ import { useEffect, useState } from "react";
 import { getPlataformas } from "../../services/api/plataformaServices.js";
 import { postSenha } from "../../services/api/senhaServices.js";
 
-export default function ModalRegistraSenha({ setAdicionaSenha }) {
+export default function ModalRegistraSenha({
+  setAdicionaSenha,
+  setNotificacao,
+  buscaSenhas,
+  setLoading,
+}) {
   const [nome, setNome] = useState("");
   const [plataforma, setPlataforma] = useState("");
   const [usuario, setUsuario] = useState("");
@@ -27,12 +32,23 @@ export default function ModalRegistraSenha({ setAdicionaSenha }) {
 
   async function cadastraSenha() {
     if (!senhaIgual) {
-      alert("As duas senhas devem ser iguais!");
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Senha Incorreta",
+        mensagem: "As duas senhas devem ser iguais",
+      });
       return;
     } else if (!senhaValida) {
-      alert("Todos os dados devem ser preenchidos!");
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Dados Inválidos",
+        mensagem: "Todos os campos deven ser preenchidos",
+      });
       return;
     }
+    setLoading(true);
     try {
       const empresa_id = localStorage.getItem("empresa_id");
       const usuario_id = localStorage.getItem("usuario_id");
@@ -46,11 +62,35 @@ export default function ModalRegistraSenha({ setAdicionaSenha }) {
         senha,
         tempoTroca
       );
+      setLoading(false);
 
-      alert("Deu bom!");
+      setNotificacao({
+        show: true,
+        tipo: "sucesso",
+        titulo: "Senha inserida com sucesso",
+        mensagem:
+          "A senha foi inserida com sucesso! Ela passará a ser exibida na tela inicial",
+      });
+
+      await buscaSenhas();
+      setTimeout(() => {
+        setNotificacao({
+          show: false,
+          tipo: "sucesso",
+          titulo: "",
+          mensagem: "",
+        });
+        setAdicionaSenha(false);
+      }, 700);
     } catch (err) {
+      setLoading(false);
       console.error(err);
-      alert(err.message);
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Erro ao cadastrar senha",
+        mensagem: err.message,
+      });
     }
   }
 
