@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import AtualizarSenha from "./AtualizarSenha.jsx";
+import EditarDadosSenha from "./EditarDadosSenha.jsx";
 import { X, Edit, KeyRound, Eye, Trash2 } from "lucide-react";
 import { getSenhaFull, deleteSenha } from "../../services/api/senhaServices.js";
 import { useEffect, useState } from "react";
@@ -13,6 +14,8 @@ export default function CardSenha({
   setLoading,
 }) {
   const [novaSenha, setNovaSenha] = useState(false);
+  const [editaSenha, setEditaSenha] = useState(false);
+
   const [senha, setSenha] = useState({});
 
   const [exibeSenha, setExibeSenha] = useState(false);
@@ -84,6 +87,16 @@ export default function CardSenha({
 
   return (
     <div className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center">
+      {editaSenha && (
+        <EditarDadosSenha
+          setEditaSenha={setEditaSenha}
+          senha={senha}
+          setNotificacao={setNotificacao}
+          setLoading={setLoading}
+          buscaSenhas={buscaSenhas}
+          buscaDadosSenha={buscaDadosSenha}
+        />
+      )}
       {novaSenha && (
         <AtualizarSenha
           setNovaSenha={setNovaSenha}
@@ -215,7 +228,10 @@ export default function CardSenha({
             Excluir Senha
           </button>
           <div className="flex gap-2">
-            <button className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-sm transition">
+            <button
+              onClick={() => setEditaSenha(true)}
+              className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-sm transition"
+            >
               <Edit size={16} />
               Editar
             </button>
@@ -224,7 +240,7 @@ export default function CardSenha({
               className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm transition"
             >
               <KeyRound size={16} />
-              Alterar Senha
+              Atualizar Senha
             </button>
           </div>
         </div>

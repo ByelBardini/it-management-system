@@ -131,6 +131,26 @@ export async function postSenha(req, res) {
   return res.status(201).json({ message: "Senha cadastrada com sucesso!" });
 }
 
+export async function putSenha(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("Necessário informar ID da senhas");
+  }
+  const { senha_nome, senha_tempo_troca } = req.body;
+  if (!senha_nome || !senha_tempo_troca) {
+    throw ApiError.badRequest("Necessário informar nova senha");
+  }
+
+  const senha = await Senha.findByPk(id);
+
+  senha.senha_nome = senha_nome;
+  senha.senha_tempo_troca = senha_tempo_troca;
+
+  await senha.save();
+
+  return res.status(200).json({ message: "Senha atualizada com sucesso" });
+}
+
 export async function atualizaSenha(req, res) {
   const { id } = req.params;
   if (!id) {
