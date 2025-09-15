@@ -1,4 +1,5 @@
 import TabelaSenhas from "../components/senhas/TabelaSenhas.jsx";
+import CardSenha from "../components/senhas/CardSenha.jsx";
 import ModalRegistraSenha from "../components/senhas/ModalRegistraSenha.jsx";
 import { useEffect, useState } from "react";
 import { getSenhas } from "../services/api/senhaServices.js";
@@ -8,6 +9,7 @@ export default function Senhas() {
   const [atrasadas, setAtrasadas] = useState();
 
   const [adicionaSenha, setAdicionaSenha] = useState(false);
+  const [cardSenha, setCardSenha] = useState(false);
 
   async function buscaSenhas() {
     const id = localStorage.getItem("empresa_id");
@@ -45,6 +47,7 @@ export default function Senhas() {
       {adicionaSenha && (
         <ModalRegistraSenha setAdicionaSenha={setAdicionaSenha} />
       )}
+      {cardSenha && <CardSenha setCardSenha={setCardSenha} />}
       <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Senhas</h2>
@@ -61,7 +64,7 @@ export default function Senhas() {
             + Adicionar
           </button>
         </div>
-        <TabelaSenhas senhas={senhas} />
+        <TabelaSenhas senhas={senhas} setCardSenha={setCardSenha} />
       </div>
     </div>
   );

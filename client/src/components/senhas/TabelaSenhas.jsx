@@ -1,6 +1,11 @@
 import { formatToDate } from "brazilian-values";
 
-export default function TabelaSenhas({ senhas }) {
+export default function TabelaSenhas({ senhas, setCardSenha }) {
+  function abreCard(id) {
+    localStorage.setItem("senha_id", id);
+    setCardSenha(true);
+  }
+
   return (
     <table className="w-full text-left border-collapse">
       <thead>
@@ -23,6 +28,7 @@ export default function TabelaSenhas({ senhas }) {
           const diffDias = Math.ceil((proxima - hoje) / (1000 * 60 * 60 * 24));
           return (
             <tr
+              onDoubleClick={() => abreCard(senha.senha_id)}
               key={senha.senha_id}
               className="text-sm text-white/80 hover:bg-red-500/10 transition"
             >

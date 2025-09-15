@@ -11,6 +11,17 @@ export async function getSenhas(id) {
   }
 }
 
+export async function getSenhaFull(id) {
+  try {
+    const response = await api.get(`/senha/full/${id}`);
+
+    return response.data;
+  } catch (err) {
+    console.error("Erro ao buscar senha:", err);
+    throw err;
+  }
+}
+
 export async function postSenha(
   senha_empresa_id,
   senha_usuario_id,
