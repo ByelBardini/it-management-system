@@ -54,11 +54,7 @@ export default function EditarItem({
 
   async function salvarItem() {
     const id = item.item_id;
-    if (
-      !nome ||
-      setor.setor_id != workstation.workstation_setor_id ||
-      (!emUso && (setor != "" || workstation != ""))
-    ) {
+    if (!nome || setor.setor_id != workstation.workstation_setor_id) {
       setNotificacao({
         show: true,
         tipo: "erro",
@@ -81,11 +77,13 @@ export default function EditarItem({
     }
     setLoading(true);
     try {
+      const setorId = emUso ? setor : "";
+      const workstationId = emUso ? workstation : "";
       const emUsonum = emUso ? 1 : 0;
       const fd = new FormData();
       fd.append("item_nome", nome);
-      fd.append("item_setor_id", setor || null);
-      fd.append("item_workstation_id", workstation || null);
+      fd.append("item_setor_id", setorId || null);
+      fd.append("item_workstation_id", workstationId || null);
       fd.append("item_em_uso", emUsonum);
 
       fd.append("caracteristicas", JSON.stringify(caracteristicas || []));
