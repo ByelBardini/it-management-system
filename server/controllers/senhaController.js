@@ -22,6 +22,7 @@ export async function getSenhas(req, res) {
       "senha_ultima_troca",
       "senha_tempo_troca",
     ],
+    order: [["senha_id", "ASC"]],
     include: [
       {
         model: Plataforma,

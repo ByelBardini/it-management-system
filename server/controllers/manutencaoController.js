@@ -17,6 +17,7 @@ export async function getManutencoes(req, res) {
       "item_ultima_manutencao",
       "item_intervalo_manutencao",
     ],
+    order: [["item_etiqueta", "ASC"]],
     include: [
       {
         model: Setor,
