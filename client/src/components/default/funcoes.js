@@ -29,3 +29,12 @@ export function formatarIntervaloTabela(intervalo, diffDias) {
     return "text-yellow-400 font-semibold";
   }
 }
+
+export function getDiffDias(atualizado, intervalo) {
+  const ultima = new Date(atualizado);
+  const prazo = intervalo * 30 || 0;
+  const proxima = new Date(ultima.getTime() + prazo * 24 * 60 * 60 * 1000);
+  const hoje = new Date();
+  const diffDias = Math.ceil((proxima - hoje) / (1000 * 60 * 60 * 24));
+  return diffDias;
+}

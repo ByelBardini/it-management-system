@@ -2,6 +2,7 @@ import { formatToDate } from "brazilian-values";
 import {
   formatarIntervalo,
   formatarIntervaloTabela,
+  getDiffDias,
 } from "../default/funcoes.js";
 
 export default function TabelaSenhas({ senhas, setCardSenha }) {
@@ -23,13 +24,10 @@ export default function TabelaSenhas({ senhas, setCardSenha }) {
       </thead>
       <tbody>
         {senhas.map((senha) => {
-          const ultima = new Date(senha.senha_ultima_troca);
-          const prazo = senha.senha_tempo_troca || 0;
-          const proxima = new Date(
-            ultima.getTime() + prazo * 24 * 60 * 60 * 1000
+          const diffDias = getDiffDias(
+            senha.senha_ultima_troca,
+            senha.senha_tempo_troca
           );
-          const hoje = new Date();
-          const diffDias = Math.ceil((proxima - hoje) / (1000 * 60 * 60 * 24));
           return (
             <tr
               onDoubleClick={() => abreCard(senha.senha_id)}

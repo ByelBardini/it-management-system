@@ -3,6 +3,7 @@ import { formatToDate } from "brazilian-values";
 import {
   formatarIntervalo,
   formatarIntervaloTabela,
+  getDiffDias,
 } from "../default/funcoes.js";
 
 export default function TabelaManutencoes({
@@ -28,13 +29,10 @@ export default function TabelaManutencoes({
       </thead>
       <tbody>
         {itens.map((item) => {
-          const ultima = new Date(item.item_ultima_manutencao);
-          const prazo = item.item_intervalo_manutencao * 30 || 0;
-          const proxima = new Date(
-            ultima.getTime() + prazo * 24 * 60 * 60 * 1000
+          const diffDias = getDiffDias(
+            item.item_ultima_manutencao,
+            item.item_intervalo_manutencao
           );
-          const hoje = new Date();
-          const diffDias = Math.ceil((proxima - hoje) / (1000 * 60 * 60 * 24));
           return (
             <tr
               key={item.item_id}

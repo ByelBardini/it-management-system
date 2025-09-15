@@ -109,10 +109,11 @@ export default function EditarDadosSenha({
                 Selecione...
               </option>
               <option value={0}>Nunca</option>
-              <option value={30}>30 dias</option>
-              <option value={60}>60 dias</option>
-              <option value={90}>90 dias</option>
-              <option value={180}>180 dias</option>
+              <option value={1}>1 mês</option>
+              <option value={2}>2 meses</option>
+              <option value={3}>3 meses</option>
+              <option value={6}>6 meses</option>
+              <option value={12}>1 Ano</option>
             </select>
           </div>
         </div>

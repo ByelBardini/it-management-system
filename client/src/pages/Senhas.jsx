@@ -6,6 +6,7 @@ import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import { useEffect, useState } from "react";
 import { getSenhas } from "../services/api/senhaServices.js";
+import { getDiffDias } from "../components/default/funcoes.js";
 
 export default function Senhas() {
   const [senhas, setSenhas] = useState([]);
@@ -32,18 +33,15 @@ export default function Senhas() {
     try {
       const senhas = await getSenhas(id);
       console.log(senhas);
-
-      const hoje = new Date();
       const vencidas = senhas.filter((senha) => {
         if (senha.senha_tempo_troca == 0) {
           return false;
         }
-        const ultimaTroca = new Date(senha.senha_ultima_troca);
-        const prazo = senha.senha_tempo_troca || 0;
-        const proximaTroca = new Date(
-          ultimaTroca.getTime() + prazo * 24 * 60 * 60 * 1000
+        const diffDias = getDiffDias(
+          senha.senha_ultima_troca,
+          senha.senha_tempo_troca
         );
-        return proximaTroca < hoje;
+        return diffDias < 1;
       }).length;
 
       setAtrasadas(vencidas);

@@ -5,6 +5,7 @@ import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import { useEffect, useState } from "react";
 import { getManutencoes } from "../services/api/manutencaoServices.js";
+import { getDiffDias } from "../components/default/funcoes.js";
 
 export default function Manutencoes() {
   const [itens, setItens] = useState([]);
@@ -31,17 +32,15 @@ export default function Manutencoes() {
     try {
       const itens = await getManutencoes(id);
 
-      const hoje = new Date();
       const vencidas = itens.filter((item) => {
         if (item.item_intervalo_manutencao == 0) {
           return false;
         }
-        const ultimaTroca = new Date(item.item_ultima_manutencao);
-        const prazo = item.item_intervalo_manutencao * 30 || 0;
-        const proximaManutencao = new Date(
-          ultimaTroca.getTime() + prazo * 24 * 60 * 60 * 1000
+        const diffDias = getDiffDias(
+          item.item_ultima_manutencao,
+          item.item_intervalo_manutencao
         );
-        return proximaManutencao < hoje;
+        return diffDias < 1;
       }).length;
 
       setAtrasadas(vencidas);
