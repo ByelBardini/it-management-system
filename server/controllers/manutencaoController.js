@@ -30,10 +30,31 @@ export async function getManutencoes(req, res) {
   return res.status(200).json(itens);
 }
 
+export async function putManutencao(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("O ID do item é obrigatório");
+  }
+  const { novo_intervalo } = req.body;
+  if (!novo_intervalo) {
+    throw ApiError.badRequest("O intervalo de manutenção é obrigatório");
+  }
+
+  const item = await Item.findByPk(id);
+
+  item.item_intervalo_manutencao = novo_intervalo;
+
+  await item.save();
+
+  return res
+    .status(200)
+    .json({ message: "O intervalo de manutenção foi editado com sucesso" });
+}
+
 export async function realizarManutencao(req, res) {
   const { id } = req.params;
   if (!id) {
-    throw ApiError.badRequest("O ID do itemé obrigatório");
+    throw ApiError.badRequest("O ID do item é obrigatório");
   }
 
   const item = await Item.findByPk(id);

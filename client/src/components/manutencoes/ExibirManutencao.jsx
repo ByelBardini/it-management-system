@@ -1,6 +1,8 @@
+import AlterarIntervalo from "./AlterarIntervalo.jsx";
 import { X, Edit, Check, Wrench } from "lucide-react";
 import { formatToDate } from "brazilian-values";
 import { realizarManutencao } from "../../services/api/manutencaoServices.js";
+import { useState } from "react";
 
 const intervalos = {
   0: "Não é realizado",
@@ -17,6 +19,8 @@ export default function ExibirManutencao({
   setLoading,
   setConfirmacao,
 }) {
+  const [editar, setEditar] = useState(false);
+
   async function realizar() {
     setConfirmacao({
       show: false,
@@ -57,6 +61,17 @@ export default function ExibirManutencao({
   }
   return (
     <div className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center">
+      {editar && (
+        <AlterarIntervalo
+          interval={item.item_intervalo_manutencao}
+          setEditar={setEditar}
+          setVisualizando={setVisualizando}
+          setNotificacao={setNotificacao}
+          buscarItens={buscarItens}
+          setLoading={setLoading}
+          id={item.item_id}
+        />
+      )}
       <div className="w-full max-w-lg bg-white/5 backdrop-blur-2xl rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6">
         <div className="flex justify-between items-center border-b border-white/10 pb-3">
           <h2 className="text-lg font-semibold text-white">
@@ -98,7 +113,10 @@ export default function ExibirManutencao({
 
         <div className="flex gap-3 border-t border-white/10 pt-4 justify-between items-center">
           <div className="flex gap-2">
-            <button className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-500 text-white text-sm transition">
+            <button
+              onClick={() => setEditar(true)}
+              className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-500 text-white text-sm transition"
+            >
               <Edit size={16} />
               Editar
             </button>
