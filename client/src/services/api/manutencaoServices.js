@@ -9,3 +9,13 @@ export async function getManutencoes(id) {
     throw err;
   }
 }
+
+export async function realizarManutencao(id) {
+  try {
+    const response = await api.put(`/manutencao/realizar/${id}`);
+    return response.data;
+  } catch (err) {
+    console.error("Erro ao buscar itens:", err);
+    throw err;
+  }
+}

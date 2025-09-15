@@ -29,3 +29,20 @@ export async function getManutencoes(req, res) {
 
   return res.status(200).json(itens);
 }
+
+export async function realizarManutencao(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("O ID do itemé obrigatório");
+  }
+
+  const item = await Item.findByPk(id);
+
+  item.item_ultima_manutencao = new Date();
+
+  await item.save();
+
+  res
+    .status(200)
+    .json({ message: "Data de manutenção atualizada com sucesso!" });
+}

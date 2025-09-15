@@ -1,5 +1,6 @@
 import { X, Edit, Check, Wrench } from "lucide-react";
 import { formatToDate } from "brazilian-values";
+import { realizarManutencao } from "../../services/api/manutencaoServices.js";
 
 const intervalos = {
   0: "Não é realizado",
@@ -8,7 +9,52 @@ const intervalos = {
   6: "A cada 6 meses",
   12: "1 vez por ano",
 };
-export default function ExibirManutencao({ setVisualizando, item }) {
+export default function ExibirManutencao({
+  setVisualizando,
+  item,
+  setNotificacao,
+  buscarItens,
+  setLoading,
+  setConfirmacao,
+}) {
+  async function realizar() {
+    setConfirmacao({
+      show: false,
+      texto: "",
+      onSim: null,
+    });
+    setLoading(true);
+    try {
+      await realizarManutencao(item.item_id);
+
+      setLoading(false);
+      setNotificacao({
+        show: true,
+        tipo: "sucesso",
+        titulo: "Manutenção atualizada com sucesso!",
+        mensagem: "A data de manutenção foi atualizada com sucesso",
+      });
+      await buscarItens();
+
+      setTimeout(() => {
+        setNotificacao({
+          show: false,
+          tipo: "sucesso",
+          titulo: "",
+          mensagem: "",
+        });
+        setVisualizando(false);
+      }, 700);
+    } catch (err) {
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Erro ao atualizar a data de manutenção",
+        mensagem: err.message,
+      });
+      console.error(err);
+    }
+  }
   return (
     <div className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center">
       <div className="w-full max-w-lg bg-white/5 backdrop-blur-2xl rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6">
@@ -56,7 +102,17 @@ export default function ExibirManutencao({ setVisualizando, item }) {
               <Edit size={16} />
               Editar
             </button>
-            <button className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm transition">
+            <button
+              onClick={() =>
+                setConfirmacao({
+                  show: true,
+                  texto:
+                    "Tem certeza que deseja marcar a manutenção como realizada? Essa ação é irreversível",
+                  onSim: () => realizar(),
+                })
+              }
+              className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm transition"
+            >
               <Wrench size={16} />
               Realizada
             </button>
