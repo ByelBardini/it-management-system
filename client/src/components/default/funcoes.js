@@ -38,3 +38,11 @@ export function getDiffDias(atualizado, intervalo) {
   const diffDias = Math.ceil((proxima - hoje) / (1000 * 60 * 60 * 24));
   return diffDias;
 }
+
+export function dividirEmPartes(array, tamanho) {
+  const resultado = [];
+  for (let i = 0; i < array.length; i += tamanho) {
+    resultado.push(array.slice(i, i + tamanho));
+  }
+  return resultado;
+}

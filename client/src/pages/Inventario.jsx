@@ -6,10 +6,17 @@ import Loading from "../components/default/Loading";
 import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import CampoFiltros from "../components/inventario/CampoFiltros.jsx";
-import { Plus, FunnelPlus, FunnelX } from "lucide-react";
+import {
+  Plus,
+  FunnelPlus,
+  FunnelX,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getItens, getItensInativos } from "../services/api/itemServices";
+import { dividirEmPartes } from "../components/default/funcoes.js";
 
 export default function Inventario() {
   const [itens, setItens] = useState([]);
@@ -35,6 +42,9 @@ export default function Inventario() {
   const [inativos, setInativos] = useState(false);
   const [filtrando, setFiltrando] = useState(false);
   const [itensFiltrados, setItensFiltrados] = useState([]);
+  const [itensOrdenados, setItensOrdenados] = useState([]);
+
+  const [sessao, setSessao] = useState(0);
 
   async function buscarItens() {
     const id_empresa = localStorage.getItem("empresa_id");
@@ -59,6 +69,13 @@ export default function Inventario() {
     buscarItens();
     setEditado(false);
   }, [editado, inativos]);
+
+  useEffect(() => {
+    const ordenados = dividirEmPartes(itensFiltrados, 8);
+    setItensOrdenados(ordenados);
+    console.log(ordenados);
+    setSessao(0);
+  }, [itensFiltrados]);
 
   return (
     <div className="p-6">
@@ -152,25 +169,51 @@ export default function Inventario() {
         </div>
         <div className="overflow-x-auto">
           <TabelaItens
-            itens={itensFiltrados}
+            itens={itensOrdenados[sessao] || []}
             setCardItem={setCardItem}
             inativos={inativos}
           />
         </div>
       </div>
-      <div className="w-full justify-end flex">
-        <button
-          className={`cursor-pointer mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${
-            !inativos
-              ? "bg-red-600/50 ring-1 ring-red-600/10 text-white/80 hover:bg-red-600/70 transition"
-              : "bg-emerald-600/50 ring-1 ring-emerald-600/10 text-white/80 hover:bg-emerald-600/70 transition"
-          }`}
-          onClick={() => setInativos(!inativos)}
-        >
-          <span className="text-sm font-medium">
-            {!inativos ? "Listar Itens Inativos" : "Listar Itens Ativos"}
+      <div className="flex items-center justify-between mt-4">
+        <div className="w-1/3"></div>
+
+        <div className="flex-1 flex justify-center items-center gap-4">
+          <button
+            disabled={sessao === 0}
+            onClick={() => setSessao((prev) => prev - 1)}
+            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
+          >
+            <ChevronLeft size={18} />
+          </button>
+
+          <span className="text-sm text-white/70">
+            Página {sessao + 1} de {itensOrdenados.length}
           </span>
-        </button>
+
+          <button
+            disabled={sessao === itensOrdenados.length - 1}
+            onClick={() => setSessao((prev) => prev + 1)}
+            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
+
+        <div className="w-1/3 flex justify-end">
+          <button
+            className={`w1/3 cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${
+              !inativos
+                ? "bg-red-600/50 ring-1 ring-red-600/10 text-white/80 hover:bg-red-600/70 transition"
+                : "bg-emerald-600/50 ring-1 ring-emerald-600/10 text-white/80 hover:bg-emerald-600/70 transition"
+            }`}
+            onClick={() => setInativos(!inativos)}
+          >
+            <span className="text-sm font-medium">
+              {!inativos ? "Listar Itens Inativos" : "Listar Itens Ativos"}
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );
