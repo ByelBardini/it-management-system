@@ -123,12 +123,12 @@ export default function Filtro({
                           seleciona(opcao);
                         }}
                         key={id}
-                        className="flex items-center px-4 pr-2 py-2 hover:bg-white/10 cursor-pointer"
+                        className="flex min-w-20 w-full items-center px-4 pr-2 mr-10 py-2 hover:bg-white/10 cursor-pointer"
                       >
-                        <span className="w-full flex items-center gap-3 place-content-between">
+                        <span className="w-full flex items-center gap-3 justify-between ">
                           {valor === 1 ? "Sim" : "Não"}
                           {marcado && (
-                            <Check size={16} className="text-sky-500 ml-3" />
+                            <Check size={16} className="text-sky-500" />
                           )}
                         </span>
                       </li>
@@ -136,7 +136,7 @@ export default function Filtro({
                   })
                 : categoria === "Tipo"
                 ? opcoes.map((opcao, id) => {
-                    const valor = Object.values(opcao)[0];
+                    const valor = opcao.item_tipo;
                     const marcado = selecionados.some(
                       (s) => s.item_tipo === valor
                     );
@@ -147,12 +147,12 @@ export default function Filtro({
                           seleciona(opcao);
                         }}
                         key={id}
-                        className="flex items-center px-4 pr-2 py-2 hover:bg-white/10 cursor-pointer"
+                        className="flex min-w-40 w-full items-center px-4 pr-2 mr-10 py-2 hover:bg-white/10 cursor-pointer"
                       >
-                        <span className="w-full flex items-center place-content-between gap-3">
+                        <span className="w-full flex items-center justify-between gap-3">
                           {tiposItens[valor]}
                           {marcado && (
-                            <Check size={16} className="text-sky-500 ml-3" />
+                            <Check size={16} className="text-sky-500" />
                           )}
                         </span>
                       </li>
@@ -169,12 +169,12 @@ export default function Filtro({
                           seleciona(opcao[tipo]);
                         }}
                         key={opcao[tipo].id}
-                        className="flex items-center px-4 pr-2 py-2 hover:bg-white/10 cursor-pointer"
+                        className="flex min-w-40 w-full items-center px-4 pr-2 mr-10 py-2 hover:bg-white/10 cursor-pointer"
                       >
-                        <span className="w-full flex items-center gap-3 place-content-between">
+                        <span className="w-full flex items-center gap-3 justify-between">
                           {opcao[tipo].nome}
                           {marcado && (
-                            <Check size={16} className="text-sky-500 ml-3" />
+                            <Check size={16} className="text-sky-500" />
                           )}
                         </span>
                       </li>
