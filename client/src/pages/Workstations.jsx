@@ -5,10 +5,11 @@ import CardItem from "../components/inventario/CardItem.jsx";
 import Notificacao from "../components/default/Notificacao.jsx";
 import Loading from "../components/default/Loading.jsx";
 import Filtro from "../components/workstations/Filtro.jsx";
-import { Plus, SearchX } from "lucide-react";
+import { Plus, SearchX, ChevronLeft, ChevronRight } from "lucide-react";
 import { getWorkstation } from "../services/api/workstationServices.js";
 import { useEffect } from "react";
 import { useState } from "react";
+import { dividirEmPartes } from "../components/default/funcoes.js";
 
 export default function Workstations() {
   const [workstations, setWorkstations] = useState([]);
@@ -34,6 +35,9 @@ export default function Workstations() {
 
   const [cardItem, setCardItem] = useState(false);
 
+  const [workstationsOrdenadas, setWorkstationsOrdenadas] = useState([]);
+  const [sessao, setSessao] = useState(0);
+
   async function buscarWorkstations() {
     const id = localStorage.getItem("empresa_id");
     try {
@@ -53,6 +57,12 @@ export default function Workstations() {
     buscarWorkstations();
     setModificado(false);
   }, [modificado]);
+
+  useEffect(() => {
+    const ordenadas = dividirEmPartes(workstationsFiltradas, 15);
+    setWorkstationsOrdenadas(ordenadas);
+    setSessao(0);
+  }, [workstationsFiltradas]);
 
   return (
     <div className="p-6">
@@ -124,7 +134,7 @@ export default function Workstations() {
           </button>
         </div>
         <div className="overflow-x-auto grid grid-cols-3 gap-4 p-2">
-          {workstationsFiltradas.map((workstation) => (
+          {(workstationsOrdenadas[sessao] || []).map((workstation) => (
             <div
               key={workstation.workstation_id}
               onDoubleClick={() => abreCard(workstation.workstation_id)}
@@ -152,6 +162,30 @@ export default function Workstations() {
             </p>
           </div>
         )}
+      </div>
+
+      <div className="flex items-center justify-between mt-4">
+        <div className="flex-1 flex justify-center items-center gap-4">
+          <button
+            disabled={sessao === 0}
+            onClick={() => setSessao((prev) => prev - 1)}
+            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
+          >
+            <ChevronLeft size={18} />
+          </button>
+
+          <span className="text-sm text-white/70">
+            Página {sessao + 1} de {workstationsOrdenadas.length}
+          </span>
+
+          <button
+            disabled={sessao === workstationsOrdenadas.length - 1}
+            onClick={() => setSessao((prev) => prev + 1)}
+            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
       </div>
     </div>
   );
