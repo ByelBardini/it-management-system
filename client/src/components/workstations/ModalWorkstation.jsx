@@ -214,8 +214,9 @@ export default function ModalWorkstation({
                 onSim: () => excluirWorkstation(),
               })
             }
-            className={`w1/3 cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-600/50 ring-1 ring-red-600/10 text-white/80 hover:bg-red-600/70 transition`}
+            className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm transition"
           >
+            <Trash2 size={16} />
             <span className="text-sm font-medium">Excluir Workstation</span>
           </button>
         </div>
