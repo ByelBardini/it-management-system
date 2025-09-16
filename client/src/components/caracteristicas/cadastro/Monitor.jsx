@@ -6,14 +6,7 @@ export default function Monitor({
   setCaracteristicaValida,
   caracteristicas,
 }) {
-  const campos = [
-    "modelo",
-    "tamanho",
-    "resolucao",
-    "entradas",
-    "fonte",
-    "vesa",
-  ];
+  const campos = ["modelo", "tela", "resolucao", "entradas", "fonte", "vesa"];
   useEffect(() => {
     const checagem = caracteristicas.filter(
       (caracteristica) =>
@@ -44,7 +37,9 @@ export default function Monitor({
       </div>
       <div>
         <div className="flex items-center gap-1">
-          <label className="mb-1 block text-sm text-white/70">Tamanho da Tela</label>{" "}
+          <label className="mb-1 block text-sm text-white/70">
+            Tamanho da Tela
+          </label>{" "}
           <span className="rounded text-xs text-red-400">*</span>
         </div>
         <input

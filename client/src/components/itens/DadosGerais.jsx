@@ -16,6 +16,7 @@ export default function DadosGerais({ value, onChange }) {
         <input
           onChange={(e) => onChange({ nome: e.target.value })}
           type="text"
+          value={value.nome}
           placeholder="Ex.: Desktop Financeiro 01"
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />

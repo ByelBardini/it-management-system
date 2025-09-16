@@ -37,7 +37,9 @@ export default function Switch({
       </div>
       <div>
         <div className="flex items-center gap-1">
-          <label className="mb-1 block text-sm text-white/70">Número de Portas</label>{" "}
+          <label className="mb-1 block text-sm text-white/70">
+            Número de Portas
+          </label>{" "}
           <span className="rounded text-xs text-red-400">*</span>
         </div>
         <input
