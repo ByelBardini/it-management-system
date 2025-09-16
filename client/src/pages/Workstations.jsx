@@ -66,6 +66,7 @@ export default function Workstations() {
           modificado={modificado}
           setModificado={setModificado}
           setCardItem={setCardItem}
+          buscarWorkstations={buscarWorkstations}
         />
       )}
       {confirmacao.show && (

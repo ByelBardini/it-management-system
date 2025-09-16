@@ -38,3 +38,16 @@ export async function postWorkstation(req, res) {
 
   return res.status(201).json({ message: "Workstation criada com sucesso" });
 }
+
+export async function deleteWorkstation(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("O ID do workstation é obrigatório");
+  }
+
+  const workstation = await Workstation.findByPk(id);
+
+  await workstation.destroy();
+
+  return res.status(200).json({ message: "Workstation deletada com sucesso!" });
+}

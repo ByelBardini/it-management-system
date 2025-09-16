@@ -4,6 +4,7 @@ import {
   getItensWorkstation,
   removerWorkstation,
 } from "../../services/api/itemServices.js";
+import { deleteWorkstation } from "../../services/api/workstationServices.js";
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -13,6 +14,7 @@ export default function ModalWorkstation({
   setConfirmacao,
   setCarregando,
   setCardItem,
+  buscarWorkstations,
 }) {
   const [itens, setItens] = useState([]);
 
@@ -48,6 +50,7 @@ export default function ModalWorkstation({
         titulo: "Operação realizada com sucesso!",
         mensagem: "Item desvinculado com sucesso!",
       });
+      await buscaItens();
 
       setTimeout(() => {
         setNotificacao({
@@ -56,7 +59,6 @@ export default function ModalWorkstation({
           titulo: "",
           mensagem: "",
         });
-        buscaItens();
       }, 1000);
     } catch (err) {
       setNotificacao({
@@ -66,6 +68,47 @@ export default function ModalWorkstation({
         mensagem: err.message,
       });
       console.error("Erro ao desvincular do workstation:", err);
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  async function excluirWorkstation() {
+    setConfirmacao({
+      show: false,
+      texto: "",
+      onSim: null,
+    });
+    const id = localStorage.getItem("workstation_id");
+    setCarregando(true);
+    try {
+      await deleteWorkstation(id);
+
+      setNotificacao({
+        show: true,
+        tipo: "sucesso",
+        titulo: "Operação realizada com sucesso!",
+        mensagem: "Workstation excluída com sucesso!",
+      });
+      await buscarWorkstations();
+
+      setTimeout(() => {
+        setNotificacao({
+          show: false,
+          tipo: "sucesso",
+          titulo: "",
+          mensagem: "",
+        });
+        setCardWorkstation(false);
+      }, 1000);
+    } catch (err) {
+      setNotificacao({
+        show: false,
+        tipo: "erro",
+        titulo: "Erro ao excluir workstation",
+        mensagem: err.message,
+      });
+      console.error("Erro ao excluir workstation:", err);
     } finally {
       setCarregando(false);
     }
@@ -160,6 +203,21 @@ export default function ModalWorkstation({
               </p>
             </div>
           )}
+        </div>
+        <div className="w-full flex justify-end">
+          <button
+            onClick={() =>
+              setConfirmacao({
+                show: true,
+                texto:
+                  "Você tem certeza que deseja excluir esse workstation? Essa ação é irreversível",
+                onSim: () => excluirWorkstation(),
+              })
+            }
+            className={`w1/3 cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-600/50 ring-1 ring-red-600/10 text-white/80 hover:bg-red-600/70 transition`}
+          >
+            <span className="text-sm font-medium">Excluir Workstation</span>
+          </button>
         </div>
       </div>
     </div>

@@ -25,3 +25,14 @@ export async function postWorkstation(id_empresa, id_setor, workstation_nome) {
     throw err;
   }
 }
+
+export async function deleteWorkstation(id) {
+  try {
+    const response = await api.delete(`/workstation/${id}`);
+
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
