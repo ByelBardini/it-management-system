@@ -158,6 +158,39 @@ export default function App() {
         <section className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 shadow-xl flex flex-col">
           <header className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-medium text-white/80">
+              Status das Manutenções
+            </h2>
+          </header>
+          <div className="grid gap-4">
+            <div className="flex flex-col items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
+              <div className="h-8 w-8 grid place-items-center rounded-lg bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-400/20 mb-2">
+                <Wrench className="h-4 w-4" />
+              </div>
+              <h3 className="text-sm text-white/70">Em dia</h3>
+              <div className="text-2xl font-bold text-white">{manutDia}</div>
+            </div>
+            <div className="flex flex-col items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
+              <div className="h-8 w-8 grid place-items-center rounded-lg bg-amber-500/15 text-amber-400 ring-1 ring-amber-400/20 mb-2">
+                <Clock className="h-4 w-4" />
+              </div>
+              <h3 className="text-sm text-white/70">Faltando 30 dias</h3>
+              <div className="text-2xl font-bold text-white">{manut30}</div>
+            </div>
+            <div className="flex flex-col items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
+              <div className="h-8 w-8 grid place-items-center rounded-lg bg-rose-500/15 text-rose-400 ring-1 ring-rose-400/20 mb-2">
+                <AlertTriangle className="h-4 w-4" />
+              </div>
+              <h3 className="text-sm text-white/70">Atrasada</h3>
+              <div className="text-2xl font-bold text-white">
+                {manutAtrasada}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 shadow-xl flex flex-col">
+          <header className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-medium text-white/80">
               Senhas cadastradas
             </h2>
             <div className="h-9 w-9 grid place-items-center rounded-lg bg-indigo-500/15 text-indigo-400 ring-1 ring-indigo-400/20">
@@ -187,39 +220,6 @@ export default function App() {
                 <div className="mt-3 text-3xl font-bold text-white">
                   {senhasAtualizadas}
                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 shadow-xl flex flex-col">
-          <header className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-medium text-white/80">
-              Status das Manutenções
-            </h2>
-          </header>
-          <div className="grid gap-4">
-            <div className="flex flex-col items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
-              <div className="h-8 w-8 grid place-items-center rounded-lg bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-400/20 mb-2">
-                <Wrench className="h-4 w-4" />
-              </div>
-              <h3 className="text-sm text-white/70">Em dia</h3>
-              <div className="text-2xl font-bold text-white">{manutDia}</div>
-            </div>
-            <div className="flex flex-col items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
-              <div className="h-8 w-8 grid place-items-center rounded-lg bg-amber-500/15 text-amber-400 ring-1 ring-amber-400/20 mb-2">
-                <Clock className="h-4 w-4" />
-              </div>
-              <h3 className="text-sm text-white/70">Faltando 30 dias</h3>
-              <div className="text-2xl font-bold text-white">{manut30}</div>
-            </div>
-            <div className="flex flex-col items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
-              <div className="h-8 w-8 grid place-items-center rounded-lg bg-rose-500/15 text-rose-400 ring-1 ring-rose-400/20 mb-2">
-                <AlertTriangle className="h-4 w-4" />
-              </div>
-              <h3 className="text-sm text-white/70">Atrasada</h3>
-              <div className="text-2xl font-bold text-white">
-                {manutAtrasada}
               </div>
             </div>
           </div>

@@ -45,8 +45,8 @@ export default function Header() {
             <nav className="hidden md:flex items-center gap-2">
               <NavButton to="/inventario">Inventário</NavButton>
               <NavButton to="/workstations">Workstations</NavButton>
-              <NavButton to="/senha">Senhas</NavButton>
               <NavButton to="/manutencao">Manutenções</NavButton>
+              <NavButton to="/senha">Senhas</NavButton>
             </nav>
 
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
