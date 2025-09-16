@@ -5,10 +5,16 @@ import Loading from "../components/default/Loading";
 import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import CampoFiltros from "../components/senhas/CampoFiltros.jsx";
-import { FunnelX, FunnelPlus, Plus } from "lucide-react";
+import {
+  FunnelX,
+  FunnelPlus,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { getSenhas } from "../services/api/senhaServices.js";
-import { getDiffDias } from "../components/default/funcoes.js";
+import { getDiffDias, dividirEmPartes } from "../components/default/funcoes.js";
 
 export default function Senhas() {
   const [senhas, setSenhas] = useState([]);
@@ -32,6 +38,9 @@ export default function Senhas() {
 
   const [filtrando, setFiltrando] = useState(false);
   const [senhasFiltradas, setSenhasFiltradas] = useState([]);
+  const [senhasOrdenadas, setSenhasOrdenadas] = useState([]);
+
+  const [sessao, setSessao] = useState(0);
 
   async function buscaSenhas() {
     const id = localStorage.getItem("empresa_id");
@@ -61,6 +70,12 @@ export default function Senhas() {
   useEffect(() => {
     buscaSenhas();
   }, []);
+
+  useEffect(() => {
+    const ordenadas = dividirEmPartes(senhasFiltradas, 9);
+    setSenhasOrdenadas(ordenadas);
+    setSessao(0);
+  }, [senhasFiltradas]);
 
   return (
     <div className="p-6">
@@ -141,7 +156,33 @@ export default function Senhas() {
             </div>
           </div>
         </div>
-        <TabelaSenhas senhas={senhasFiltradas} setCardSenha={setCardSenha} />
+        <TabelaSenhas
+          senhas={senhasOrdenadas[sessao] || []}
+          setCardSenha={setCardSenha}
+        />
+      </div>
+      <div className="flex items-center justify-between mt-4">
+        <div className="flex-1 flex justify-center items-center gap-4">
+          <button
+            disabled={sessao === 0}
+            onClick={() => setSessao((prev) => prev - 1)}
+            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
+          >
+            <ChevronLeft size={18} />
+          </button>
+
+          <span className="text-sm text-white/70">
+            Página {sessao + 1} de {senhasOrdenadas.length}
+          </span>
+
+          <button
+            disabled={sessao === senhasOrdenadas.length - 1}
+            onClick={() => setSessao((prev) => prev + 1)}
+            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
       </div>
     </div>
   );
