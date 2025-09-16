@@ -5,7 +5,8 @@ import EditarItem from "../components/inventario/EditarItem";
 import Loading from "../components/default/Loading";
 import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
-import { Plus } from "lucide-react";
+import CampoFiltros from "../components/inventario/CampoFiltros.jsx";
+import { Plus, FunnelPlus, FunnelX } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getItens, getItensInativos } from "../services/api/itemServices";
@@ -32,6 +33,8 @@ export default function Inventario() {
   });
 
   const [inativos, setInativos] = useState(false);
+  const [filtrando, setFiltrando] = useState(false);
+  const [itensFiltrados, setItensFiltrados] = useState([]);
 
   async function buscarItens() {
     const id_empresa = localStorage.getItem("empresa_id");
@@ -39,9 +42,12 @@ export default function Inventario() {
       if (!inativos) {
         const itens = await getItens(id_empresa);
         setItens(itens);
+        setItensFiltrados(itens);
+        console.log(itens);
       } else {
         const itens = await getItensInativos(id_empresa);
         setItens(itens);
+        setItensFiltrados(itens);
         console.log(itens);
       }
     } catch (err) {
@@ -102,7 +108,14 @@ export default function Inventario() {
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Inventário</h2>
 
-          {inativos ? (
+          {filtrando ? (
+            <CampoFiltros
+              itens={itens}
+              inativos={inativos}
+              setItensFiltrados={setItensFiltrados}
+              filtrando={filtrando}
+            />
+          ) : inativos ? (
             <div className="flex items-center gap-2">
               <span className="text-sm text-white/70">
                 Total Itens Inativos:
@@ -120,17 +133,26 @@ export default function Inventario() {
             </div>
           )}
 
-          <NavLink
-            to={"/cadastro"}
-            className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
-          >
-            <Plus size={18} />
-            <span className="text-sm font-medium">Adicionar</span>
-          </NavLink>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setFiltrando(!filtrando)}
+              className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
+            >
+              {filtrando ? <FunnelX size={18} /> : <FunnelPlus size={18} />}
+            </button>
+
+            <NavLink
+              to={"/cadastro"}
+              className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
+            >
+              <Plus size={18} />
+              <span className="text-sm font-medium">Adicionar</span>
+            </NavLink>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <TabelaItens
-            itens={itens}
+            itens={itensFiltrados}
             setCardItem={setCardItem}
             inativos={inativos}
           />

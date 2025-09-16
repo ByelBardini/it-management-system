@@ -5,7 +5,7 @@ const tipos = {
   cadeira: "Cadeira",
   monitor: "Monitor",
   ferramenta: "Ferramenta",
-  ap: "Acess Point",
+  ap: "Access Point",
   "ar-condicionado": "Ar Condicionado",
   switch: "Switch",
   periferico: "Periférico",
