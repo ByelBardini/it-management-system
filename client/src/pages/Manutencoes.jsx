@@ -65,7 +65,7 @@ export default function Manutencoes() {
   }, []);
 
   useEffect(() => {
-    const ordenados = dividirEmPartes(itensFiltrados, 10);
+    const ordenados = dividirEmPartes(itensFiltrados, 11);
     setItensOrdenados(ordenados);
     console.log(ordenados);
     setSessao(0);
@@ -106,9 +106,9 @@ export default function Manutencoes() {
         />
       )}
       {loading && <Loading />}
-      <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
+      <div className="mt-4 rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
-          <h2 className="text-lg font-semibold text-white">Senhas</h2>
+          <h2 className="text-lg font-semibold text-white">Manutenções</h2>
           {filtrando ? (
             <CampoFiltros
               itens={itens}

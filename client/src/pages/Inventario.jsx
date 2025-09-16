@@ -71,7 +71,7 @@ export default function Inventario() {
   }, [editado, inativos]);
 
   useEffect(() => {
-    const ordenados = dividirEmPartes(itensFiltrados, 8);
+    const ordenados = dividirEmPartes(itensFiltrados, 9);
     setItensOrdenados(ordenados);
     console.log(ordenados);
     setSessao(0);

@@ -120,7 +120,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="mt-4 space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <section className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 shadow-xl flex flex-col">
           <header className="flex items-center justify-between mb-3">
@@ -226,7 +226,7 @@ export default function App() {
         </section>
       </div>
 
-      <section className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-6 shadow-xl">
+      <section className="mb-4 rounded-2xl bg-white/5 ring-1 ring-white/10 p-6 shadow-xl">
         <header className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-medium text-white/80">
             Situação dos Itens

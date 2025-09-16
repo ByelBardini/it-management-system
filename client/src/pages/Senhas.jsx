@@ -72,7 +72,7 @@ export default function Senhas() {
   }, []);
 
   useEffect(() => {
-    const ordenadas = dividirEmPartes(senhasFiltradas, 9);
+    const ordenadas = dividirEmPartes(senhasFiltradas, 10);
     setSenhasOrdenadas(ordenadas);
     setSessao(0);
   }, [senhasFiltradas]);
