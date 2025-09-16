@@ -1,16 +1,12 @@
 import { useState, useEffect, useRef } from "react";
+import { getDiffDias } from "../default/funcoes.js";
 import Filtro from "./Filtro.jsx";
+import FiltroPrazo from "./FiltroPrazo.jsx";
 
-export default function Filtros({
-  itens,
-  inativos,
-  setItensFiltrados,
-  filtrando,
-}) {
+export default function Filtros({ itens, setItensFiltrados, filtrando }) {
   const [tiposSelecionados, setTiposSelecionados] = useState([]);
   const [setoresSelecionados, setSetoresSelecionados] = useState([]);
-  const [workstationsSelecionadas, setWorkstationsSelecionadas] = useState([]);
-  const [emUsoSelecionado, setEmUsoSelecionado] = useState([]);
+  const [prazoSelecionado, setPrazoSelecionado] = useState([]);
   const [pesquisa, setPesquisa] = useState("");
   const [openFilter, setOpenFilter] = useState(null);
   const containerRef = useRef(null);
@@ -30,24 +26,34 @@ export default function Filtros({
       );
     }
 
-    if (workstationsSelecionadas.length > 0) {
-      filtrados = filtrados.filter((item) =>
-        workstationsSelecionadas.some(
-          (w) => w.id === item.workstation?.workstation_id
-        )
-      );
-    }
-
     if (pesquisa != "") {
       filtrados = filtrados.filter((item) =>
         item.item_nome.toLowerCase().includes(pesquisa)
       );
     }
 
-    if (emUsoSelecionado.length > 0) {
-      filtrados = filtrados.filter((item) =>
-        emUsoSelecionado.some((u) => u.item_em_uso === item.item_em_uso)
-      );
+    if (prazoSelecionado.length > 0) {
+      filtrados = filtrados.filter((item) => {
+        const diffDias = getDiffDias(
+          item.item_ultima_manutencao,
+          item.item_intervalo_manutencao
+        );
+        return prazoSelecionado.some((p) => {
+          if (p.id === 0) {
+            if (item.item_intervalo_manutencao == 0) {
+              return false;
+            }
+            return diffDias < 0;
+          }
+          if (p.id === 31) {
+            return diffDias >= 0;
+          }
+          if (item.item_intervalo_manutencao == 0) {
+            return false;
+          }
+          return diffDias <= p.id && diffDias >= 0;
+        });
+      });
     }
 
     setItensFiltrados(filtrados);
@@ -56,8 +62,8 @@ export default function Filtros({
   function limpaFiltro() {
     setItensFiltrados(itens);
     setSetoresSelecionados([]);
-    setWorkstationsSelecionadas([]);
     setTiposSelecionados([]);
+    setPrazoSelecionado([]);
     setPesquisa("");
   }
 
@@ -79,60 +85,37 @@ export default function Filtros({
   useEffect(() => {
     setTiposSelecionados([]);
     setSetoresSelecionados([]);
-    setWorkstationsSelecionadas([]);
-  }, [inativos, filtrando]);
+  }, [filtrando]);
 
   return (
     <div
       ref={containerRef}
-      className="w-5/7 flex items-center justify-between gap-4"
+      className="w-4/7 flex items-center justify-between gap-4"
     >
       <div className="flex items-center gap-2">
-        {!inativos ? (
-          <>
-            <Filtro
-              itens={itens}
-              categoria="Tipo"
-              isOpen={openFilter === "Tipo"}
-              setOpenFilter={setOpenFilter}
-              selecionados={tiposSelecionados}
-              setSelecionados={setTiposSelecionados}
-            />
-            <Filtro
-              itens={itens}
-              categoria="Setor"
-              isOpen={openFilter === "Setor"}
-              setOpenFilter={setOpenFilter}
-              selecionados={setoresSelecionados}
-              setSelecionados={setSetoresSelecionados}
-            />
-            <Filtro
-              itens={itens}
-              categoria="Workstation"
-              isOpen={openFilter === "Workstation"}
-              setOpenFilter={setOpenFilter}
-              selecionados={workstationsSelecionadas}
-              setSelecionados={setWorkstationsSelecionadas}
-            />
-            <Filtro
-              itens={itens}
-              categoria="Em uso"
-              isOpen={openFilter === "Em uso"}
-              setOpenFilter={setOpenFilter}
-              selecionados={emUsoSelecionado}
-              setSelecionados={setEmUsoSelecionado}
-            />
-          </>
-        ) : (
-          <Filtro
-            itens={itens}
-            categoria="Tipo"
-            isOpen={openFilter === "Tipo"}
-            setOpenFilter={setOpenFilter}
-            selecionados={tiposSelecionados}
-            setSelecionados={setTiposSelecionados}
-          />
-        )}
+        <Filtro
+          itens={itens}
+          categoria="Tipo"
+          isOpen={openFilter === "Tipo"}
+          setOpenFilter={setOpenFilter}
+          selecionados={tiposSelecionados}
+          setSelecionados={setTiposSelecionados}
+        />
+        <Filtro
+          itens={itens}
+          categoria="Setor"
+          isOpen={openFilter === "Setor"}
+          setOpenFilter={setOpenFilter}
+          selecionados={setoresSelecionados}
+          setSelecionados={setSetoresSelecionados}
+        />
+        <FiltroPrazo
+          itens={itens}
+          isOpen={openFilter === "Prazo"}
+          setOpenFilter={setOpenFilter}
+          selecionados={prazoSelecionado}
+          setSelecionados={setPrazoSelecionado}
+        />
       </div>
 
       <div className="flex items-center gap-2">
