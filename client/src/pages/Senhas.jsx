@@ -4,6 +4,8 @@ import ModalRegistraSenha from "../components/senhas/ModalRegistraSenha.jsx";
 import Loading from "../components/default/Loading";
 import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
+import CampoFiltros from "../components/senhas/CampoFiltros.jsx";
+import { FunnelX, FunnelPlus, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getSenhas } from "../services/api/senhaServices.js";
 import { getDiffDias } from "../components/default/funcoes.js";
@@ -28,6 +30,9 @@ export default function Senhas() {
   });
   const [loading, setLoading] = useState(false);
 
+  const [filtrando, setFiltrando] = useState(false);
+  const [senhasFiltradas, setSenhasFiltradas] = useState([]);
+
   async function buscaSenhas() {
     const id = localStorage.getItem("empresa_id");
     try {
@@ -47,6 +52,7 @@ export default function Senhas() {
       setAtrasadas(vencidas);
 
       setSenhas(senhas);
+      setSenhasFiltradas(senhas);
     } catch (err) {
       console.error("Erro ao buscar senhas:", err);
     }
@@ -102,20 +108,40 @@ export default function Senhas() {
       <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Senhas</h2>
-          <p className="text-sm text-white/70 flex items-center gap-2">
-            Senhas atrasadas:
-            <span className="px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-300 text-xs font-semibold border border-rose-400/20">
-              {atrasadas}
-            </span>
-          </p>
-          <button
-            onClick={() => setAdicionaSenha(true)}
-            className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm transition"
-          >
-            + Adicionar
-          </button>
+          {filtrando ? (
+            <CampoFiltros
+              senhas={senhas}
+              setSenhasFiltradas={setSenhasFiltradas}
+              filtrando={filtrando}
+            />
+          ) : (
+            <p className="text-sm text-white/70 flex items-center gap-2">
+              Senhas atrasadas:
+              <span className="px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-300 text-xs font-semibold border border-rose-400/20">
+                {atrasadas}
+              </span>
+            </p>
+          )}
+          <div className="flex gap-4 ">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setFiltrando(!filtrando)}
+                className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
+              >
+                {filtrando ? <FunnelX size={18} /> : <FunnelPlus size={18} />}
+              </button>
+
+              <button
+                onClick={() => setAdicionaSenha(true)}
+                className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
+              >
+                <Plus size={18} />
+                <span className="text-sm font-medium">Adicionar</span>
+              </button>
+            </div>
+          </div>
         </div>
-        <TabelaSenhas senhas={senhas} setCardSenha={setCardSenha} />
+        <TabelaSenhas senhas={senhasFiltradas} setCardSenha={setCardSenha} />
       </div>
     </div>
   );
