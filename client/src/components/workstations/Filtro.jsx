@@ -54,7 +54,7 @@ export default function Filtro({ workstations, setWorkstationsFiltradas }) {
     <div className="relative inline-block text-left">
       <button
         onClick={() => setOpen(!open)}
-        className="inline-flex items-center gap-2 rounded-lg bg-white/10 px-2 py-1 text-sm text-white hover:bg-white/20"
+        className="cursor-pointer inline-flex items-center gap-2 rounded-lg bg-white/10 px-2 py-1 text-sm text-white hover:bg-white/20"
       >
         Filtro
         <ChevronDown
