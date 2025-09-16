@@ -5,7 +5,7 @@ import CardItem from "../components/inventario/CardItem.jsx";
 import Notificacao from "../components/default/Notificacao.jsx";
 import Loading from "../components/default/Loading.jsx";
 import Filtro from "../components/workstations/Filtro.jsx";
-import { Plus } from "lucide-react";
+import { Plus, SearchX } from "lucide-react";
 import { getWorkstation } from "../services/api/workstationServices.js";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -139,6 +139,19 @@ export default function Workstations() {
             </div>
           ))}
         </div>
+        {workstationsFiltradas.length == 0 && (
+          <div className="w-full py-12 flex flex-col items-center justify-center text-center">
+            <div className="h-12 w-12 flex items-center justify-center rounded-full bg-white/10 text-white/60 mb-4">
+              <SearchX className="h-6 w-6" />
+            </div>
+            <h3 className="text-lg font-semibold text-white">
+              Nenhuma workstation encontrada
+            </h3>
+            <p className="text-sm text-white/60 mt-1">
+              Adicione uma workstation para ela ser exibida aqui.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
