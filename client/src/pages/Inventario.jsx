@@ -47,20 +47,24 @@ export default function Inventario() {
   const [sessao, setSessao] = useState(0);
 
   async function buscarItens() {
+    setLoading(true);
     const id_empresa = localStorage.getItem("empresa_id");
     try {
       if (!inativos) {
         const itens = await getItens(id_empresa);
         setItens(itens);
         setItensFiltrados(itens);
+        setLoading(false);
         console.log(itens);
       } else {
         const itens = await getItensInativos(id_empresa);
         setItens(itens);
         setItensFiltrados(itens);
+        setLoading(false);
         console.log(itens);
       }
     } catch (err) {
+      setLoading(false);
       console.error(err);
     }
   }

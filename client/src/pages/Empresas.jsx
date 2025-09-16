@@ -4,19 +4,25 @@ import { api } from "../services/api.js";
 import { getEmpresas } from "../services/api/empresaServices.js";
 import { useEffect, useState } from "react";
 import ListaEmpresa from "../components/empresas/ListaEmpresa.jsx";
+import Loading from "../components/default/Loading.jsx";
 
 export default function Empresas() {
   const navigate = useNavigate();
 
   const [empresas, setEmpresas] = useState([]);
 
+  const [loading, setLoading] = useState(false);
+
   async function buscaEmpresas() {
+    setLoading(true);
     try {
       const empresas = await getEmpresas();
       setEmpresas(empresas);
+      setLoading(false);
       console.log(empresas);
     } catch (err) {
       console.error(err);
+      setLoading(false);
     }
   }
 
@@ -37,6 +43,7 @@ export default function Empresas() {
 
   return (
     <div className="relative flex justify-center items-center w-screen h-screen overflow-hidden bg-[#0A1633] text-white">
+      {loading && <Loading />}
       <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_30%,rgba(59,130,246,0.22),transparent)]" />
       <div
         className="absolute inset-0 opacity-40

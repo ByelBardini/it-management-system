@@ -40,10 +40,13 @@ export default function Workstations() {
 
   async function buscarWorkstations() {
     const id = localStorage.getItem("empresa_id");
+    setCarregando(true);
     try {
       const workstations = await getWorkstation(id);
+      setCarregando(false);
       setWorkstations(workstations);
     } catch (err) {
+      setCarregando(false);
       console.error(err);
     }
   }

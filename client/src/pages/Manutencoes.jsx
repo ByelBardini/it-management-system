@@ -37,6 +37,7 @@ export default function Manutencoes() {
 
   async function buscarItens() {
     const id = localStorage.getItem("empresa_id");
+    setLoading(true);
     try {
       const itens = await getManutencoes(id);
 
@@ -52,10 +53,12 @@ export default function Manutencoes() {
       }).length;
 
       setAtrasadas(vencidas);
+      setLoading(false);
 
       setItens(itens);
       setItensFiltrados(itens);
     } catch (err) {
+      setLoading(false);
       console.error(err);
     }
   }

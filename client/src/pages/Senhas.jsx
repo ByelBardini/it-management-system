@@ -44,6 +44,7 @@ export default function Senhas() {
 
   async function buscaSenhas() {
     const id = localStorage.getItem("empresa_id");
+    setLoading(true);
     try {
       const senhas = await getSenhas(id);
       console.log(senhas);
@@ -59,10 +60,12 @@ export default function Senhas() {
       }).length;
 
       setAtrasadas(vencidas);
+      setLoading(false);
 
       setSenhas(senhas);
       setSenhasFiltradas(senhas);
     } catch (err) {
+      setLoading(false);
       console.error("Erro ao buscar senhas:", err);
     }
   }

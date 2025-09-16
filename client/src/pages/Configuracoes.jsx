@@ -116,14 +116,15 @@ export default function Configuracoes() {
   }
 
   async function buscarDados() {
+    setCarregando(true);
     try {
       const setores = await getSetores(localStorage.getItem("empresa_id"));
       const plataformas = await getPlataformas();
       setSetores(setores || []);
       setPlataformas(plataformas || []);
-      console.log(plataformas);
-      console.log(setores);
+      setCarregando(false);
     } catch (err) {
+      setCarregando(false);
       console.error(err);
     }
   }
