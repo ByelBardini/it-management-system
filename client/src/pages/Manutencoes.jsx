@@ -6,8 +6,8 @@ import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import CampoFiltros from "../components/manutencoes/CampoFiltros.jsx";
 import { useEffect, useState } from "react";
 import { getManutencoes } from "../services/api/manutencaoServices.js";
-import { getDiffDias } from "../components/default/funcoes.js";
-import { FunnelX, FunnelPlus } from "lucide-react";
+import { getDiffDias, dividirEmPartes } from "../components/default/funcoes.js";
+import { FunnelX, FunnelPlus, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function Manutencoes() {
   const [itens, setItens] = useState([]);
@@ -31,6 +31,9 @@ export default function Manutencoes() {
 
   const [filtrando, setFiltrando] = useState(false);
   const [itensFiltrados, setItensFiltrados] = useState([]);
+  const [itensOrdenados, setItensOrdenados] = useState([]);
+
+  const [sessao, setSessao] = useState(0);
 
   async function buscarItens() {
     const id = localStorage.getItem("empresa_id");
@@ -60,6 +63,14 @@ export default function Manutencoes() {
   useEffect(() => {
     buscarItens();
   }, []);
+
+  useEffect(() => {
+    const ordenados = dividirEmPartes(itensFiltrados, 10);
+    setItensOrdenados(ordenados);
+    console.log(ordenados);
+    setSessao(0);
+  }, [itensFiltrados]);
+
   return (
     <div>
       {visualizando && (
@@ -121,10 +132,33 @@ export default function Manutencoes() {
           </button>
         </div>
         <TabelaManutencoes
-          itens={itensFiltrados}
+          itens={itensOrdenados[sessao] || []}
           setSelecionado={setSelecionado}
           setVisualizando={setVisualizando}
         />
+      </div>
+      <div className="flex items-center justify-between mt-4">
+        <div className="flex-1 flex justify-center items-center gap-4">
+          <button
+            disabled={sessao === 0}
+            onClick={() => setSessao((prev) => prev - 1)}
+            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
+          >
+            <ChevronLeft size={18} />
+          </button>
+
+          <span className="text-sm text-white/70">
+            Página {sessao + 1} de {itensOrdenados.length}
+          </span>
+
+          <button
+            disabled={sessao === itensOrdenados.length - 1}
+            onClick={() => setSessao((prev) => prev + 1)}
+            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
       </div>
     </div>
   );
