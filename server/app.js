@@ -13,6 +13,7 @@ import senhaRoutes from "./routes/senhaRoutes.js";
 import manutencoesRoutes from "./routes/manutencoesRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import perfilRoutes from "./routes/perfilRoutes.js";
+import { ApiError } from "./middlewares/ApiError.js";
 
 dotenv.config();
 
@@ -41,4 +42,16 @@ app.use("/manutencao", manutencoesRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/perfil", perfilRoutes);
 
+app.use((err, req, res, next) => {
+  if (err instanceof ApiError) {
+    return res.status(err.status).json({
+      code: err.code,
+      erro: err.message,
+      details: err.details,
+    });
+  }
+
+  console.error(err);
+  res.status(500).json({ erro: "Erro interno do servidor" });
+});
 export default app;

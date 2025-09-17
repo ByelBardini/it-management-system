@@ -6,7 +6,7 @@ import uploadFoto from "../middlewares/perfilUpload.js";
 const router = Router();
 
 router.use(autenticar);
-router.put("/troca/:id", autorizarUser(":id"), trocaSenha);
-router.put("/:id",  autorizarUser(":id"), uploadFoto.single("foto"), putPerfil);
+router.put("/troca/:id", autorizarUser(), trocaSenha);
+router.put("/:id", autorizarUser(), uploadFoto.single("foto"), putPerfil);
 
 export default router;

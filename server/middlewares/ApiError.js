@@ -12,8 +12,8 @@ export class ApiError extends Error {
   static unauthorized(msg = "Necessário estar logado") {
     return new ApiError(401, "ERR_UNAUTHORIZED", msg);
   }
-  static unauthorized(msg = "Acesso negado ao recurso") {
-    return new ApiError(403, "ERR_UNAUTHORIZED", msg);
+  static forbidden(msg = "Acesso negado ao recurso") {
+    return new ApiError(403, "ERR_FORBIDDEN", msg);
   }
   static notFound(msg = "Recurso não encontrado") {
     return new ApiError(404, "ERR_NOT_FOUND", msg);
