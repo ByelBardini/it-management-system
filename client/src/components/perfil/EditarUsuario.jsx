@@ -8,7 +8,11 @@ export default function EditarFuncionario({
   setNotificacao,
 }) {
   const [fotoFile, setFotoFile] = useState(null);
-  const [fotoPreview, setFotoPreview] = useState(null);
+  const [fotoPreview, setFotoPreview] = useState(
+    `${import.meta.env.VITE_API_BASE_URL}/imagem?path=${localStorage.getItem(
+      "usuario_caminho_foto"
+    )}`
+  );
   const inputRef = useRef(null);
 
   const [nome, setNome] = useState(localStorage.getItem("usuario_nome"));

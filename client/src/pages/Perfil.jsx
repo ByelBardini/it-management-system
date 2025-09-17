@@ -59,31 +59,23 @@ export default function Perfil() {
       <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-lg backdrop-blur-2xl overflow-hidden">
         <div className="flex items-center gap-6 p-6">
           <div className="flex-shrink-0">
-            {usuario.foto ? (
-              <img
-                src={usuario.foto}
-                alt={usuario.nome}
-                className="h-24 w-24 rounded-full object-cover ring-2 ring-sky-500"
-              />
-            ) : (
-              <div className="h-24 w-24 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-2xl ring-2 ring-sky-500">
-                {usuario.fotoCaminho ? (
-                  <img
-                    className="h-full w-full object-cover rounded-full"
-                    src={`${import.meta.env.VITE_API_BASE_URL}/imagem?path=${
-                      usuario.fotoCaminho
-                    }`}
-                    alt="Foto do funcionário"
-                    loading="lazy"
-                  />
-                ) : (
-                  <UserRound
-                    size={82}
-                    className="text-white h-22 w-22 object-cover rounded-2xl"
-                  />
-                )}
-              </div>
-            )}
+            <div className="h-24 w-24 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-2xl ring-2 ring-sky-500">
+              {usuario.fotoCaminho ? (
+                <img
+                  className="h-full w-full object-cover rounded-full"
+                  src={`${import.meta.env.VITE_API_BASE_URL}/imagem?path=${
+                    usuario.fotoCaminho
+                  }`}
+                  alt="Foto do funcionário"
+                  loading="lazy"
+                />
+              ) : (
+                <UserRound
+                  size={82}
+                  className="text-white h-22 w-22 object-cover rounded-2xl"
+                />
+              )}
+            </div>
           </div>
 
           <div className="space-y-2">
