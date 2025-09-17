@@ -47,6 +47,7 @@ export async function login(req, res) {
       token: token,
       resposta: {
         usuario_id: usuario.usuario_id,
+        usuario_login: usuario.usuario_login,
         usuario_tipo: usuario.usuario_tipo,
         usuario_nome: usuario.usuario_nome,
         usuario_troca_senha: usuario.usuario_troca_senha,

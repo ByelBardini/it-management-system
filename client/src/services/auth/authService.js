@@ -7,6 +7,7 @@ export async function logar(usuario_login, usuario_senha) {
 
     localStorage.setItem("token", token);
     localStorage.setItem("usuario_id", resposta.usuario_id);
+    localStorage.setItem("usuario_login", resposta.usuario_login);
     localStorage.setItem("usuario_tipo", resposta.usuario_tipo);
     localStorage.setItem("usuario_nome", resposta.usuario_nome);
     localStorage.setItem("usuario_troca_senha", resposta.usuario_troca_senha);

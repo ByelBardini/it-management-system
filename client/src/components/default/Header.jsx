@@ -57,7 +57,10 @@ export default function Header() {
               {localStorage.getItem("empresa_nome")}
             </NavButton>
 
-            <div className="hidden sm:flex items-center gap-2 rounded-lg bg-white/5 px-2 py-1.5 ring-1 ring-white/10">
+            <NavButton
+              to="/perfil"
+              className="hidden sm:flex items-center gap-2 rounded-lg bg-white/5 px-2 py-1.5 ring-1 ring-white/10"
+            >
               <div className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-xs font-bold">
                 GB
               </div>
@@ -71,7 +74,7 @@ export default function Header() {
                     : "Usuário"}
                 </div>
               </div>
-            </div>
+            </NavButton>
 
             <button
               onClick={voltar}

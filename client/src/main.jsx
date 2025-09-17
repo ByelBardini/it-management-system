@@ -13,6 +13,7 @@ import Senhas from "./pages/Senhas.jsx";
 import Configuracoes from "./pages/Configuracoes.jsx";
 import Workstations from "./pages/Workstations.jsx";
 import CadastroItem from "./pages/CadastroItem.jsx";
+import Perfil from "./pages/Perfil.jsx";
 
 const router = createBrowserRouter([
   {
@@ -74,6 +75,14 @@ const router = createBrowserRouter([
   {
     path: "/cadastro",
     element: <CadastroItem />,
+  },
+  {
+    path: "/perfil",
+    element: (
+      <AppLayout>
+        <Perfil />
+      </AppLayout>
+    ),
   },
 ]);
 
