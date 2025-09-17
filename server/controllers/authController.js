@@ -1,8 +1,8 @@
-import { Usuario } from "../models/index.js";
-import { ApiError } from "../middlewares/ApiError.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
+import { Usuario } from "../models/index.js";
+import { ApiError } from "../middlewares/ApiError.js";
 dotenv.config();
 
 const CHAVE = process.env.SECRET_KEY_LOGIN;

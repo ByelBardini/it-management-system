@@ -1,16 +1,52 @@
+import AtualizarSenha from "../components/perfil/TrocarSenha.jsx";
+import Loading from "../components/default/Loading";
+import Notificacao from "../components/default/Notificacao";
+import { useState } from "react";
 import { Pencil, KeyRound } from "lucide-react";
 
 export default function Perfil() {
   const usuario = {
     nome: localStorage.getItem("usuario_nome") || "Usuário Desconhecido",
     login: localStorage.getItem("usuario_login") || "login@example.com",
-    tipo:
-      localStorage.getItem("usuario_tipo") === "adm" ? "Admin" : "Usuário",
+    tipo: localStorage.getItem("usuario_tipo") === "adm" ? "Admin" : "Usuário",
     foto: null,
   };
 
+  const [trocaSenha, setTrocaSenha] = useState(false);
+
+  const [notificacao, setNotificacao] = useState({
+    show: false,
+    tipo: "sucesso",
+    titulo: "",
+    mensagem: "",
+  });
+  const [loading, setLoading] = useState(false);
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
+      {trocaSenha && (
+        <AtualizarSenha
+          setTrocaSenha={setTrocaSenha}
+          setLoading={setLoading}
+          setNotificacao={setNotificacao}
+        />
+      )}
+      {notificacao.show && (
+        <Notificacao
+          tipo={notificacao.tipo}
+          titulo={notificacao.titulo}
+          mensagem={notificacao.mensagem}
+          onClick={() =>
+            setNotificacao({
+              show: false,
+              tipo: "sucesso",
+              titulo: "",
+              mensagem: "",
+            })
+          }
+        />
+      )}
+      {loading && <Loading />}
       <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-lg backdrop-blur-2xl overflow-hidden">
         <div className="flex items-center gap-6 p-6">
           <div className="flex-shrink-0">
@@ -60,7 +96,7 @@ export default function Perfil() {
             Editar Usuário
           </button>
           <button
-            onClick={() => console.log("Trocar senha")}
+            onClick={() => setTrocaSenha(true)}
             className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm transition"
           >
             <KeyRound size={16} />

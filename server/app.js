@@ -12,6 +12,7 @@ import plataformaRoutes from "./routes/plataformaRoutes.js";
 import senhaRoutes from "./routes/senhaRoutes.js";
 import manutencoesRoutes from "./routes/manutencoesRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import perfilRoutes from "./routes/perfilRoutes.js";
 
 dotenv.config();
 
@@ -38,5 +39,6 @@ app.use("/plataforma", plataformaRoutes);
 app.use("/senha", senhaRoutes);
 app.use("/manutencao", manutencoesRoutes);
 app.use("/dashboard", dashboardRoutes);
+app.use("/perfil", perfilRoutes);
 
 export default app;
