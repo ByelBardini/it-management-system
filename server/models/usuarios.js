@@ -27,6 +27,10 @@ Usuario.init(
       type: DataTypes.ENUM("adm", "usuario"),
       allowNull: false,
     },
+    usuario_caminho_foto: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
     usuario_ativo: {
       type: DataTypes.TINYINT,
       allowNull: false,

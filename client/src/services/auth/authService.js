@@ -11,6 +11,7 @@ export async function logar(usuario_login, usuario_senha) {
     localStorage.setItem("usuario_tipo", resposta.usuario_tipo);
     localStorage.setItem("usuario_nome", resposta.usuario_nome);
     localStorage.setItem("usuario_troca_senha", resposta.usuario_troca_senha);
+    localStorage.setItem("usuario_caminho_foto", data.usuario_caminho_foto);
 
     return resposta;
   } catch (err) {

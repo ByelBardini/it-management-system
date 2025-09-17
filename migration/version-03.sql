@@ -30,3 +30,6 @@ ADD CONSTRAINT `senha_empresa_id`
 
 ALTER TABLE `it_management_system`.`itens` 
 CHANGE COLUMN `item_tipo` `item_tipo` ENUM('desktop', 'notebook', 'movel', 'cadeira', 'monitor', 'ferramenta', 'ap', 'ar-condicionado', 'switch', 'periferico', 'no-break', 'impressora', 'gerador', 'celular', 'outros') NOT NULL ;
+
+ALTER TABLE `it_management_system`.`usuarios` 
+ADD COLUMN `usuario_caminho_foto` VARCHAR(255) NULL AFTER `usuario_tipo`;

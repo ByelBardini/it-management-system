@@ -18,5 +18,15 @@ router.get("/download", (req, res) => {
 
   res.download(full, path.basename(full));
 });
+router.get("/imagem", (req, res) => {
+  const rel = String(req.query.path || "").replace(/^\/?uploads[\\/]/, "");
+  const full = path.resolve(uploadRoot, rel);
+
+  if (!full.startsWith(uploadRoot) || !fs.existsSync(full)) {
+    return res.status(404).send("Imagem não encontrada");
+  }
+
+  res.sendFile(full);
+});
 
 export default router;

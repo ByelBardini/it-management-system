@@ -1,5 +1,6 @@
 import logoEmpresa from "../../assets/logo-empresa.png";
-import { Building2, Undo2 } from "lucide-react";
+import { Building2, Undo2, UserRound } from "lucide-react";
+import { useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 function NavButton({ children, className = "", to }) {
@@ -19,12 +20,20 @@ function NavButton({ children, className = "", to }) {
 }
 
 export default function Header() {
+  const fotoCaminho = localStorage.getItem("usuario_caminho_foto");
+
   const navigate = useNavigate();
 
   function voltar() {
     localStorage.setItem("empresa_nome", "");
     navigate("/empresas", { replace: true });
   }
+
+  useEffect(() => {
+    console.log(
+      `${import.meta.env.VITE_API_BASE_URL}/imagem?path=${fotoCaminho}`
+    );
+  });
 
   return (
     <header className="fixed top-0 left-0 z-50 w-full">
@@ -61,8 +70,22 @@ export default function Header() {
               to="/perfil"
               className="hidden sm:flex items-center gap-2 rounded-lg bg-white/5 px-2 py-1.5 ring-1 ring-white/10"
             >
-              <div className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-xs font-bold">
-                GB
+              <div className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-xs font-bold">
+                {fotoCaminho ? (
+                  <img
+                    className="h-10 w-10 object-cover rounded-2xl"
+                    src={`${
+                      import.meta.env.VITE_API_BASE_URL
+                    }/imagem?path=${fotoCaminho}`}
+                    alt="Foto do funcionário"
+                    loading="lazy"
+                  />
+                ) : (
+                  <UserRound
+                    size={82}
+                    className="text-white h-8 w-8 object-cover rounded-2xl"
+                  />
+                )}
               </div>
               <div className="mr-1">
                 <div className="text-sm font-medium text-white">

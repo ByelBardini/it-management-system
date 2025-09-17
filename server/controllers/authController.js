@@ -51,6 +51,7 @@ export async function login(req, res) {
         usuario_tipo: usuario.usuario_tipo,
         usuario_nome: usuario.usuario_nome,
         usuario_troca_senha: usuario.usuario_troca_senha,
+        usuario_caminho_foto: usuario.usuario_caminho_foto || null,
       },
     });
   } catch (err) {

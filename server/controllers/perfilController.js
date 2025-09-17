@@ -33,3 +33,30 @@ export async function trocaSenha(req, res) {
 
   return res.status(200).json({ message: "Senha atualizada com sucesso" });
 }
+
+export async function putPerfil(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("O ID do usuário é obrigatório");
+  }
+
+  const { nome_usuario } = req.body;
+  if (!nome_usuario) {
+    throw ApiError.badRequest("O nome do usuário é obrigatório");
+  }
+  const fotoPath = req.file ? `/uploads/fotos/${req.file.filename}` : null;
+
+  const usuario = await Usuario.findByPk(id);
+
+  usuario.usuario_nome = nome_usuario;
+  if (fotoPath != null) {
+    usuario.usuario_caminho_foto = fotoPath;
+  }
+
+  await usuario.save();
+
+  return res.status(200).json({
+    usuario_nome: nome_usuario,
+    usuario_caminho_foto: fotoPath || usuario.usuario_caminho_foto,
+  });
+}
