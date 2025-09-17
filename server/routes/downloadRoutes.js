@@ -1,11 +1,12 @@
 import fs from "fs";
 import path from "path";
 import express from "express";
+import { autenticar } from "../middlewares/autenticaToken.js";
 
 const router = express.Router();
 const uploadRoot = path.join(process.cwd(), "uploads");
 
-router.get("/download", (req, res) => {
+router.get("/download", autenticar, (req, res) => {
   const rel = String(req.query.path || "");
   const full = path.join(
     process.cwd(),

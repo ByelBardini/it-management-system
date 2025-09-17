@@ -10,3 +10,20 @@ api.interceptors.request.use((config) => {
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
+
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    const status = err?.response?.status;
+
+    if (status === 401 || status === 403) {
+      localStorage.removeItem("token");
+
+      err.userMessage = "Sua sessão expirou. Faça login novamente.";
+    } else if (status >= 500) {
+      err.userMessage = "Erro no servidor. Tente novamente mais tarde.";
+    }
+
+    return Promise.reject(err);
+  }
+);

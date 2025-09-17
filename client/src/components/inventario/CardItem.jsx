@@ -27,7 +27,13 @@ export default function CardItem({
     const url = `http://localhost:3030/download?path=${encodeURIComponent(
       caminho
     )}`;
-    const resp = await fetch(url, { credentials: "include" });
+    const token = localStorage.getItem("token");
+    const resp = await fetch(url, {
+      credentials: "include",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     if (!resp.ok) {
       return;
     }

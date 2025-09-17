@@ -43,6 +43,7 @@ export async function login(req, res) {
       expiresIn: "8h",
     });
 
+
     return res.status(200).json({
       token: token,
       resposta: {

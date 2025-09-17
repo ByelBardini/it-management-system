@@ -31,6 +31,8 @@ export default function Empresas() {
     localStorage.removeItem("usuario_tipo");
     localStorage.removeItem("usuario_nome");
     localStorage.removeItem("usuario_troca_senha");
+    localStorage.removeItem("usuario_nome");
+    localStorage.removeItem("usuario_caminho_foto");
 
     delete api.defaults.headers.common.Authorization;
 
@@ -39,6 +41,7 @@ export default function Empresas() {
 
   useEffect(() => {
     buscaEmpresas();
+    console.log(localStorage.getItem("usuario_caminho_foto"));
   }, []);
 
   return (

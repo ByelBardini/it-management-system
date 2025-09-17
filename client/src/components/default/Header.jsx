@@ -1,6 +1,5 @@
 import logoEmpresa from "../../assets/logo-empresa.png";
 import { Building2, Undo2, UserRound } from "lucide-react";
-import { useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 function NavButton({ children, className = "", to }) {
@@ -28,12 +27,6 @@ export default function Header() {
     localStorage.setItem("empresa_nome", "");
     navigate("/empresas", { replace: true });
   }
-
-  useEffect(() => {
-    console.log(
-      `${import.meta.env.VITE_API_BASE_URL}/imagem?path=${fotoCaminho}`
-    );
-  });
 
   return (
     <header className="fixed top-0 left-0 z-50 w-full">

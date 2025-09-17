@@ -10,9 +10,12 @@ import {
   getItensWorkstation,
   removerWorkstation,
 } from "../controllers/itemController.js";
+import { autenticar, autorizarRole } from "../middlewares/autenticaToken.js";
 
 const router = Router();
 
+router.use(autenticar);
+router.use(autorizarRole("adm"));
 router.get("/:id", getItens);
 router.get("/inativos/:id", getItensInativos);
 router.get("/workstation/:id", getItensWorkstation);
