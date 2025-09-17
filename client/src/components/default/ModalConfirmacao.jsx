@@ -4,7 +4,7 @@ export default function ModalConfirmacao({ onNao, onSim, texto, tipo = "atencao"
   const isSucesso = tipo === "sucesso";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+    <div className="fixed inset-0 z-70 flex items-center justify-center bg-black/70">
       <div className="w-full max-w-md rounded-2xl bg-white/5 backdrop-blur-2xl ring-1 ring-white/10 shadow-lg">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">

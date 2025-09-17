@@ -164,7 +164,7 @@ export default function Senhas() {
           setCardSenha={setCardSenha}
         />
       </div>
-      <div className="flex items-center justify-between mt-4">
+      <div className="fixed bottom-0 left-0 w-full flex items-center justify-center pb-4">
         <div className="flex-1 flex justify-center items-center gap-4">
           <button
             disabled={sessao === 0}

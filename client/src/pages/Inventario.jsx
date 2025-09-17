@@ -180,31 +180,7 @@ export default function Inventario() {
         </div>
       </div>
       <div className="flex items-center justify-between mt-4">
-        <div className="w-1/3"></div>
-
-        <div className="flex-1 flex justify-center items-center gap-4">
-          <button
-            disabled={sessao === 0}
-            onClick={() => setSessao((prev) => prev - 1)}
-            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
-          >
-            <ChevronLeft size={18} />
-          </button>
-
-          <span className="text-sm text-white/70">
-            Página {sessao + 1} de {itensOrdenados.length}
-          </span>
-
-          <button
-            disabled={sessao === itensOrdenados.length - 1}
-            onClick={() => setSessao((prev) => prev + 1)}
-            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
-          >
-            <ChevronRight size={18} />
-          </button>
-        </div>
-
-        <div className="w-1/3 flex justify-end">
+        <div className="w-full flex justify-end">
           <button
             className={`w1/3 cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${
               !inativos
@@ -218,6 +194,27 @@ export default function Inventario() {
             </span>
           </button>
         </div>
+      </div>
+      <div className="fixed bottom-0 left-0 w-full flex items-center justify-center pb-4">
+        <button
+          disabled={sessao === 0}
+          onClick={() => setSessao((prev) => prev - 1)}
+          className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
+        >
+          <ChevronLeft size={18} />
+        </button>
+
+        <span className="mr-4 ml-4 ext-sm text-white/70">
+          Página {sessao + 1} de {itensOrdenados.length}
+        </span>
+
+        <button
+          disabled={sessao === itensOrdenados.length - 1}
+          onClick={() => setSessao((prev) => prev + 1)}
+          className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
+        >
+          <ChevronRight size={18} />
+        </button>
       </div>
     </div>
   );
