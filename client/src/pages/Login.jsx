@@ -6,16 +6,19 @@ import { logar } from "../services/auth/authService.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
+import { tratarErro } from "../components/default/funcoes.js";
 
 export default function Login() {
   const navigate = useNavigate();
 
   const [carregando, setCarregando] = useState(false);
 
-  const [notificacao, setNotificacao] = useState(false);
-  const [tipo, setTipo] = useState("sucesso");
-  const [titulo, setTitulo] = useState("");
-  const [descricao, setDescricao] = useState("");
+  const [notificacao, setNotificacao] = useState({
+    show: false,
+    tipo: "sucesso",
+    titulo: "",
+    mensagem: "",
+  });
 
   const [login, setLogin] = useState("");
   const [senha, setSenha] = useState("");
@@ -29,56 +32,67 @@ export default function Login() {
 
   async function logarSistema() {
     if (login == "" || senha == "") {
-      setTipo("erro");
-      setTitulo("Dados incompletos");
-      setDescricao("Login e senha são necessários para logar no sistema");
-      setNotificacao(true);
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Dados incompletos",
+        mensagem: "Login e senha são necessários para logar no sistema",
+      });
     } else {
       setCarregando(true);
       try {
         await logar(login, senha);
 
-        setTipo("sucesso");
-        setTitulo("Sucesso!");
-        setDescricao(
-          "Login realizado com sucesso! Redirezionando para o sistema"
-        );
-        setNotificacao(true);
+        setNotificacao({
+          show: true,
+          tipo: "sucesso",
+          titulo: "Sucesso",
+          mensagem:
+            "Login realizado com sucesso! Redirezionando para o sistema",
+        });
 
         setTimeout(() => {
-          setNotificacao(false);
+          setNotificacao({
+            show: false,
+            tipo: "sucesso",
+            titulo: "",
+            mensagem: "",
+          });
           navigate("/empresas", { replace: true });
         }, 1000);
       } catch (err) {
         if (err.message.includes("obrigatórios")) {
-          setTipo("erro");
-          setTitulo("Dados incompletos");
-          setDescricao("Login e senha são necessários para logar no sistema");
-          setNotificacao(true);
+          setNotificacao({
+            show: true,
+            tipo: "erro",
+            titulo: "Dados incompletos",
+            mensagem: "Login e senha são necessários para logar no sistema",
+          });
         } else if (err.message.includes("Login incorreto")) {
-          setTipo("erro");
-          setTitulo("Login Inválido");
-          setDescricao("Usuário não encontrado no sistema");
-          setNotificacao(true);
+          setNotificacao({
+            show: true,
+            tipo: "erro",
+            titulo: "Login Inválido",
+            mensagem: "Usuário não encontrado no sistema",
+          });
         } else if (err.message.includes("Usuário inativo")) {
-          setTipo("erro");
-          setTitulo("Usuário inativo");
-          setDescricao(
-            "Seu usuário não está ativo, fale com um administrador do sistema"
-          );
-          setNotificacao(true);
+          setNotificacao({
+            show: true,
+            tipo: "erro",
+            titulo: "Usuário inativo",
+            mensagem:
+              "Seu usuário não está ativo, fale com um administrador do sistema",
+          });
         } else if (err.message.includes("Senha incorreta")) {
-          setTipo("erro");
-          setTitulo("Senha incorreta");
-          setDescricao(
-            "Senha incorreta, verifique a digitação e tente novamente"
-          );
-          setNotificacao(true);
+          setNotificacao({
+            show: true,
+            tipo: "erro",
+            titulo: "Senha incorreta",
+            mensagem:
+              "Senha incorreta, verifique a digitação e tente novamente",
+          });
         } else {
-          setTipo("erro");
-          setTitulo("Erro ao logar");
-          setDescricao(err.message);
-          setNotificacao(true);
+          tratarErro(setNotificacao, err);
         }
       } finally {
         setCarregando(false);
@@ -89,13 +103,18 @@ export default function Login() {
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       <AnimatePresence mode="wait">
-        {notificacao && (
+        {notificacao.show && (
           <Notificacao
-            tipo={tipo}
-            titulo={titulo}
-            mensagem={descricao}
+            tipo={notificacao.tipo}
+            titulo={notificacao.titulo}
+            mensagem={notificacao.mensagem}
             onClick={() => {
-              setNotificacao(false);
+              setNotificacao({
+                show: false,
+                tipo: "sucesso",
+                titulo: "",
+                mensagem: "",
+              });
             }}
           />
         )}

@@ -3,6 +3,7 @@ import { X, Edit, Check, Wrench } from "lucide-react";
 import { formatToDate } from "brazilian-values";
 import { realizarManutencao } from "../../services/api/manutencaoServices.js";
 import { useState } from "react";
+import { tratarErro } from "../default/funcoes.js";
 
 const intervalos = {
   0: "Não é realizado",
@@ -50,13 +51,7 @@ export default function ExibirManutencao({
         setVisualizando(false);
       }, 700);
     } catch (err) {
-      setNotificacao({
-        show: true,
-        tipo: "erro",
-        titulo: "Erro ao atualizar a data de manutenção",
-        mensagem: err.message,
-      });
-      console.error(err);
+      tratarErro(setNotificacao, err);
     }
   }
   return (

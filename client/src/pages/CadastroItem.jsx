@@ -7,6 +7,7 @@ import Notificacao from "../components/default/Notificacao.jsx";
 import { useState, useCallback } from "react";
 import { postItem } from "../services/api/itemServices.js";
 import { NavLink, useNavigate } from "react-router-dom";
+import { tratarErro } from "../components/default/funcoes.js";
 
 export default function CadastroItem() {
   const navigate = useNavigate();
@@ -15,9 +16,12 @@ export default function CadastroItem() {
 
   const [modalConfirmacao, setModalConfirmacao] = useState(false);
 
-  const [notificacao, setNotificacao] = useState(false);
-  const [titulo, setTitulo] = useState("");
-  const [mensagem, setMensagem] = useState("");
+  const [notificacao, setNotificacao] = useState({
+    show: false,
+    tipo: "sucesso",
+    titulo: "",
+    mensagem: "",
+  });
 
   function limpaTela() {
     setForm({
@@ -47,14 +51,20 @@ export default function CadastroItem() {
       form.manutencao == "" ||
       form.intervalo == ""
     ) {
-      setTitulo("Dados imcompletos");
-      setMensagem("Preencha todos os campos obrigatórios");
-      setNotificacao(true);
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Dados imcompletos",
+        mensagem: "Preencha todos os campos obrigatórios",
+      });
       return;
     } else if (!caracteristicaValida) {
-      setTitulo("Características inválidas");
-      setMensagem("Preencha todas as características corretamente");
-      setNotificacao(true);
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Características inválidas",
+        mensagem: "Preencha todas as características corretamente",
+      });
       return;
     } else {
       try {
@@ -86,10 +96,7 @@ export default function CadastroItem() {
         await postItem(fd);
         setModalConfirmacao(true);
       } catch (err) {
-        console.error("Erro ao adicionar item:", err);
-        setTitulo("Erro ao adicionar item");
-        setMensagem(err.message || "Tente novamente mais tarde");
-        setNotificacao(true);
+        tratarErro(setNotificacao, err);
       } finally {
         setLoading(false);
       }
@@ -143,12 +150,19 @@ export default function CadastroItem() {
           }
         />
       )}
-      {notificacao && (
+      {notificacao.show && (
         <Notificacao
-          tipo={"erro"}
-          onClick={() => setNotificacao(false)}
-          titulo={titulo}
-          mensagem={mensagem}
+          tipo={notificacao.tipo}
+          titulo={notificacao.titulo}
+          mensagem={notificacao.mensagem}
+          onClick={() =>
+            setNotificacao({
+              show: false,
+              tipo: "sucesso",
+              titulo: "",
+              mensagem: "",
+            })
+          }
         />
       )}
 

@@ -9,7 +9,7 @@ import { Plus, SearchX, ChevronLeft, ChevronRight } from "lucide-react";
 import { getWorkstation } from "../services/api/workstationServices.js";
 import { useEffect } from "react";
 import { useState } from "react";
-import { dividirEmPartes } from "../components/default/funcoes.js";
+import { dividirEmPartes, tratarErro } from "../components/default/funcoes.js";
 
 export default function Workstations() {
   const [workstations, setWorkstations] = useState([]);
@@ -46,8 +46,7 @@ export default function Workstations() {
       setCarregando(false);
       setWorkstations(workstations);
     } catch (err) {
-      setCarregando(false);
-      console.error(err);
+      tratarErro(setNotificacao, err);
     }
   }
 

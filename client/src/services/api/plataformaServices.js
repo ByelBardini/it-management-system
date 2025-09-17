@@ -6,7 +6,7 @@ export async function getPlataformas() {
 
     return response.data;
   } catch (err) {
-    console.error("Erro ao buscar plataformas:", err);
+    console.error("Erro em getPlataformas:", err);
     throw err;
   }
 }
@@ -18,7 +18,7 @@ export async function postPlataforma(plataforma_nome) {
     });
     return response.data;
   } catch (err) {
-    console.error("Erro ao adicionar plataforma:", err);
+    console.error("Erro em postPlataforma:", err);
     throw err;
   }
 }
@@ -28,7 +28,7 @@ export async function deletePlataforma(id) {
     const response = await api.delete(`/plataforma/${id}`);
     return response.data;
   } catch (err) {
-    console.error("Erro ao deletar plataforma:", err);
+    console.error("Erro em deletePlataforma:", err);
     throw err;
   }
 }

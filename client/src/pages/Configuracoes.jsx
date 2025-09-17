@@ -11,6 +11,7 @@ import {
   deletePlataforma,
 } from "../services/api/plataformaServices.js";
 import { useEffect } from "react";
+import { tratarErro } from "../components/default/funcoes.js";
 
 export default function Configuracoes() {
   const [adicionandoSetor, setAdicionandoSetor] = useState(false);
@@ -62,13 +63,7 @@ export default function Configuracoes() {
         setNotificacao(false);
       }, 1000);
     } catch (err) {
-      console.error(err);
-      setNotificacao({
-        show: true,
-        tipo: "erro",
-        titulo: "Erro ao deletar setor",
-        mensagem: err.message,
-      });
+      tratarErro(setNotificacao, err);
     } finally {
       setCarregando(false);
     }
@@ -103,13 +98,7 @@ export default function Configuracoes() {
         });
       }, 1000);
     } catch (err) {
-      console.error(err);
-      setNotificacao({
-        show: true,
-        tipo: "erro",
-        titulo: "Erro ao deletar plataforma",
-        mensagem: err.message,
-      });
+      tratarErro(setNotificacao, err);
     } finally {
       setCarregando(false);
     }
@@ -125,7 +114,7 @@ export default function Configuracoes() {
       setCarregando(false);
     } catch (err) {
       setCarregando(false);
-      console.error(err);
+      tratarErro(setNotificacao, err);
     }
   }
 

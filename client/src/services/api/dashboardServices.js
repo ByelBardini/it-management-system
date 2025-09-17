@@ -6,7 +6,7 @@ export async function getDashboard(id) {
 
     return response.data;
   } catch (err) {
-    console.error("Erro ao  buscar informações:", err);
+    console.error("Erro em getDashboard:", err);
     throw err;
   }
 }

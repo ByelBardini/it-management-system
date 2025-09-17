@@ -12,18 +12,23 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    const status = err?.response?.status;
-
-    if (status === 401 || status === 403) {
-      localStorage.removeItem("token");
-
-      err.userMessage = "Sua sessão expirou. Faça login novamente.";
-    } else if (status >= 500) {
-      err.userMessage = "Erro no servidor. Tente novamente mais tarde.";
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      const { status, code, message } = error.response.data;
+      return Promise.reject({ status, code, message });
+    } else if (error.request) {
+      return Promise.reject({
+        status: 503,
+        code: "ERR_NO_RESPONSE",
+        message: "Servidor não respondeu",
+      });
+    } else {
+      return Promise.reject({
+        status: 500,
+        code: "ERR_AXIOS",
+        message: error.message,
+      });
     }
-
-    return Promise.reject(err);
   }
 );

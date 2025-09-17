@@ -5,7 +5,7 @@ export async function getItens(id) {
     const response = await api.get(`/item/${id}`);
     return response.data;
   } catch (err) {
-    console.error("Erro ao buscar itens:", err);
+    console.error("Erro em getItens:", err);
     throw err;
   }
 }
@@ -15,7 +15,7 @@ export async function getItensInativos(id) {
     const response = await api.get(`/item/inativos/${id}`);
     return response.data;
   } catch (err) {
-    console.error("Erro ao buscar itens:", err);
+    console.error("Erro em getItensInativos:", err);
     throw err;
   }
 }
@@ -25,7 +25,7 @@ export async function getItensWorkstation(id) {
     const response = await api.get(`/item/workstation/${id}`);
     return response.data;
   } catch (err) {
-    console.log("Erro ao buscar itens:", err);
+    console.log("Erro em getItensWorkstation:", err);
     throw err;
   }
 }
@@ -35,7 +35,7 @@ export async function getItemFull(id) {
     const response = await api.get(`/item/full/${id}`);
     return response.data;
   } catch (err) {
-    console.error("Erro ao buscar item:", err);
+    console.error("Erro em getItemFull:", err);
     throw err;
   }
 }
@@ -48,7 +48,7 @@ export async function postItem(fd) {
 
     return response.data;
   } catch (err) {
-    console.error("Erro ao adicionar item:", err);
+    console.error("Erro em postItem:", err);
     throw err;
   }
 }
@@ -60,7 +60,7 @@ export async function putItem(id, fd) {
     });
     return response.data;
   } catch (err) {
-    console.error("Erro ao modificar item:", err);
+    console.error("Erro em putItem:", err);
     throw err;
   }
 }
@@ -71,7 +71,7 @@ export async function removerWorkstation(id) {
 
     return response.data;
   } catch (err) {
-    console.error("Erro ao desvincular do workstation", err);
+    console.error("Erro em removerWorkstation", err);
     throw err;
   }
 }
@@ -81,7 +81,7 @@ export async function inativaItem(id) {
     const response = await api.put(`/item/inativa/${id}`);
     return response.data;
   } catch (err) {
-    console.error("Erro ao inativar item:", err);
+    console.error("Erro em inativaItem:", err);
     throw err;
   }
 }

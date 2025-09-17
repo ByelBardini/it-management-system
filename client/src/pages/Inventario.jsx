@@ -16,7 +16,7 @@ import {
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getItens, getItensInativos } from "../services/api/itemServices";
-import { dividirEmPartes } from "../components/default/funcoes.js";
+import { dividirEmPartes, tratarErro } from "../components/default/funcoes.js";
 
 export default function Inventario() {
   const [itens, setItens] = useState([]);
@@ -64,8 +64,8 @@ export default function Inventario() {
         console.log(itens);
       }
     } catch (err) {
+      tratarErro(setNotificacao, err);
       setLoading(false);
-      console.error(err);
     }
   }
 

@@ -6,7 +6,11 @@ import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import CampoFiltros from "../components/manutencoes/CampoFiltros.jsx";
 import { useEffect, useState } from "react";
 import { getManutencoes } from "../services/api/manutencaoServices.js";
-import { getDiffDias, dividirEmPartes } from "../components/default/funcoes.js";
+import {
+  getDiffDias,
+  dividirEmPartes,
+  tratarErro,
+} from "../components/default/funcoes.js";
 import { FunnelX, FunnelPlus, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function Manutencoes() {
@@ -58,8 +62,7 @@ export default function Manutencoes() {
       setItens(itens);
       setItensFiltrados(itens);
     } catch (err) {
-      setLoading(false);
-      console.error(err);
+      tratarErro(setNotificacao, err);
     }
   }
 

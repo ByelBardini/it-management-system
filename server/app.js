@@ -45,13 +45,19 @@ app.use("/perfil", perfilRoutes);
 app.use((err, req, res, next) => {
   if (err instanceof ApiError) {
     return res.status(err.status).json({
+      status: err.status,
       code: err.code,
-      erro: err.message,
-      details: err.details,
+      message: err.message,
+      details: err.details || null,
     });
   }
 
   console.error(err);
-  res.status(500).json({ erro: "Erro interno do servidor" });
+
+  res.status(500).json({
+    status: 500,
+    code: "ERR_INTERNAL",
+    message: "Erro interno do servidor",
+  });
 });
 export default app;

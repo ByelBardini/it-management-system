@@ -1,6 +1,7 @@
 import { X, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { putSenha } from "../../services/api/senhaServices.js";
+import { tratarErro } from "../default/funcoes.js";
 
 export default function EditarDadosSenha({
   setEditaSenha,
@@ -57,13 +58,7 @@ export default function EditarDadosSenha({
       }, 700);
     } catch (err) {
       setLoading(false);
-      console.error(err);
-      setNotificacao({
-        show: true,
-        tipo: "erro",
-        titulo: "Erro ao salvar senha",
-        mensagem: err.message,
-      });
+      tratarErro(setNotificacao, err);
     }
   }
 

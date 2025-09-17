@@ -14,7 +14,11 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getSenhas } from "../services/api/senhaServices.js";
-import { getDiffDias, dividirEmPartes } from "../components/default/funcoes.js";
+import {
+  getDiffDias,
+  dividirEmPartes,
+  tratarErro,
+} from "../components/default/funcoes.js";
 
 export default function Senhas() {
   const [senhas, setSenhas] = useState([]);
@@ -66,7 +70,7 @@ export default function Senhas() {
       setSenhasFiltradas(senhas);
     } catch (err) {
       setLoading(false);
-      console.error("Erro ao buscar senhas:", err);
+      tratarErro(setNotificacao, err);
     }
   }
 

@@ -1,6 +1,7 @@
 import { X, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { putManutencao } from "../../services/api/manutencaoServices.js";
+import { tratarErro } from "../default/funcoes.js";
 
 export default function AlterarIntervalo({
   interval,
@@ -52,13 +53,7 @@ export default function AlterarIntervalo({
       }, 700);
     } catch (err) {
       setLoading(false);
-      setNotificacao({
-        show: true,
-        tipo: "erro",
-        titulo: "Erro ao atualizar o intervalo de manutenção",
-        mensagem: err.message,
-      });
-      console.error(err);
+      tratarErro(setNotificacao, err);
     }
   }
 

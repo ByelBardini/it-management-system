@@ -9,7 +9,7 @@ export async function trocarSenha(id, senhaAtual, nova_senha) {
 
     return response.data;
   } catch (err) {
-    console.error("Erro ao trocar senha:", err);
+    console.error("Erro em trocarSenha:", err);
     throw err;
   }
 }
@@ -35,7 +35,7 @@ export async function putPerfil(id, nome_usuario, fotoFile) {
 
     return data;
   } catch (err) {
-    console.error("Erro ao editar perfil:", err);
+    console.error("Erro em putPerfil:", err);
     throw err;
   }
 }

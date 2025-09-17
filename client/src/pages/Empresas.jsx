@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../services/api.js";
 import { getEmpresas } from "../services/api/empresaServices.js";
 import { useEffect, useState } from "react";
+import { tratarErro } from "../components/default/funcoes.js";
 import ListaEmpresa from "../components/empresas/ListaEmpresa.jsx";
+import Notificacao from "../components/default/Notificacao.jsx";
 import Loading from "../components/default/Loading.jsx";
 
 export default function Empresas() {
@@ -12,6 +14,12 @@ export default function Empresas() {
   const [empresas, setEmpresas] = useState([]);
 
   const [loading, setLoading] = useState(false);
+  const [notificacao, setNotificacao] = useState({
+    show: false,
+    tipo: "sucesso",
+    titulo: "",
+    mensagem: "",
+  });
 
   async function buscaEmpresas() {
     setLoading(true);
@@ -21,7 +29,7 @@ export default function Empresas() {
       setLoading(false);
       console.log(empresas);
     } catch (err) {
-      console.error(err);
+      tratarErro(setNotificacao, err);
       setLoading(false);
     }
   }
@@ -47,6 +55,21 @@ export default function Empresas() {
   return (
     <div className="relative flex justify-center items-center w-screen h-screen overflow-hidden bg-[#0A1633] text-white">
       {loading && <Loading />}
+      {notificacao.show && (
+        <Notificacao
+          tipo={notificacao.tipo}
+          titulo={notificacao.titulo}
+          mensagem={notificacao.mensagem}
+          onClick={() =>
+            setNotificacao({
+              show: false,
+              tipo: "sucesso",
+              titulo: "",
+              mensagem: "",
+            })
+          }
+        />
+      )}
       <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_30%,rgba(59,130,246,0.22),transparent)]" />
       <div
         className="absolute inset-0 opacity-40

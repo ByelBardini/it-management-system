@@ -5,7 +5,7 @@ export async function getEmpresas() {
     const response = await api.get("/empresa");
     return response.data;
   } catch (err) {
-    console.error("Erro ao buscar empresas:", err);
+    console.error("Erro em getEmpresas:", err);
     throw err;
   }
 }
@@ -15,7 +15,7 @@ export async function getSetoresWorkstations(id) {
     const response = await api.get(`/empresa/setores-workstations/${id}`);
     return response.data;
   } catch (err) {
-    console.error("Erro ao  buscar dados:", err);
+    console.error("Erro em getSetoresWorkstations:", err);
     throw err;
   }
 }

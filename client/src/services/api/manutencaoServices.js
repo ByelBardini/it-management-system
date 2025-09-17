@@ -5,7 +5,7 @@ export async function getManutencoes(id) {
     const response = await api.get(`/manutencao/${id}`);
     return response.data;
   } catch (err) {
-    console.error("Erro ao buscar itens:", err);
+    console.error("Erro em getManutencoes:", err);
     throw err;
   }
 }
@@ -15,7 +15,7 @@ export async function realizarManutencao(id) {
     const response = await api.put(`/manutencao/realizar/${id}`);
     return response.data;
   } catch (err) {
-    console.error("Erro ao atualizar item:", err);
+    console.error("Erro em realizarManutencao:", err);
     throw err;
   }
 }
@@ -25,7 +25,7 @@ export async function putManutencao(id, novo_intervalo) {
     const response = await api.put(`/manutencao/${id}`, { novo_intervalo });
     return response.data;
   } catch (err) {
-    console.error("Erro ao editar item:", err);
+    console.error("Erro em putManutencao:", err);
     throw err;
   }
 }

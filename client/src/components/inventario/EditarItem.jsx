@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import tipos from "./tiposCarac.js";
 import EditarAnexos from "../anexos/EditarAnexos.jsx";
 import { X, Paperclip } from "lucide-react";
 import { getSetoresWorkstations } from "../../services/api/empresaServices.js";
 import { useEffect, useState } from "react";
 import { putItem, inativaItem } from "../../services/api/itemServices.js";
+import { tratarErro } from "../default/funcoes.js";
 
 export default function EditarItem({
   setEditarItem,
@@ -117,13 +119,7 @@ export default function EditarItem({
         });
       }, 800);
     } catch (err) {
-      setNotificacao({
-        show: true,
-        tipo: "erro",
-        titulo: "Erro ao editar Item",
-        mensagem: "Ocorreu um erro ao editar o item. Tente novamente.",
-      });
-      console.error(err);
+      tratarErro(setNotificacao, err);
     } finally {
       setLoading(false);
     }
@@ -169,13 +165,7 @@ export default function EditarItem({
         );
       });
     } catch (err) {
-      setNotificacao({
-        show: true,
-        tipo: "erro",
-        titulo: "Erro ao inativar Item",
-        mensagem: "Ocorreu um erro ao inativar o item. Tente novamente.",
-      });
-      console.error(err);
+      tratarErro(setNotificacao, err);
     } finally {
       setLoading(false);
     }
@@ -188,7 +178,7 @@ export default function EditarItem({
       setSetores(dados.setores);
       setWorkstations(dados.workstations);
     } catch (err) {
-      console.error(err);
+      tratarErro(setNotificacao, err);
     }
   }
 

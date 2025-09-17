@@ -46,3 +46,13 @@ export function dividirEmPartes(array, tamanho) {
   }
   return resultado;
 }
+
+export function tratarErro(setNotificacao, err) {
+  console.error(err);
+  setNotificacao({
+    show: true,
+    tipo: "atencao",
+    titulo: `Erro ${err.status}`,
+    mensagem: err.message,
+  });
+}

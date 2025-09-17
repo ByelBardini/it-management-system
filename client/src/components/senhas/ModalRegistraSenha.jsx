@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getPlataformas } from "../../services/api/plataformaServices.js";
 import { postSenha } from "../../services/api/senhaServices.js";
+import { tratarErro } from "../default/funcoes.js";
 
 export default function ModalRegistraSenha({
   setAdicionaSenha,
@@ -26,7 +28,7 @@ export default function ModalRegistraSenha({
       const plats = await getPlataformas();
       setPlataformas(plats);
     } catch (err) {
-      console.error(err.message);
+      tratarErro(setNotificacao, err);
     }
   }
 
@@ -84,13 +86,7 @@ export default function ModalRegistraSenha({
       }, 700);
     } catch (err) {
       setLoading(false);
-      console.error(err);
-      setNotificacao({
-        show: true,
-        tipo: "erro",
-        titulo: "Erro ao cadastrar senha",
-        mensagem: err.message,
-      });
+      tratarErro(setNotificacao, err);
     }
   }
 

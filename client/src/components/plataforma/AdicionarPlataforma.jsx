@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { postPlataforma } from "../../services/api/plataformaServices.js";
 import { useState } from "react";
+import { tratarErro } from "../default/funcoes.js";
 
 export default function AdicionarPlataforma({
   setAdicionando,
@@ -44,13 +45,7 @@ export default function AdicionarPlataforma({
           setAdicionando(false);
         }, 1000);
       } catch (err) {
-        setNotificacao({
-          show: true,
-          tipo: "erro",
-          titulo: "Erro ao inserir plataforma",
-          mensagem: err.message,
-        });
-        console.error(err);
+        tratarErro(setNotificacao, err);
       } finally {
         setCarregando(false);
       }

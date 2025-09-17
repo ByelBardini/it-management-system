@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import tipos from "../inventario/tiposItens.js";
 import { X, Trash2, ExternalLink } from "lucide-react";
 import {
@@ -7,6 +8,7 @@ import {
 import { deleteWorkstation } from "../../services/api/workstationServices.js";
 import { useState } from "react";
 import { useEffect } from "react";
+import { tratarErro } from "../default/funcoes.js";
 
 export default function ModalWorkstation({
   setCardWorkstation,
@@ -30,7 +32,7 @@ export default function ModalWorkstation({
 
       setItens(itens);
     } catch (err) {
-      console.error("Erro ao buscar itens:", err);
+      tratarErro(setNotificacao, err);
     }
   }
 
@@ -61,13 +63,7 @@ export default function ModalWorkstation({
         });
       }, 1000);
     } catch (err) {
-      setNotificacao({
-        show: false,
-        tipo: "erro",
-        titulo: "Erro ao desvincular item",
-        mensagem: err.message,
-      });
-      console.error("Erro ao desvincular do workstation:", err);
+      tratarErro(setNotificacao, err);
     } finally {
       setCarregando(false);
     }
@@ -79,6 +75,16 @@ export default function ModalWorkstation({
       texto: "",
       onSim: null,
     });
+    if (itens.length > 0) {
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Impossível excluir o workstation",
+        mensagem:
+          "Você não pode excluir um workstation que tenha algum item vinculado",
+      });
+      return;
+    }
     const id = localStorage.getItem("workstation_id");
     setCarregando(true);
     try {
@@ -102,13 +108,7 @@ export default function ModalWorkstation({
         setCardWorkstation(false);
       }, 1000);
     } catch (err) {
-      setNotificacao({
-        show: false,
-        tipo: "erro",
-        titulo: "Erro ao excluir workstation",
-        mensagem: err.message,
-      });
-      console.error("Erro ao excluir workstation:", err);
+      tratarErro(setNotificacao, err);
     } finally {
       setCarregando(false);
     }

@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { postSetor } from "../../services/api/setorServices.js";
 import { useState } from "react";
+import { tratarErro } from "../default/funcoes.js";
 
 export default function AdicionarSetor({
   setAdicionando,
@@ -45,13 +46,7 @@ export default function AdicionarSetor({
           setAdicionando(false);
         }, 1000);
       } catch (err) {
-        setNotificacao({
-          show: true,
-          tipo: "erro",
-          titulo: "Erro ao inserir setor",
-          mensagem: err.message,
-        });
-        console.error(err);
+        tratarErro(setNotificacao, err);
       } finally {
         setCarregando(false);
       }

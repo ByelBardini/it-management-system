@@ -6,7 +6,7 @@ export async function getSenhas(id) {
 
     return response.data;
   } catch (err) {
-    console.error("Erro ao buscar senhas:", err);
+    console.error("Erro em getSenhas:", err);
     throw err;
   }
 }
@@ -17,7 +17,7 @@ export async function getSenhaFull(id) {
 
     return response.data;
   } catch (err) {
-    console.error("Erro ao buscar senha:", err);
+    console.error("Erro em getSenhaFull:", err);
     throw err;
   }
 }
@@ -44,7 +44,7 @@ export async function postSenha(
 
     return response.data;
   } catch (err) {
-    console.error("Erro ao cadastrar senha:", err);
+    console.error("Erro em postSenha:", err);
     throw err;
   }
 }
@@ -58,7 +58,7 @@ export async function putSenha(id, senha_nome, senha_tempo_troca) {
 
     return response.data;
   } catch (err) {
-    console.error("Erro ao atualizar senha:", err);
+    console.error("Erro em putSenha:", err);
     throw err;
   }
 }
@@ -69,7 +69,7 @@ export async function atualizaSenha(id, nova_senha) {
 
     return response.data;
   } catch (err) {
-    console.error("Erro ao atualizar senha:", err);
+    console.error("Erro em atualizaSenha:", err);
     throw err;
   }
 }
@@ -80,7 +80,7 @@ export async function deleteSenha(id) {
 
     return response.data;
   } catch (err) {
-    console.error("Erro ao excluir senha:", err);
+    console.error("Erro em deleteSenha:", err);
     throw err;
   }
 }

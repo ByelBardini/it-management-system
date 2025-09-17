@@ -6,7 +6,7 @@ export async function getWorkstation(id) {
 
     return response.data;
   } catch (err) {
-    console.error(err);
+    console.error("Erro em getWorkstation:", err);
     throw err;
   }
 }
@@ -21,7 +21,7 @@ export async function postWorkstation(id_empresa, id_setor, workstation_nome) {
 
     return response.data;
   } catch (err) {
-    console.error(err);
+    console.error("Erro em postWorkstation:", err);
     throw err;
   }
 }
@@ -32,7 +32,7 @@ export async function deleteWorkstation(id) {
 
     return response.data;
   } catch (err) {
-    console.error(err);
+    console.error("Erro em deleteWorkstation:", err);
     throw err;
   }
 }

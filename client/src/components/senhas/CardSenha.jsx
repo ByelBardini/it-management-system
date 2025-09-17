@@ -5,6 +5,7 @@ import { X, Edit, KeyRound, Eye, Trash2 } from "lucide-react";
 import { getSenhaFull, deleteSenha } from "../../services/api/senhaServices.js";
 import { useEffect, useState } from "react";
 import { formatToDate } from "brazilian-values";
+import { tratarErro } from "../default/funcoes.js";
 
 export default function CardSenha({
   setCardSenha,
@@ -30,13 +31,7 @@ export default function CardSenha({
       setSenha(senha);
     } catch (err) {
       setLoading(false);
-      console.error(err);
-      setNotificacao({
-        show: true,
-        tipo: "erro",
-        titulo: "Erro ao cadastrar senha",
-        mensagem: err.message,
-      });
+      tratarErro(setNotificacao, err);
     }
   }
 
@@ -71,13 +66,7 @@ export default function CardSenha({
       }, 700);
     } catch (err) {
       setLoading(false);
-      console.error(err);
-      setNotificacao({
-        show: true,
-        tipo: "erro",
-        titulo: "Erro ao excluir senha",
-        mensagem: err.message,
-      });
+      tratarErro(setNotificacao, err);
     }
   }
 

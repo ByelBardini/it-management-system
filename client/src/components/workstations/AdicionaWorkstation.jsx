@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { X, Save, SearchX } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getSetores } from "../../services/api/setorServices.js";
+import { tratarErro } from "../default/funcoes.js";
 import { postWorkstation } from "../../services/api/workstationServices.js";
 
 export default function AdicionaWorkstation({
@@ -21,7 +23,7 @@ export default function AdicionaWorkstation({
       const setores = await getSetores(localStorage.getItem("empresa_id"));
       setSetores(setores);
     } catch (err) {
-      console.error(err);
+      tratarErro(setNotificacao, err);
     }
   }
 
@@ -48,17 +50,16 @@ export default function AdicionaWorkstation({
         });
         setModificado(true);
         setTimeout(() => {
-          setNotificacao({ show: false, tipo: "sucesso", titulo: "", mensagem: "" });
+          setNotificacao({
+            show: false,
+            tipo: "sucesso",
+            titulo: "",
+            mensagem: "",
+          });
           setAdicionando(false);
         }, 1000);
       } catch (err) {
-        console.error(err);
-        setNotificacao({
-          show: true,
-          tipo: "erro",
-          titulo: "Erro ao adicionar workstation",
-          mensagem: err.message,
-        });
+        tratarErro(setNotificacao, err);
       } finally {
         setCarregando(false);
       }
@@ -138,7 +139,9 @@ export default function AdicionaWorkstation({
                           className="h-4 w-4 accent-sky-500"
                           value={setor.setor_id}
                         />
-                        <span className="text-sm text-white">{setor.setor_nome}</span>
+                        <span className="text-sm text-white">
+                          {setor.setor_nome}
+                        </span>
                       </label>
                     </li>
                   ))

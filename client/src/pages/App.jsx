@@ -1,4 +1,5 @@
 import tipos from "../components/inventario/tiposItens.js";
+import Notificacao from "../components/default/Notificacao.jsx";
 import {
   Monitor,
   Lock,
@@ -11,7 +12,7 @@ import {
 } from "lucide-react";
 import { getDashboard } from "../services/api/dashboardServices.js";
 import { useEffect, useState } from "react";
-import { getDiffDias } from "../components/default/funcoes.js";
+import { getDiffDias, tratarErro } from "../components/default/funcoes.js";
 
 export default function App() {
   const [equipamentosTotal, setEquipamentosTotal] = useState(0);
@@ -28,6 +29,13 @@ export default function App() {
   const [temWorkstation, setTemWorkstation] = useState(0);
   const [semWorkstation, setSemWorkstation] = useState(0);
   const [emEstoque, setEmEstoque] = useState(0);
+
+  const [notificacao, setNotificacao] = useState({
+    show: false,
+    tipo: "sucesso",
+    titulo: "",
+    mensagem: "",
+  });
 
   async function buscarDados() {
     const id = localStorage.getItem("empresa_id");
@@ -111,7 +119,7 @@ export default function App() {
 
       console.log(dados);
     } catch (err) {
-      console.error(err);
+      tratarErro(setNotificacao, err);
     }
   }
 
@@ -121,6 +129,21 @@ export default function App() {
 
   return (
     <div className="mt-4 space-y-6">
+      {notificacao.show && (
+        <Notificacao
+          tipo={notificacao.tipo}
+          titulo={notificacao.titulo}
+          mensagem={notificacao.mensagem}
+          onClick={() =>
+            setNotificacao({
+              show: false,
+              tipo: "sucesso",
+              titulo: "",
+              mensagem: "",
+            })
+          }
+        />
+      )}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <section className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 shadow-xl flex flex-col">
           <header className="flex items-center justify-between mb-3">
