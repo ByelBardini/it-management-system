@@ -78,16 +78,6 @@ export default function ModalWorkstation({
       texto: "",
       onSim: null,
     });
-    if (itens.length > 0) {
-      setNotificacao({
-        show: true,
-        tipo: "erro",
-        titulo: "Impossível excluir o workstation",
-        mensagem:
-          "Você não pode excluir um workstation que tenha algum item vinculado",
-      });
-      return;
-    }
     const id = localStorage.getItem("workstation_id");
     setCarregando(true);
     try {
@@ -213,7 +203,7 @@ export default function ModalWorkstation({
               setConfirmacao({
                 show: true,
                 texto:
-                  "Você tem certeza que deseja excluir esse workstation? Essa ação é irreversível",
+                  "Você tem certeza que deseja excluir esse workstation? Essa ação é irreversível, todos os itens vinculados perderão o vínculo",
                 onSim: () => excluirWorkstation(),
               })
             }
