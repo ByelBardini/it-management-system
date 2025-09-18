@@ -2,6 +2,20 @@ import { Usuario } from "../models/index.js";
 import { ApiError } from "../middlewares/ApiError.js";
 import bcrypt from "bcrypt";
 
+export async function getFuncionarios(req, res) {
+  const usuarios = await Usuario.findAll({
+    attributes: [
+      "usuario_id",
+      "usuario_login",
+      "usuario_nome",
+      "usuario_tipo",
+      "usuario_ativo",
+    ],
+  });
+
+  res.status(200).json(usuarios);
+}
+
 export async function cadastrarUsuario(req, res) {
   const { usuario_nome, usuario_tipo, usuario_login } = req.body;
 

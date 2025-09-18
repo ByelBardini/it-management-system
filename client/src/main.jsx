@@ -14,6 +14,7 @@ import Configuracoes from "./pages/Configuracoes.jsx";
 import Workstations from "./pages/Workstations.jsx";
 import CadastroItem from "./pages/CadastroItem.jsx";
 import Perfil from "./pages/Perfil.jsx";
+import Usuarios from "./pages/Usuarios.jsx";
 
 const router = createBrowserRouter([
   {
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
   {
     path: "/cadastro",
     element: <CadastroItem />,
+  },
+  {
+    path: "/usuarios",
+    element: <Usuarios />,
   },
   {
     path: "/perfil",

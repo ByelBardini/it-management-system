@@ -2,7 +2,7 @@
 import ListaEmpresa from "../components/empresas/ListaEmpresa.jsx";
 import Notificacao from "../components/default/Notificacao.jsx";
 import Loading from "../components/default/Loading.jsx";
-import { LogOut } from "lucide-react";
+import { LogOut, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api.js";
 import { getEmpresas } from "../services/api/empresaServices.js";
@@ -92,6 +92,17 @@ export default function Empresas() {
                    transition focus:outline-none focus:ring-2 focus:ring-blue-400"
       >
         <LogOut className="h-5 w-5" />
+      </button>
+
+      <button
+        onClick={() => navigate("/usuarios", { replace: true })}
+        aria-label="Usuários"
+        title="Gerenciar usuários"
+        className="cursor-pointer absolute top-5 left-5 inline-flex items-center justify-center
+               h-11 w-11 rounded-full bg-white/5 ring-1 ring-white/10
+               text-white/80 hover:bg-white/10 hover:text-white transition"
+      >
+        <Users className="h-5 w-5" />
       </button>
 
       <div className="w-full md:w-1/2 h-[75vh] p-4">
