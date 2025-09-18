@@ -8,3 +8,6 @@ CREATE TABLE `it_management_system`.`logs_sistema` (
 
 ALTER TABLE `it_management_system`.`logs_sistema` 
 ADD COLUMN `log_item_pai_id` INT NULL AFTER `log_id`;
+
+ALTER TABLE `it_management_system`.`itens` 
+CHANGE COLUMN `item_tipo` `item_tipo` ENUM('desktop', 'notebook', 'movel', 'cadeira', 'monitor', 'ferramenta', 'ap', 'ar-condicionado', 'switch', 'periferico', 'no-break', 'impressora', 'gerador', 'celular', 'cabo', 'outros') NOT NULL ;

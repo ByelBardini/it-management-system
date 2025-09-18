@@ -103,6 +103,9 @@ export default function DadosGerais({ value, onChange }) {
           </optgroup>
 
           <optgroup className="bg-zinc-700" label="Outros">
+            <option value="cabo" className="bg-zinc-900">
+              Cabo
+            </option>
             <option value="outros" className="bg-zinc-900">
               Outros
             </option>

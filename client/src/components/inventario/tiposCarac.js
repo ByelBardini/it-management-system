@@ -27,6 +27,7 @@ const tipos = {
   fibra: "Fibra",
   gerenciavel: "Gerenciável",
   portas: "Número de Portas",
+  comprimento: "Comprimento",
 };
 
 export default tipos;

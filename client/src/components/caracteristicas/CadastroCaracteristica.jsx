@@ -13,6 +13,7 @@ import Impressora from "./cadastro/Impressora.jsx";
 import NoBreak from "./cadastro/NoBreak.jsx";
 import Celular from "./cadastro/Celular.jsx";
 import Gerador from "./cadastro/Gerador.jsx";
+import Cabo from "./cadastro/Cabo.jsx";
 import Outros from "./cadastro/Outros.jsx";
 import { useEffect } from "react";
 
@@ -144,6 +145,15 @@ export default function CadastroCaracteristica({
     case "outros":
       return (
         <Outros
+          setCaracteristicas={setCaracteristicas}
+          caracteristicas={caracteristicas}
+          setCaracteristicaValida={setCaracteristicaValida}
+        />
+      );
+
+    case "cabo":
+      return (
+        <Cabo
           setCaracteristicas={setCaracteristicas}
           caracteristicas={caracteristicas}
           setCaracteristicaValida={setCaracteristicaValida}

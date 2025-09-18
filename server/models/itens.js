@@ -48,6 +48,7 @@ Item.init(
         "impressora",
         "gerador",
         "celular",
+        "cabo",
         "outros"
       ),
       allowNull: false,

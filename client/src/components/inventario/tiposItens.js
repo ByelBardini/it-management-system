@@ -13,6 +13,7 @@ const tipos = {
   impressora: "Impressora",
   gerador: "Gerador",
   celular: "Celular",
+  cabo: "Cabo",
   outros: "Outros",
 };
 
