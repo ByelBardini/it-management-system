@@ -92,7 +92,7 @@ export default function Login() {
               "Senha incorreta, verifique a digitação e tente novamente",
           });
         } else {
-          tratarErro(setNotificacao, err);
+          tratarErro(setNotificacao, err, navigate);
         }
       } finally {
         setCarregando(false);
