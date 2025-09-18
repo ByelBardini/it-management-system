@@ -15,15 +15,24 @@ import Workstations from "./pages/Workstations.jsx";
 import CadastroItem from "./pages/CadastroItem.jsx";
 import Perfil from "./pages/Perfil.jsx";
 import Usuarios from "./pages/Usuarios.jsx";
+import PageTransition from "./components/default/PageTransition.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Login />,
+    element: (
+      <PageTransition>
+        <Login />
+      </PageTransition>
+    ),
   },
   {
     path: "/empresas",
-    element: <Empresas />,
+    element: (
+      <PageTransition>
+        <Empresas />
+      </PageTransition>
+    ),
   },
   {
     path: "/app",
@@ -75,11 +84,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/cadastro",
-    element: <CadastroItem />,
+    element: (
+      <PageTransition>
+        <CadastroItem />
+      </PageTransition>
+    ),
   },
   {
     path: "/usuarios",
-    element: <Usuarios />,
+    element: (
+      <PageTransition>
+        <Usuarios />
+      </PageTransition>
+    ),
   },
   {
     path: "/perfil",
