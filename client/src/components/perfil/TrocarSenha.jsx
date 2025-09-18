@@ -2,12 +2,15 @@ import { Save, X, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import { trocarSenha } from "../../services/api/perfilServices.js";
 import { tratarErro } from "../default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function AtualizarSenha({
   setTrocaSenha,
   setLoading,
   setNotificacao,
 }) {
+  const navigate = useNavigate();
+
   const [senhaAtual, setSenhaAtual] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmaSenha, setConfirmaSenha] = useState("");
@@ -63,7 +66,7 @@ export default function AtualizarSenha({
       }, 700);
     } catch (err) {
       setLoading(false);
-                  tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 

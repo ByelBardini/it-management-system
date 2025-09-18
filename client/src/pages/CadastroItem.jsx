@@ -96,7 +96,7 @@ export default function CadastroItem() {
         await postItem(fd);
         setModalConfirmacao(true);
       } catch (err) {
-        tratarErro(setNotificacao, err);
+        tratarErro(setNotificacao, err, navigate);
       } finally {
         setLoading(false);
       }

@@ -2,6 +2,7 @@ import { X, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { putSenha } from "../../services/api/senhaServices.js";
 import { tratarErro } from "../default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function EditarDadosSenha({
   setEditaSenha,
@@ -11,6 +12,8 @@ export default function EditarDadosSenha({
   buscaSenhas,
   buscaDadosSenha,
 }) {
+  const navigate = useNavigate();
+
   const [nome, setNome] = useState("");
   const [tempoTroca, setTempoTroca] = useState("");
 
@@ -58,7 +61,7 @@ export default function EditarDadosSenha({
       }, 700);
     } catch (err) {
       setLoading(false);
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 

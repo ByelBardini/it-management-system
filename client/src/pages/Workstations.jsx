@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import AdicionaWorkstation from "../components/workstations/AdicionaWorkstation.jsx";
 import ModalWorkstation from "../components/workstations/ModalWorkstation.jsx";
 import ModalConfirmacao from "../components/default/ModalConfirmacao.jsx";
@@ -10,8 +11,11 @@ import { getWorkstation } from "../services/api/workstationServices.js";
 import { useEffect } from "react";
 import { useState } from "react";
 import { dividirEmPartes, tratarErro } from "../components/default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function Workstations() {
+  const navigate = useNavigate();
+
   const [workstations, setWorkstations] = useState([]);
   const [workstationsFiltradas, setWorkstationsFiltradas] = useState([]);
   const [adicionando, setAdicionando] = useState(false);
@@ -46,7 +50,7 @@ export default function Workstations() {
       setCarregando(false);
       setWorkstations(workstations);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 

@@ -6,6 +6,7 @@ import { getSetoresWorkstations } from "../../services/api/empresaServices.js";
 import { useEffect, useState } from "react";
 import { putItem, inativaItem } from "../../services/api/itemServices.js";
 import { tratarErro } from "../default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function EditarItem({
   setEditarItem,
@@ -16,6 +17,8 @@ export default function EditarItem({
   setNotificacao,
   setConfirmacao,
 }) {
+  const navigate = useNavigate();
+
   const [setores, setSetores] = useState([]);
   const [workstations, setWorkstations] = useState([]);
 
@@ -119,7 +122,7 @@ export default function EditarItem({
         });
       }, 800);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     } finally {
       setLoading(false);
     }
@@ -165,7 +168,7 @@ export default function EditarItem({
         );
       });
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     } finally {
       setLoading(false);
     }
@@ -178,7 +181,7 @@ export default function EditarItem({
       setSetores(dados.setores);
       setWorkstations(dados.workstations);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 

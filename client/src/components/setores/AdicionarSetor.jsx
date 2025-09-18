@@ -2,6 +2,7 @@ import { X } from "lucide-react";
 import { postSetor } from "../../services/api/setorServices.js";
 import { useState } from "react";
 import { tratarErro } from "../default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function AdicionarSetor({
   setAdicionando,
@@ -9,6 +10,8 @@ export default function AdicionarSetor({
   setNotificacao,
   setCarregando,
 }) {
+  const navigate = useNavigate();
+
   const [nomeSetor, setNomeSetor] = useState("");
 
   function enter(e) {
@@ -46,7 +49,7 @@ export default function AdicionarSetor({
           setAdicionando(false);
         }, 1000);
       } catch (err) {
-        tratarErro(setNotificacao, err);
+        tratarErro(setNotificacao, err, navigate);
       } finally {
         setCarregando(false);
       }

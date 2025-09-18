@@ -9,6 +9,7 @@ import { deleteWorkstation } from "../../services/api/workstationServices.js";
 import { useState } from "react";
 import { useEffect } from "react";
 import { tratarErro } from "../default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function ModalWorkstation({
   setCardWorkstation,
@@ -18,6 +19,8 @@ export default function ModalWorkstation({
   setCardItem,
   buscarWorkstations,
 }) {
+  const navigate = useNavigate();
+
   const [itens, setItens] = useState([]);
 
   function abreItem(id) {
@@ -32,7 +35,7 @@ export default function ModalWorkstation({
 
       setItens(itens);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 
@@ -63,7 +66,7 @@ export default function ModalWorkstation({
         });
       }, 1000);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     } finally {
       setCarregando(false);
     }
@@ -108,7 +111,7 @@ export default function ModalWorkstation({
         setCardWorkstation(false);
       }, 1000);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     } finally {
       setCarregando(false);
     }

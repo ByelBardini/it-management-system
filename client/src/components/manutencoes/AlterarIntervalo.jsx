@@ -2,6 +2,7 @@ import { X, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { putManutencao } from "../../services/api/manutencaoServices.js";
 import { tratarErro } from "../default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function AlterarIntervalo({
   interval,
@@ -12,6 +13,8 @@ export default function AlterarIntervalo({
   id,
   setVisualizando,
 }) {
+  const navigate = useNavigate();
+
   const [intervalo, setIntervalo] = useState("");
 
   useEffect(() => {
@@ -53,7 +56,7 @@ export default function AlterarIntervalo({
       }, 700);
     } catch (err) {
       setLoading(false);
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 

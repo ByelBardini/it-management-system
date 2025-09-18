@@ -6,6 +6,7 @@ import { getSenhaFull, deleteSenha } from "../../services/api/senhaServices.js";
 import { useEffect, useState } from "react";
 import { formatToDate } from "brazilian-values";
 import { tratarErro } from "../default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function CardSenha({
   setCardSenha,
@@ -14,6 +15,8 @@ export default function CardSenha({
   buscaSenhas,
   setLoading,
 }) {
+  const navigate = useNavigate();
+
   const [novaSenha, setNovaSenha] = useState(false);
   const [editaSenha, setEditaSenha] = useState(false);
 
@@ -31,7 +34,7 @@ export default function CardSenha({
       setSenha(senha);
     } catch (err) {
       setLoading(false);
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 
@@ -66,7 +69,7 @@ export default function CardSenha({
       }, 700);
     } catch (err) {
       setLoading(false);
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 

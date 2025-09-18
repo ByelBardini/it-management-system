@@ -1,12 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import ListaEmpresa from "../components/empresas/ListaEmpresa.jsx";
+import Notificacao from "../components/default/Notificacao.jsx";
+import Loading from "../components/default/Loading.jsx";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api.js";
 import { getEmpresas } from "../services/api/empresaServices.js";
 import { useEffect, useState } from "react";
 import { tratarErro } from "../components/default/funcoes.js";
-import ListaEmpresa from "../components/empresas/ListaEmpresa.jsx";
-import Notificacao from "../components/default/Notificacao.jsx";
-import Loading from "../components/default/Loading.jsx";
 
 export default function Empresas() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function Empresas() {
       setLoading(false);
       console.log(empresas);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
       setLoading(false);
     }
   }

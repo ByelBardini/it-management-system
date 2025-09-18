@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import AdicionarSetor from "../components/setores/AdicionarSetor.jsx";
 import AdicionarPlataforma from "../components/plataforma/AdicionarPlataforma.jsx";
 import Notificacao from "../components/default/Notificacao.jsx";
@@ -12,8 +13,11 @@ import {
 } from "../services/api/plataformaServices.js";
 import { useEffect } from "react";
 import { tratarErro } from "../components/default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function Configuracoes() {
+  const navigate = useNavigate();
+
   const [adicionandoSetor, setAdicionandoSetor] = useState(false);
   const [adicionandoPlataforma, setAdicionandoPlataforma] = useState(false);
 
@@ -63,7 +67,7 @@ export default function Configuracoes() {
         setNotificacao(false);
       }, 1000);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     } finally {
       setCarregando(false);
     }
@@ -98,7 +102,7 @@ export default function Configuracoes() {
         });
       }, 1000);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     } finally {
       setCarregando(false);
     }
@@ -114,7 +118,7 @@ export default function Configuracoes() {
       setCarregando(false);
     } catch (err) {
       setCarregando(false);
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 

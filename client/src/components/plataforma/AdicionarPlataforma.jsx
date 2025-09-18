@@ -2,6 +2,7 @@ import { X } from "lucide-react";
 import { postPlataforma } from "../../services/api/plataformaServices.js";
 import { useState } from "react";
 import { tratarErro } from "../default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function AdicionarPlataforma({
   setAdicionando,
@@ -9,6 +10,8 @@ export default function AdicionarPlataforma({
   setNotificacao,
   setCarregando,
 }) {
+  const navigate = useNavigate();
+
   const [nomePlataforma, setNomePlataforma] = useState("");
 
   function enter(e) {
@@ -45,7 +48,7 @@ export default function AdicionarPlataforma({
           setAdicionando(false);
         }, 1000);
       } catch (err) {
-        tratarErro(setNotificacao, err);
+        tratarErro(setNotificacao, err, navigate);
       } finally {
         setCarregando(false);
       }

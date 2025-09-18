@@ -2,12 +2,15 @@ import { X, Camera, Save, ImageIcon } from "lucide-react";
 import { useState, useRef } from "react";
 import { putPerfil } from "../../services/api/perfilServices.js";
 import { tratarErro } from "../default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function EditarFuncionario({
   setEditarPerfil,
   setLoading,
   setNotificacao,
 }) {
+  const navigate = useNavigate();
+
   const [fotoFile, setFotoFile] = useState(null);
   const [fotoPreview, setFotoPreview] = useState(
     `${import.meta.env.VITE_API_BASE_URL}/imagem?path=${localStorage.getItem(
@@ -67,7 +70,7 @@ export default function EditarFuncionario({
       }, 700);
     } catch (err) {
       setLoading(false);
-                  tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 

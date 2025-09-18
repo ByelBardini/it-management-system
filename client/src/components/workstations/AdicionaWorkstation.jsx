@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getSetores } from "../../services/api/setorServices.js";
 import { tratarErro } from "../default/funcoes.js";
 import { postWorkstation } from "../../services/api/workstationServices.js";
+import { useNavigate } from "react-router-dom";
 
 export default function AdicionaWorkstation({
   setModificado,
@@ -11,6 +12,8 @@ export default function AdicionaWorkstation({
   setNotificacao,
   setCarregando,
 }) {
+  const navigate = useNavigate();
+
   const [setores, setSetores] = useState([]);
   const [setoresFiltrados, setSetoresFiltrados] = useState([]);
   const [filtro, setFiltro] = useState("");
@@ -23,7 +26,7 @@ export default function AdicionaWorkstation({
       const setores = await getSetores(localStorage.getItem("empresa_id"));
       setSetores(setores);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 
@@ -59,7 +62,7 @@ export default function AdicionaWorkstation({
           setAdicionando(false);
         }, 1000);
       } catch (err) {
-        tratarErro(setNotificacao, err);
+        tratarErro(setNotificacao, err, navigate);
       } finally {
         setCarregando(false);
       }

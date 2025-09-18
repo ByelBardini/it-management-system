@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getPlataformas } from "../../services/api/plataformaServices.js";
 import { postSenha } from "../../services/api/senhaServices.js";
 import { tratarErro } from "../default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function ModalRegistraSenha({
   setAdicionaSenha,
@@ -11,6 +12,8 @@ export default function ModalRegistraSenha({
   buscaSenhas,
   setLoading,
 }) {
+  const navigate = useNavigate();
+
   const [nome, setNome] = useState("");
   const [plataforma, setPlataforma] = useState("");
   const [usuario, setUsuario] = useState("");
@@ -28,7 +31,7 @@ export default function ModalRegistraSenha({
       const plats = await getPlataformas();
       setPlataformas(plats);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 
@@ -86,7 +89,7 @@ export default function ModalRegistraSenha({
       }, 700);
     } catch (err) {
       setLoading(false);
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 

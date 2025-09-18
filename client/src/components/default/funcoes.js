@@ -47,11 +47,29 @@ export function dividirEmPartes(array, tamanho) {
   return resultado;
 }
 
-export function tratarErro(setNotificacao, err) {
+export function tratarErro(setNotificacao, err, navigate) {
   console.error(err);
+  if (err.status == 401 || err.status == 403) {
+    setNotificacao({
+      show: true,
+      tipo: "erro",
+      titulo: `Erro de validação`,
+      mensagem:
+        "Token inválido ou expirado, redirecionando para a tela de login",
+    });
+    setTimeout(() => {
+      setNotificacao({
+        show: false,
+        tipo: "sucesso",
+        titulo: "",
+        mensagem: "",
+      });
+      navigate("/", { replace: true });
+    }, 700);
+  }
   setNotificacao({
     show: true,
-    tipo: "atencao",
+    tipo: "erro",
     titulo: `Erro ${err.status}`,
     mensagem: err.message,
   });

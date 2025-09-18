@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import tipos from "../components/inventario/tiposItens.js";
 import Notificacao from "../components/default/Notificacao.jsx";
 import {
@@ -13,8 +14,11 @@ import {
 import { getDashboard } from "../services/api/dashboardServices.js";
 import { useEffect, useState } from "react";
 import { getDiffDias, tratarErro } from "../components/default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function App() {
+  const navigate = useNavigate();
+
   const [equipamentosTotal, setEquipamentosTotal] = useState(0);
   const [equipamentosPorTipo, setEquipamentosPorTipo] = useState([]);
 
@@ -119,7 +123,7 @@ export default function App() {
 
       console.log(dados);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 

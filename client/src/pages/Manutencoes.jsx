@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import TabelaManutencoes from "../components/manutencoes/TabelaManutencoes.jsx";
 import ExibirManutencao from "../components/manutencoes/ExibirManutencao.jsx";
 import Loading from "../components/default/Loading";
@@ -12,8 +13,11 @@ import {
   tratarErro,
 } from "../components/default/funcoes.js";
 import { FunnelX, FunnelPlus, ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Manutencoes() {
+  const navigate = useNavigate();
+  
   const [itens, setItens] = useState([]);
   const [atrasadas, setAtrasadas] = useState("");
 
@@ -62,7 +66,7 @@ export default function Manutencoes() {
       setItens(itens);
       setItensFiltrados(itens);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 

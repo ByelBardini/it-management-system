@@ -4,6 +4,7 @@ import { formatToDate } from "brazilian-values";
 import { realizarManutencao } from "../../services/api/manutencaoServices.js";
 import { useState } from "react";
 import { tratarErro } from "../default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 const intervalos = {
   0: "Não é realizado",
@@ -20,6 +21,8 @@ export default function ExibirManutencao({
   setLoading,
   setConfirmacao,
 }) {
+  const navigate = useNavigate();
+
   const [editar, setEditar] = useState(false);
 
   async function realizar() {
@@ -51,7 +54,7 @@ export default function ExibirManutencao({
         setVisualizando(false);
       }, 700);
     } catch (err) {
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
   return (

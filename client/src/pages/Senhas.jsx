@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import TabelaSenhas from "../components/senhas/TabelaSenhas.jsx";
 import CardSenha from "../components/senhas/CardSenha.jsx";
 import ModalRegistraSenha from "../components/senhas/ModalRegistraSenha.jsx";
@@ -19,8 +20,11 @@ import {
   dividirEmPartes,
   tratarErro,
 } from "../components/default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
 export default function Senhas() {
+  const navigate = useNavigate();
+  
   const [senhas, setSenhas] = useState([]);
   const [atrasadas, setAtrasadas] = useState();
 
@@ -70,7 +74,7 @@ export default function Senhas() {
       setSenhasFiltradas(senhas);
     } catch (err) {
       setLoading(false);
-      tratarErro(setNotificacao, err);
+      tratarErro(setNotificacao, err, navigate);
     }
   }
 
