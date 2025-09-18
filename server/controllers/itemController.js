@@ -152,7 +152,7 @@ export async function removerWorkstation(req, res) {
 
   const item = await Item.findByPk(id);
   item.item_workstation_id = null;
-  item.save();
+  item.save({ usuarioId: req.usuario.id });
 
   return res
     .status(200)
@@ -213,7 +213,7 @@ export async function postItem(req, res) {
         item_ultima_manutencao,
         item_intervalo_manutencao,
       },
-      { transaction: t }
+      { transaction: t, usuarioId: req.usuario.id }
     );
 
     for (const c of caracteristicas) {
@@ -223,7 +223,7 @@ export async function postItem(req, res) {
           caracteristica_nome: c.nome,
           caracteristica_valor: c.valor,
         },
-        { transaction: t }
+        { transaction: t, usuarioId: req.usuario.id }
       );
     }
 
@@ -235,7 +235,7 @@ export async function postItem(req, res) {
           anexo_nome: a.nome,
           anexo_caminho: a.caminho,
         },
-        { transaction: t }
+        { transaction: t, usuarioId: req.usuario.id }
       );
     }
 
@@ -284,19 +284,22 @@ export async function putItem(req, res) {
   }
   item.item_em_uso = item_em_uso;
 
-  item.save();
+  item.save({ usuarioId: req.usuario.id });
 
   for (const c of caracteristicas) {
     const caracteristica = await Caracteristica.findByPk(c.caracteristica_id);
     if (caracteristica) {
       caracteristica.caracteristica_valor = c.caracteristica_valor;
-      await caracteristica.save();
+      await caracteristica.save({ usuarioId: req.usuario.id });
     } else {
-      await Caracteristica.create({
-        caracteristica_item_id: id,
-        caracteristica_nome: c.caracteristica_nome,
-        caracteristica_valor: c.caracteristica_valor,
-      });
+      await Caracteristica.create(
+        {
+          caracteristica_item_id: id,
+          caracteristica_nome: c.caracteristica_nome,
+          caracteristica_valor: c.caracteristica_valor,
+        },
+        { usuarioId: req.usuario.id }
+      );
     }
   }
   const anexosBanco = await Anexo.findAll({ where: { anexo_item_id: id } });
@@ -306,12 +309,15 @@ export async function putItem(req, res) {
   ).filter(Boolean);
 
   for (const a of req.anexos) {
-    await Anexo.create({
-      anexo_item_id: id,
-      anexo_tipo: a.tipo,
-      anexo_nome: a.nome,
-      anexo_caminho: a.caminho,
-    });
+    await Anexo.create(
+      {
+        anexo_item_id: id,
+        anexo_tipo: a.tipo,
+        anexo_nome: a.nome,
+        anexo_caminho: a.caminho,
+      },
+      { usuarioId: req.usuario.id }
+    );
   }
 
   const removidos = anexosBanco.filter(
@@ -334,7 +340,7 @@ export async function putItem(req, res) {
       console.error("Erro movendo anexo para excluídos:", err);
     }
 
-    await r.destroy();
+    await r.destroy({ usuarioId: req.usuario.id });
   }
 
   return res.status(200).json({ message: "Item atualizado com sucesso" });
@@ -354,6 +360,6 @@ export async function inativaItem(req, res) {
   item.item_setor_id = null;
   item.item_workstation_id = null;
   item.item_data_inativacao = new Date();
-  await item.save();
+  await item.save({ usuarioId: req.usuario.id });
   return res.status(200).json({ message: "Item inativado com sucesso" });
 }

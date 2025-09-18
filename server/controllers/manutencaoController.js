@@ -44,7 +44,7 @@ export async function putManutencao(req, res) {
 
   item.item_intervalo_manutencao = novo_intervalo;
 
-  await item.save();
+  await item.save({ usuarioId: req.usuario.id });
 
   return res
     .status(200)
@@ -61,7 +61,7 @@ export async function realizarManutencao(req, res) {
 
   item.item_ultima_manutencao = new Date();
 
-  await item.save();
+  await item.save({ usuarioId: req.usuario.id });
 
   res
     .status(200)

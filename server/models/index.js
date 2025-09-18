@@ -7,6 +7,7 @@ import Setor from "./setores.js";
 import Usuario from "./usuarios.js";
 import Workstation from "./workstations.js";
 import Plataforma from "./plataformas.js";
+import Log from "./logs.js";
 
 //Foreign keys de Empresas e Setores
 Empresa.hasMany(Setor, {
@@ -158,6 +159,191 @@ Senha.belongsTo(Empresa, {
   as: "empresas",
 });
 
+//Logging de itens
+Item.afterCreate(async (item, options) => {
+  const usuarioId = options?.usuarioId || null;
+  await Log.create({
+    log_usuario_id: usuarioId,
+    log_item_pai_id: item.item_empresa_id,
+    log_operacao: "Item criado",
+    log_valor_anterior: "-",
+    log_novo_valor: JSON.stringify(item.toJSON()),
+  });
+});
+
+Item.afterUpdate(async (item, options) => {
+  const usuarioId = options?.usuarioId || null;
+  const changedFields = item.changed();
+
+  if (changedFields && changedFields.length > 0) {
+    for (const field of changedFields) {
+      const oldVal = item.previous(field);
+      const newVal = item.get(field);
+      await Log.create({
+        log_usuario_id: usuarioId,
+        log_item_pai_id: item.item_id,
+        log_operacao: `Campo do item atualizado: ${field}`,
+        log_valor_anterior: oldVal !== null ? String(oldVal) : "NULL",
+        log_novo_valor: newVal !== null ? String(newVal) : "NULL",
+      });
+    }
+  }
+});
+
+//Logging de Anexos
+Anexo.afterCreate(async (anexo, options) => {
+  const usuarioId = options?.usuarioId || null;
+  await Log.create({
+    log_usuario_id: usuarioId,
+    log_item_pai_id: anexo.anexo_item_id,
+    log_operacao: `Anexo criado`,
+    log_valor_anterior: "-",
+    log_novo_valor: JSON.stringify(anexo.toJSON()),
+  });
+});
+
+Anexo.afterDestroy(async (anexo, options) => {
+  const usuarioId = options?.usuarioId || null;
+  await Log.create({
+    log_usuario_id: usuarioId,
+    log_item_pai_id: anexo.anexo_item_id,
+    log_operacao: `Anexo excluído`,
+    log_valor_anterior: JSON.stringify(anexo.toJSON()),
+    log_novo_valor: "-",
+  });
+});
+
+//Logging se Setores
+Setor.afterCreate(async (setor, options) => {
+  const usuarioId = options?.usuarioId || null;
+  await Log.create({
+    log_usuario_id: usuarioId,
+    log_item_pai_id: setor.setor_empresa_id,
+    log_operacao: `Setor criado`,
+    log_valor_anterior: "-",
+    log_novo_valor: JSON.stringify(setor.toJSON()),
+  });
+});
+
+Setor.afterDestroy(async (setor, options) => {
+  const usuarioId = options?.usuarioId || null;
+  await Log.create({
+    log_usuario_id: usuarioId,
+    log_item_pai_id: setor.setor_empresa_id,
+    log_operacao: `Setor excluído`,
+    log_valor_anterior: JSON.stringify(setor.toJSON()),
+    log_novo_valor: "-",
+  });
+});
+
+//Logging de Plataformas
+Plataforma.afterCreate(async (plataforma, options) => {
+  const usuarioId = options?.usuarioId || null;
+  await Log.create({
+    log_usuario_id: usuarioId,
+    log_item_pai_id: null,
+    log_operacao: `Plataforma criada`,
+    log_valor_anterior: "-",
+    log_novo_valor: JSON.stringify(plataforma.toJSON()),
+  });
+});
+
+Plataforma.afterDestroy(async (plataforma, options) => {
+  const usuarioId = options?.usuarioId || null;
+  await Log.create({
+    log_usuario_id: usuarioId,
+    log_item_pai_id: null,
+    log_operacao: `Plataforma excluída`,
+    log_valor_anterior: JSON.stringify(plataforma.toJSON()),
+    log_novo_valor: "-",
+  });
+});
+
+//Logging de Workstations
+Workstation.afterCreate(async (workstation, options) => {
+  const usuarioId = options?.usuarioId || null;
+  await Log.create({
+    log_usuario_id: usuarioId,
+    log_item_pai_id: workstation.workstation_empresa_id,
+    log_operacao: `Workstation criada`,
+    log_valor_anterior: "-",
+    log_novo_valor: JSON.stringify(workstation.toJSON()),
+  });
+});
+
+Workstation.afterDestroy(async (workstation, options) => {
+  const usuarioId = options?.usuarioId || null;
+  await Log.create({
+    log_usuario_id: usuarioId,
+    log_item_pai_id: workstation.workstation_empresa_id,
+    log_operacao: `Workstation excluída`,
+    log_valor_anterior: JSON.stringify(workstation.toJSON()),
+    log_novo_valor: "-",
+  });
+});
+
+//Logging de Senhas
+Senha.afterCreate(async (senha, options) => {
+  const usuarioId = options?.usuarioId || null;
+  await Log.create({
+    log_usuario_id: usuarioId,
+    log_item_pai_id: senha.senha_plataforma_id,
+    log_operacao: `Senha criada`,
+    log_valor_anterior: "-",
+    log_novo_valor: JSON.stringify(senha.toJSON()),
+  });
+});
+
+Senha.afterDestroy(async (senha, options) => {
+  const usuarioId = options?.usuarioId || null;
+  await Log.create({
+    log_usuario_id: usuarioId,
+    log_item_pai_id: senha.senha_plataforma_id,
+    log_operacao: `Senha excluída`,
+    log_valor_anterior: JSON.stringify(senha.toJSON()),
+    log_novo_valor: "-",
+  });
+});
+
+Senha.afterUpdate(async (senha, options) => {
+  const usuarioId = options?.usuarioId || null;
+  const changedFields = senha.changed();
+
+  if (changedFields && changedFields.length > 0) {
+    for (const field of changedFields) {
+      const oldVal = senha.previous(field);
+      const newVal = senha.get(field);
+      await Log.create({
+        log_usuario_id: usuarioId,
+        log_item_pai_id: senha.senha_id,
+        log_operacao: `Campo da senha atualizado: ${field}`,
+        log_valor_anterior: oldVal !== null ? String(oldVal) : "NULL",
+        log_novo_valor: newVal !== null ? String(newVal) : "NULL",
+      });
+    }
+  }
+});
+
+//Logging de Características
+Caracteristica.afterUpdate(async (caracteristica, options) => {
+  const usuarioId = options?.usuarioId || null;
+  const changedFields = caracteristica.changed();
+
+  if (changedFields && changedFields.length > 0) {
+    for (const field of changedFields) {
+      const oldVal = caracteristica.previous(field);
+      const newVal = caracteristica.get(field);
+      await Log.create({
+        log_usuario_id: usuarioId,
+        log_item_pai_id: caracteristica.caracteristica_item_id,
+        log_operacao: `Característica atualizada: ${caracteristica.caracteristica_nome}`,
+        log_valor_anterior: oldVal !== null ? String(oldVal) : "NULL",
+        log_novo_valor: newVal !== null ? String(newVal) : "NULL",
+      });
+    }
+  }
+});
+
 export {
   Anexo,
   Caracteristica,
@@ -168,4 +354,5 @@ export {
   Usuario,
   Workstation,
   Plataforma,
+  Log,
 };

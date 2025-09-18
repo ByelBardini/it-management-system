@@ -117,17 +117,20 @@ export async function postSenha(req, res) {
   let senhaCriptografada = cifra.update(senha, "utf-8", "hex");
   senhaCriptografada += cifra.final("hex");
 
-  await Senha.create({
-    senha_empresa_id,
-    senha_usuario_id,
-    senha_plataforma_id,
-    senha_nome,
-    senha_usuario,
-    senha_criptografada: senhaCriptografada,
-    senha_iv: iv.toString("hex"),
-    senha_ultima_troca: new Date(),
-    senha_tempo_troca: senha_tempo_troca,
-  });
+  await Senha.create(
+    {
+      senha_empresa_id,
+      senha_usuario_id,
+      senha_plataforma_id,
+      senha_nome,
+      senha_usuario,
+      senha_criptografada: senhaCriptografada,
+      senha_iv: iv.toString("hex"),
+      senha_ultima_troca: new Date(),
+      senha_tempo_troca: senha_tempo_troca,
+    },
+    { usuarioId: req.usuario.id }
+  );
 
   return res.status(201).json({ message: "Senha cadastrada com sucesso!" });
 }
@@ -147,7 +150,7 @@ export async function putSenha(req, res) {
   senha.senha_nome = senha_nome;
   senha.senha_tempo_troca = senha_tempo_troca;
 
-  await senha.save();
+  await senha.save({ usuarioId: req.usuario.id });
 
   return res.status(200).json({ message: "Senha atualizada com sucesso" });
 }
@@ -174,7 +177,7 @@ export async function atualizaSenha(req, res) {
   senha.senha_iv = iv.toString("hex");
   senha.senha_ultima_troca = new Date();
 
-  await senha.save();
+  await senha.save({ usuarioId: req.usuario.id });
 
   return res.status(200).json({ message: "Senha atualizada com sucesso" });
 }
@@ -188,7 +191,7 @@ export async function deletaSenha(req, res) {
 
   const senha = await Senha.findByPk(id);
 
-  await senha.destroy();
+  await senha.destroy({ usuarioId: req.usuario.id });
 
   return res.status(200).json({ message: "Senha excluída com sucesso." });
 }

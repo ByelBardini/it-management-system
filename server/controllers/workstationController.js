@@ -30,11 +30,14 @@ export async function postWorkstation(req, res) {
     throw ApiError.badRequest("Todos os dados são necessários");
   }
 
-  await Workstation.create({
-    workstation_empresa_id: id_empresa,
-    workstation_setor_id: id_setor,
-    workstation_nome: workstation_nome,
-  });
+  await Workstation.create(
+    {
+      workstation_empresa_id: id_empresa,
+      workstation_setor_id: id_setor,
+      workstation_nome: workstation_nome,
+    },
+    { usuarioId: req.usuario.id }
+  );
 
   return res.status(201).json({ message: "Workstation criada com sucesso" });
 }
@@ -47,7 +50,7 @@ export async function deleteWorkstation(req, res) {
 
   const workstation = await Workstation.findByPk(id);
 
-  await workstation.destroy();
+  await workstation.destroy({ usuarioId: req.usuario.id });
 
   return res.status(200).json({ message: "Workstation deletada com sucesso!" });
 }

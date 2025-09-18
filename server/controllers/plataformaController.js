@@ -14,7 +14,7 @@ export async function postPlataforma(req, res) {
     throw ApiError.badRequest("O nome é obrigatório");
   }
 
-  await Plataforma.create({ plataforma_nome });
+  await Plataforma.create({ plataforma_nome }, { usuarioId: req.usuario.id });
 
   return res.status(201).json({ message: "Plataforma criada com sucesso" });
 }
@@ -29,7 +29,7 @@ export async function deletePlataforma(req, res) {
   try {
     const plataforma = await Plataforma.findByPk(id);
 
-    await plataforma.destroy();
+    await plataforma.destroy({ usuarioId: req.usuario.id });
 
     return res.status(200).json({ message: "Plataforma excluída com sucesso" });
   } catch (err) {

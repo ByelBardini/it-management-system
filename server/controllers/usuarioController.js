@@ -54,7 +54,7 @@ export async function inativaUsuario(req, res) {
 
   usuario.usuario_ativo = !usuario.usuario_ativo;
 
-  await usuario.save();
+  await usuario.save({ usuarioId: req.usuario.id });
 
   return res
     .status(200)
@@ -74,7 +74,7 @@ export async function resetarSenha(req, res) {
   usuario.usuario_senha = senhaHash;
   usuario.usuario_troca_senha = 1;
 
-  await usuario.save();
+  await usuario.save({ usuarioId: req.usuario.id });
 
   return res.status(200).json({ message: "Senha resetada com sucesso" });
 }

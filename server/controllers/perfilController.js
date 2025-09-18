@@ -29,7 +29,7 @@ export async function trocaSenha(req, res) {
 
   usuario.usuario_senha = senhaHash;
   usuario.usuario_troca_senha = 0;
-  await usuario.save();
+  await usuario.save({ usuarioId: req.usuario.id });
 
   return res.status(200).json({ message: "Senha atualizada com sucesso" });
 }
@@ -55,7 +55,7 @@ export async function primeiraTrocaSenha(req, res) {
 
   usuario.usuario_senha = senhaHash;
   usuario.usuario_troca_senha = 0;
-  await usuario.save();
+  await usuario.save({ usuarioId: req.usuario.id });
 
   return res.status(200).json({ message: "Senha atualizada com sucesso" });
 }
@@ -79,7 +79,7 @@ export async function putPerfil(req, res) {
     usuario.usuario_caminho_foto = fotoPath;
   }
 
-  await usuario.save();
+  await usuario.save({ usuarioId: req.usuario.id });
 
   return res.status(200).json({
     usuario_nome: nome_usuario,

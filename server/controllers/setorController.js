@@ -22,7 +22,10 @@ export async function postSetor(req, res) {
     throw ApiError.badRequest("Todos os dados são obrigatórios");
   }
 
-  await Setor.create({ setor_empresa_id, setor_nome });
+  await Setor.create(
+    { setor_empresa_id, setor_nome },
+    { usuarioId: req.usuario.id }
+  );
 
   return res.status(201).json({ message: "Setor criado com sucesso" });
 }
@@ -34,7 +37,9 @@ export async function deleteSetor(req, res) {
     throw ApiError.badRequest("Id do setor é obrigatório");
   }
 
-  await Setor.destroy({ where: { setor_id: id } });
+  const setor = await Setor.findByPk(id);
+
+  await setor.destroy({ usuarioId: req.usuario.id });
 
   return res.status(200).json({ message: "Setor excluído com sucesso" });
 }
