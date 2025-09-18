@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./server
+    ports:
+      - "3032:3032"
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - appnet
+
+networks:
+  appnet:
