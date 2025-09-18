@@ -86,6 +86,10 @@ export default function Usuarios() {
         <ExibeUsuario
           usuario={usuarioSelecionado}
           setExibeUsuario={setExibeUsuario}
+          setNotificacao={setNotificacao}
+          setConfirmacao={setConfirmacao}
+          setLoading={setLoading}
+          buscaUsuarios={buscaUsuarios}
         />
       )}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">

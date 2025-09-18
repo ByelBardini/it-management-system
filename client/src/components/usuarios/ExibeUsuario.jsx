@@ -1,6 +1,62 @@
-import { X, UserX, KeyRound, UserRound } from "lucide-react";
+import { X, UserX, UserCheck, KeyRound, UserRound } from "lucide-react";
+import { inativaUsuario } from "../../services/api/usuariosServices.js";
+import { tratarErro } from "../default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 
-export default function ExibeUsuario({ setExibeUsuario, usuario }) {
+export default function ExibeUsuario({
+  setExibeUsuario,
+  usuario,
+  setNotificacao,
+  setConfirmacao,
+  setLoading,
+  buscaUsuarios,
+}) {
+  const navigate = useNavigate();
+
+  async function inativar() {
+    setConfirmacao({
+      show: false,
+      texto: "",
+      onSim: null,
+    });
+    if (usuario.usuario_id == localStorage.getItem("usuario_id")) {
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Impossível Inativar",
+        mensagem: "Você não pode inativar seu próprio usuário",
+      });
+      return;
+    }
+    setLoading(true);
+    try {
+      await inativaUsuario(usuario.usuario_id);
+      setLoading(false);
+
+      setNotificacao({
+        show: true,
+        tipo: "sucesso",
+        titulo: `Usuário ${
+          usuario.usuario_ativo == 1 ? "inativado" : "ativado"
+        } com sucesso`,
+        mensagem: "A operação foi realizada com sucesso, e já foi atualizada",
+      });
+      await buscaUsuarios();
+      setTimeout(() => {
+        setNotificacao({
+          show: false,
+          tipo: "sucesso",
+          titulo: "",
+          mensagem: "",
+        });
+        setExibeUsuario(false);
+      }, 700);
+    } catch (err) {
+      setLoading(false);
+      tratarErro(setNotificacao, err, navigate);
+    }
+  }
+
   return (
     <div
       onClick={() => setExibeUsuario(false)}
@@ -77,11 +133,28 @@ export default function ExibeUsuario({ setExibeUsuario, usuario }) {
 
         <div className="flex justify-end pt-4 border-t border-white/10 gap-2">
           <button
-            onClick={() => console.log("Inativar usuário", usuario)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-white font-medium bg-rose-600 hover:bg-rose-500 transition cursor-pointer"
+            onClick={() =>
+              setConfirmacao({
+                show: true,
+                texto: `Você tem certeza que deseja ${
+                  usuario.usuario_ativo == 1 ? "inativar" : "ativar"
+                } o usuário?`,
+                onSim: inativar,
+              })
+            }
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-white font-medium ${
+              usuario.usuario_ativo == 1
+                ? "bg-rose-600 hover:bg-rose-500"
+                : "bg-green-600 hover:bg-green-500"
+            }  transition cursor-pointer`}
           >
-            <UserX className="h-4 w-4" />
-            Inativar
+            {usuario.usuario_ativo == 1 ? (
+              <UserX className="h-4 w-4" />
+            ) : (
+              <UserCheck className="h-4 w-4" />
+            )}
+
+            {usuario.usuario_ativo == 1 ? "inativar" : "ativar"}
           </button>
           <button
             onClick={() => console.log("Resetar senha", usuario)}

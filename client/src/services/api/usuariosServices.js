@@ -23,3 +23,13 @@ export async function postUsuario(usuario_nome, usuario_tipo, usuario_login) {
     throw err;
   }
 }
+
+export async function inativaUsuario(id) {
+  try {
+    const response = await api.put(`/usuario/inativa/${id}`);
+    return response.data;
+  } catch (err) {
+    console.error("Erro em inativaUsuario:", err);
+    throw err;
+  }
+}

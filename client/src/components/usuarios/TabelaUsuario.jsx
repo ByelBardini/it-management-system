@@ -23,7 +23,10 @@ export default function TabelaUsuario({
       <tbody>
         {usuarios.map((usuario) => {
           return (
-            <tr className="hover:bg-white/5 transition">
+            <tr
+              key={usuario.usuario_id}
+              className="hover:bg-white/5 transition"
+            >
               <td className="px-6 py-4">
                 <div className="flex items-center gap-3">
                   {usuario.usuario_caminho_foto != null ? (

@@ -43,3 +43,20 @@ export async function cadastrarUsuario(req, res) {
     throw ApiError.internal("Erro ao cadastrar usuário");
   }
 }
+
+export async function inativaUsuario(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("O ID do usuário é obrigatório");
+  }
+
+  const usuario = await Usuario.findByPk(id);
+
+  usuario.usuario_ativo = !usuario.usuario_ativo;
+
+  await usuario.save();
+
+  return res
+    .status(200)
+    .json({ message: "Usuário inativado/ativado com sucesso" });
+}
