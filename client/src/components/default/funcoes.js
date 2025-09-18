@@ -55,7 +55,7 @@ export function tratarErro(setNotificacao, err, navigate) {
       tipo: "erro",
       titulo: `Erro de validação`,
       mensagem:
-        "Token inválido ou expirado, redirecionando para a tela de login",
+        "Sessão inválida ou expirada, redirecionando para a tela de login",
     });
     setTimeout(() => {
       setNotificacao({
