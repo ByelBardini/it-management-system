@@ -94,17 +94,18 @@ export default function Empresas() {
         <LogOut className="h-5 w-5" />
       </button>
 
-      <button
-        onClick={() => navigate("/usuarios", { replace: true })}
-        aria-label="Usuários"
-        title="Gerenciar usuários"
-        className="cursor-pointer absolute top-5 left-5 inline-flex items-center justify-center
+      {localStorage.getItem("usuario_tipo") == "adm" && (
+        <button
+          onClick={() => navigate("/usuarios", { replace: true })}
+          aria-label="Usuários"
+          title="Gerenciar usuários"
+          className="cursor-pointer absolute top-5 left-5 inline-flex items-center justify-center
                h-11 w-11 rounded-full bg-white/5 ring-1 ring-white/10
                text-white/80 hover:bg-white/10 hover:text-white transition"
-      >
-        <Users className="h-5 w-5" />
-      </button>
-
+        >
+          <Users className="h-5 w-5" />
+        </button>
+      )}
       <div className="w-full md:w-1/2 h-[75vh] p-4">
         <div
           className="h-full rounded-2xl bg-white/5 ring-1 ring-white/10 p-6 text-white shadow-2xl

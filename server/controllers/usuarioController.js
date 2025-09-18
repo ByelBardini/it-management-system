@@ -10,6 +10,7 @@ export async function getFuncionarios(req, res) {
       "usuario_nome",
       "usuario_tipo",
       "usuario_ativo",
+      "usuario_caminho_foto",
     ],
   });
 

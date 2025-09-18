@@ -9,3 +9,17 @@ export async function getUsuarios() {
     throw err;
   }
 }
+
+export async function postUsuario(usuario_nome, usuario_tipo, usuario_login) {
+  try {
+    const response = await api.post("/usuario", {
+      usuario_nome,
+      usuario_tipo,
+      usuario_login,
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Erro em postUsuario:", err);
+    throw err;
+  }
+}
