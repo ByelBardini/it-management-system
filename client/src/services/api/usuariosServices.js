@@ -33,3 +33,13 @@ export async function inativaUsuario(id) {
     throw err;
   }
 }
+
+export async function resetarSenha(id) {
+  try {
+    const response = await api.put(`/usuario/reseta/${id}`);
+    return response.data;
+  } catch (err) {
+    console.error("Erro em resetarSenha:", err);
+    throw err;
+  }
+}

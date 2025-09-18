@@ -60,3 +60,21 @@ export async function inativaUsuario(req, res) {
     .status(200)
     .json({ message: "Usuário inativado/ativado com sucesso" });
 }
+
+export async function resetarSenha(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("O ID do usuário é obrigatório");
+  }
+
+  const usuario = await Usuario.findByPk(id);
+
+  const senhaHash = bcrypt.hashSync("12345", 10);
+
+  usuario.usuario_senha = senhaHash;
+  usuario.usuario_troca_senha = 1;
+
+  await usuario.save();
+
+  return res.status(200).json({ message: "Senha resetada com sucesso" });
+}

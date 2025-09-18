@@ -1,5 +1,8 @@
 import { X, UserX, UserCheck, KeyRound, UserRound } from "lucide-react";
-import { inativaUsuario } from "../../services/api/usuariosServices.js";
+import {
+  inativaUsuario,
+  resetarSenha,
+} from "../../services/api/usuariosServices.js";
 import { tratarErro } from "../default/funcoes.js";
 import { useNavigate } from "react-router-dom";
 
@@ -40,6 +43,39 @@ export default function ExibeUsuario({
           usuario.usuario_ativo == 1 ? "inativado" : "ativado"
         } com sucesso`,
         mensagem: "A operação foi realizada com sucesso, e já foi atualizada",
+      });
+      await buscaUsuarios();
+      setTimeout(() => {
+        setNotificacao({
+          show: false,
+          tipo: "sucesso",
+          titulo: "",
+          mensagem: "",
+        });
+        setExibeUsuario(false);
+      }, 700);
+    } catch (err) {
+      setLoading(false);
+      tratarErro(setNotificacao, err, navigate);
+    }
+  }
+
+  async function resetar() {
+    setConfirmacao({
+      show: false,
+      texto: "",
+      onSim: null,
+    });
+    setLoading(true);
+    try {
+      await resetarSenha(usuario.usuario_id);
+      setLoading(false);
+
+      setNotificacao({
+        show: true,
+        tipo: "sucesso",
+        titulo: "Senha resetada com sucesso",
+        mensagem: `A senha foi resetada com sucesso, retornado ao padrão "12345"`,
       });
       await buscaUsuarios();
       setTimeout(() => {
@@ -157,7 +193,14 @@ export default function ExibeUsuario({
             {usuario.usuario_ativo == 1 ? "inativar" : "ativar"}
           </button>
           <button
-            onClick={() => console.log("Resetar senha", usuario)}
+            onClick={() =>
+              setConfirmacao({
+                show: true,
+                texto:
+                  "Você tem certeza que deseja resetar a senha deste usuário?",
+                onSim: resetar,
+              })
+            }
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-white font-medium bg-sky-600 hover:bg-sky-500 transition cursor-pointer"
           >
             <KeyRound className="h-4 w-4" />

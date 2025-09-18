@@ -3,6 +3,7 @@ import {
   cadastrarUsuario,
   getFuncionarios,
   inativaUsuario,
+  resetarSenha,
 } from "../controllers/usuarioController.js";
 import { autenticar, autorizarRole } from "../middlewares/autenticaToken.js";
 
@@ -13,5 +14,6 @@ router.use(autorizarRole("adm"));
 router.post("/", cadastrarUsuario);
 router.get("/", getFuncionarios);
 router.put("/inativa/:id", inativaUsuario);
+router.put("/reseta/:id", resetarSenha);
 
 export default router;
