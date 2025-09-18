@@ -1,12 +1,20 @@
-import { Pencil, UserRound } from "lucide-react";
+import { DiamondPlus, UserRound } from "lucide-react";
 
-export default function TabelaUsuario({ usuarios }) {
+export default function TabelaUsuario({
+  usuarios,
+  setExibeUsuario,
+  setUsuarioSelecionado,
+}) {
+  function exibe(usuario) {
+    setUsuarioSelecionado(usuario);
+    setExibeUsuario(true);
+  }
+
   return (
     <table className="w-full text-left text-sm">
       <thead className="bg-white/10 text-white/80 uppercase text-xs">
         <tr>
           <th className="px-6 py-3">Nome</th>
-          <th className="px-6 py-3">Login</th>
           <th className="px-6 py-3">Tipo</th>
           <th className="px-6 py-3">Status</th>
           <th className="px-6 py-3"></th>
@@ -37,7 +45,6 @@ export default function TabelaUsuario({ usuarios }) {
                   </span>
                 </div>
               </td>
-              <td className="px-6 py-4">{usuario.usuario_login}</td>
               <td className="px-6 py-4">
                 <span
                   className={`px-2 py-1 rounded-full ${
@@ -62,10 +69,11 @@ export default function TabelaUsuario({ usuarios }) {
               </td>
               <td className="px-6 py-4 text-right">
                 <button
-                  className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition"
-                  title="Editar usuário"
+                  className="cursor-pointer p-2 rounded-lg bg-white/5 hover:bg-white/10 transition"
+                  title="Exibir usuário"
+                  onClick={() => exibe(usuario)}
                 >
-                  <Pencil className="h-4 w-4" />
+                  <DiamondPlus className="h-4 w-4" />
                 </button>
               </td>
             </tr>

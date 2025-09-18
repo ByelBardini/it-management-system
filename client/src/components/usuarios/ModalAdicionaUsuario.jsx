@@ -17,13 +17,13 @@ export default function ModalAdicionaUsuario({
   const [tipo, setTipo] = useState("");
 
   async function salvarUsuario() {
-    if(nome == "" || usuario == "" || tipo == ""){
-        setNotificacao({
-          show: true,
-          tipo: "erro",
-          titulo: "Dados inválidos",
-          mensagem: "Todos os dados são necessários para cadastro de usuários",
-        });
+    if (nome == "" || usuario == "" || tipo == "") {
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Dados inválidos",
+        mensagem: "Todos os dados são necessários para cadastro de usuários",
+      });
     }
     setLoading(true);
     try {
@@ -108,7 +108,7 @@ export default function ModalAdicionaUsuario({
               <option hidden value="">
                 Selecione...
               </option>
-              <option value="adm">Admin</option>
+              <option value="adm">Administrador</option>
               <option value="usuario">Usuário</option>
             </select>
           </div>

@@ -4,8 +4,9 @@ import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import TabelaUsuario from "../components/usuarios/TabelaUsuario.jsx";
 import ModalAdicionaUsuario from "../components/usuarios/ModalAdicionaUsuario.jsx";
+import ExibeUsuario from "../components/usuarios/ExibeUsuario.jsx";
 import { useNavigate, NavLink } from "react-router-dom";
-import { Undo2, UserPlus, Pencil, UserRound } from "lucide-react";
+import { Undo2, UserPlus } from "lucide-react";
 import { getUsuarios } from "../services/api/usuariosServices.js";
 import { useEffect, useState } from "react";
 import { tratarErro } from "../components/default/funcoes.js";
@@ -13,6 +14,7 @@ import { tratarErro } from "../components/default/funcoes.js";
 export default function Usuarios() {
   const navigate = useNavigate();
   const [usuarios, setUsuarios] = useState([]);
+  const [usuarioSelecionado, setUsuarioSelecionado] = useState({});
 
   const [notificacao, setNotificacao] = useState({
     show: false,
@@ -28,6 +30,7 @@ export default function Usuarios() {
   const [loading, setLoading] = useState(false);
 
   const [adicionaUsuario, setAdicionaUsuario] = useState(false);
+  const [exibeFuncionario, setExibeUsuario] = useState(false);
 
   async function buscaUsuarios() {
     setLoading(true);
@@ -79,6 +82,12 @@ export default function Usuarios() {
           buscaUsuarios={buscaUsuarios}
         />
       )}
+      {exibeFuncionario && (
+        <ExibeUsuario
+          usuario={usuarioSelecionado}
+          setExibeUsuario={setExibeUsuario}
+        />
+      )}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_30%,rgba(59,130,246,0.22),transparent)]" />
         <div
@@ -118,7 +127,11 @@ export default function Usuarios() {
         </div>
 
         <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl overflow-hidden">
-          <TabelaUsuario usuarios={usuarios} />
+          <TabelaUsuario
+            usuarios={usuarios}
+            setExibeUsuario={setExibeUsuario}
+            setUsuarioSelecionado={setUsuarioSelecionado}
+          />
         </div>
       </div>
     </div>
