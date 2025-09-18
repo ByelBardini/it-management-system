@@ -14,6 +14,19 @@ export async function trocarSenha(id, senhaAtual, nova_senha) {
   }
 }
 
+export async function primeiroLogin(id, nova_senha) {
+  try {
+    const response = await api.put(`/perfil/primeira/${id}`, {
+      nova_senha,
+    });
+
+    return response.data;
+  } catch (err) {
+    console.error("Erro primeiroLogin:", err);
+    throw err;
+  }
+}
+
 export async function putPerfil(id, nome_usuario, fotoFile) {
   try {
     const fd = new FormData();

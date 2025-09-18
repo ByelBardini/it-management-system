@@ -2,6 +2,7 @@
 import ListaEmpresa from "../components/empresas/ListaEmpresa.jsx";
 import Notificacao from "../components/default/Notificacao.jsx";
 import Loading from "../components/default/Loading.jsx";
+import PrimeiroAcesso from "../components/perfil/PrimeiroAcesso.jsx";
 import { LogOut, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api.js";
@@ -21,6 +22,7 @@ export default function Empresas() {
     titulo: "",
     mensagem: "",
   });
+  const [primeiroLogin, setPrimeiroLogin] = useState(false);
 
   async function buscaEmpresas() {
     setLoading(true);
@@ -50,11 +52,18 @@ export default function Empresas() {
 
   useEffect(() => {
     buscaEmpresas();
-    console.log(localStorage.getItem("usuario_caminho_foto"));
+    setPrimeiroLogin(localStorage.getItem("usuario_troca_senha") == 1);
   }, []);
 
   return (
     <div className="relative flex justify-center items-center w-screen h-screen overflow-hidden bg-[#0A1633] text-white">
+      {primeiroLogin && (
+        <PrimeiroAcesso
+          setPrimeiroLogin={setPrimeiroLogin}
+          setNotificacao={setNotificacao}
+          setLoading={setLoading}
+        />
+      )}
       {loading && <Loading />}
       {notificacao.show && (
         <Notificacao
