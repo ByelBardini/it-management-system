@@ -12,11 +12,13 @@ import Plataforma from "./plataformas.js";
 Empresa.hasMany(Setor, {
   foreignKey: "setor_empresa_id",
   sourceKey: "empresa_id",
+  onDelete: "CASCADE",
   as: "setores",
 });
 Setor.belongsTo(Empresa, {
   foreignKey: "setor_empresa_id",
   targetKey: "empresa_id",
+  onDelete: "CASCADE",
   as: "empresa",
 });
 
@@ -24,11 +26,13 @@ Setor.belongsTo(Empresa, {
 Setor.hasMany(Item, {
   foreignKey: "item_setor_id",
   sourceKey: "setor_id",
+  onDelete: "SET NULL",
   as: "itens",
 });
 Item.belongsTo(Setor, {
   foreignKey: "item_setor_id",
   targetKey: "setor_id",
+  onDelete: "SET NULL",
   as: "setor",
 });
 
@@ -36,11 +40,13 @@ Item.belongsTo(Setor, {
 Empresa.hasMany(Item, {
   foreignKey: "item_empresa_id",
   sourceKey: "empresa_id",
+  onDelete: "CASCADE",
   as: "itens",
 });
 Item.belongsTo(Empresa, {
   foreignKey: "item_empresa_id",
   targetKey: "empresa_id",
+  onDelete: "CASCADE",
   as: "empresa",
 });
 
@@ -48,11 +54,13 @@ Item.belongsTo(Empresa, {
 Workstation.hasMany(Item, {
   foreignKey: "item_workstation_id",
   sourceKey: "workstation_id",
+  onDelete: "SET NULL",
   as: "itens",
 });
 Item.belongsTo(Workstation, {
   foreignKey: "item_workstation_id",
   targetKey: "workstation_id",
+  onDelete: "SET NULL",
   as: "workstation",
 });
 
@@ -60,11 +68,13 @@ Item.belongsTo(Workstation, {
 Setor.hasMany(Workstation, {
   foreignKey: "workstation_setor_id",
   sourceKey: "setor_id",
+  onDelete: "CASCADE",
   as: "workstations",
 });
 Workstation.belongsTo(Setor, {
   foreignKey: "workstation_setor_id",
   targetKey: "setor_id",
+  onDelete: "CASCADE",
   as: "setor",
 });
 
@@ -72,11 +82,13 @@ Workstation.belongsTo(Setor, {
 Empresa.hasMany(Workstation, {
   foreignKey: "workstation_empresa_id",
   targetKey: "empresa_id",
+  onDelete: "CASCADE",
   as: "workstations",
 });
 Workstation.belongsTo(Empresa, {
   foreignKey: "workstation_empresa_id",
   targetKey: "empresa_id",
+  onDelete: "CASCADE",
   as: "empresa",
 });
 
@@ -84,11 +96,13 @@ Workstation.belongsTo(Empresa, {
 Item.hasMany(Anexo, {
   foreignKey: "anexo_item_id",
   sourceKey: "item_id",
+  onDelete: "CASCADE",
   as: "anexos",
 });
 Anexo.belongsTo(Item, {
   foreignKey: "anexo_item_id",
   targetKey: "item_id",
+  onDelete: "CASCADE",
   as: "item",
 });
 
@@ -96,11 +110,13 @@ Anexo.belongsTo(Item, {
 Item.hasMany(Caracteristica, {
   foreignKey: "caracteristica_item_id",
   sourceKey: "item_id",
+  onDelete: "CASCADE",
   as: "caracteristicas",
 });
 Caracteristica.belongsTo(Item, {
   foreignKey: "caracteristica_item_id",
   targetKey: "item_id",
+  onDelete: "CASCADE",
   as: "item",
 });
 
@@ -132,11 +148,13 @@ Senha.belongsTo(Plataforma, {
 Empresa.hasMany(Senha, {
   foreignKey: "senha_empresa_id",
   sourceKey: "empresa_id",
+  onDelete: "CASCADE",
   as: "senhas",
 });
 Senha.belongsTo(Empresa, {
   foreignKey: "senha_empresa_id",
   targetKey: "empresa_id",
+  onDelete: "CASCADE",
   as: "empresas",
 });
 

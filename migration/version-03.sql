@@ -33,3 +33,75 @@ CHANGE COLUMN `item_tipo` `item_tipo` ENUM('desktop', 'notebook', 'movel', 'cade
 
 ALTER TABLE `it_management_system`.`usuarios` 
 ADD COLUMN `usuario_caminho_foto` VARCHAR(255) NULL AFTER `usuario_tipo`;
+
+ALTER TABLE `it_management_system`.`itens` 
+DROP FOREIGN KEY `item_workstation_id`;
+ALTER TABLE `it_management_system`.`itens` 
+ADD CONSTRAINT `item_workstation_id`
+  FOREIGN KEY (`item_workstation_id`)
+  REFERENCES `it_management_system`.`workstations` (`workstation_id`)
+  ON DELETE SET NULL;
+
+ALTER TABLE `it_management_system`.`itens` 
+DROP FOREIGN KEY `item_setor_id`;
+ALTER TABLE `it_management_system`.`itens` 
+ADD CONSTRAINT `item_setor_id`
+  FOREIGN KEY (`item_setor_id`)
+  REFERENCES `it_management_system`.`setores` (`setor_id`)
+  ON DELETE SET NULL;
+
+ALTER TABLE `it_management_system`.`caracteristicas` 
+DROP FOREIGN KEY `caracteristica_item_id`;
+ALTER TABLE `it_management_system`.`caracteristicas` 
+ADD CONSTRAINT `caracteristica_item_id`
+  FOREIGN KEY (`caracteristica_item_id`)
+  REFERENCES `it_management_system`.`itens` (`item_id`)
+  ON DELETE CASCADE;
+
+ALTER TABLE `it_management_system`.`anexos` 
+DROP FOREIGN KEY `anexo_item_id`;
+ALTER TABLE `it_management_system`.`anexos` 
+ADD CONSTRAINT `anexo_item_id`
+  FOREIGN KEY (`anexo_item_id`)
+  REFERENCES `it_management_system`.`itens` (`item_id`)
+  ON DELETE CASCADE;
+
+ALTER TABLE `it_management_system`.`workstations` 
+DROP FOREIGN KEY `workstation_setor_id`;
+ALTER TABLE `it_management_system`.`workstations` 
+ADD CONSTRAINT `workstation_setor_id`
+  FOREIGN KEY (`workstation_setor_id`)
+  REFERENCES `it_management_system`.`setores` (`setor_id`)
+  ON DELETE CASCADE;
+
+ALTER TABLE `it_management_system`.`itens` 
+DROP FOREIGN KEY `item_empresa_id`;
+ALTER TABLE `it_management_system`.`itens` 
+ADD CONSTRAINT `item_empresa_id`
+  FOREIGN KEY (`item_empresa_id`)
+  REFERENCES `it_management_system`.`empresas` (`empresa_id`)
+  ON DELETE CASCADE;
+
+ALTER TABLE `it_management_system`.`senhas` 
+DROP FOREIGN KEY `senha_empresa_id`;
+ALTER TABLE `it_management_system`.`senhas` 
+ADD CONSTRAINT `senha_empresa_id`
+  FOREIGN KEY (`senha_empresa_id`)
+  REFERENCES `it_management_system`.`empresas` (`empresa_id`)
+  ON DELETE CASCADE;
+
+ALTER TABLE `it_management_system`.`setores` 
+DROP FOREIGN KEY `setor_empresa_id`;
+ALTER TABLE `it_management_system`.`setores` 
+ADD CONSTRAINT `setor_empresa_id`
+  FOREIGN KEY (`setor_empresa_id`)
+  REFERENCES `it_management_system`.`empresas` (`empresa_id`)
+  ON DELETE CASCADE;
+
+ALTER TABLE `it_management_system`.`workstations` 
+DROP FOREIGN KEY `workstation_empresa_id`;
+ALTER TABLE `it_management_system`.`workstations` 
+ADD CONSTRAINT `workstation_empresa_id`
+  FOREIGN KEY (`workstation_empresa_id`)
+  REFERENCES `it_management_system`.`empresas` (`empresa_id`)
+  ON DELETE CASCADE;
