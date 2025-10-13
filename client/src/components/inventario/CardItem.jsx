@@ -24,9 +24,9 @@ export default function CardItem({
   }
 
   async function baixar(caminho) {
-    const url = `http://localhost:3030/download?path=${encodeURIComponent(
-      caminho
-    )}`;
+    const url = `POST ${
+      import.meta.env.VITE_API_BASE_URL
+    }/login/download?path=${encodeURIComponent(caminho)}`;
     const token = localStorage.getItem("token");
     const resp = await fetch(url, {
       credentials: "include",

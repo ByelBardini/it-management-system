@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "it-management-system",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "identifier": "br.com.infrahub",
   "build": {
     "frontendDist": "../build",
@@ -13,14 +13,15 @@
     "windows": [
       {
         "title": "InfraHub",
-        "width": 800,
-        "height": 600,
+        "width": 1280,
+        "height": 720,
         "resizable": true,
-        "fullscreen": false
+        "fullscreen": false,
+        "devtools": true
       }
     ],
     "security": {
-      "csp": "default-src 'self'; connect-src http://localhost:3030 ws://localhost:3030"
+      "csp": "default-src 'self'; img-src 'self' data: blob: http: https:; connect-src 'self' http: https: ws:;"
     }
   },
   "bundle": {
