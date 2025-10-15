@@ -5,6 +5,7 @@ import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import TabelaPecas from "../components/pecas/TabelaPecas";
 import ModalCadastraPecas from "../components/pecas/ModalCadastraPecas";
+import CampoFiltros from "../components/pecas/CampoFiltros.jsx";
 import {
   getPecasAtivas,
   getPecasInativas,
@@ -18,6 +19,9 @@ export default function Pecas() {
   const navigate = useNavigate();
 
   const [pecas, setPecas] = useState([]);
+  const [pecasFiltradas, setPecasFiltradas] = useState([]);
+  const [pecasOrdenadas, setPecasOrdenadas] = useState([]);
+
   const [cardPecas, setCardPecas] = useState(false);
   const [adiciona, setAdiciona] = useState(false);
 
@@ -43,9 +47,11 @@ export default function Pecas() {
     try {
       if (inativos) {
         const pecas = await getPecasInativas(id_empresa);
+        setPecasFiltradas(pecas);
         setPecas(pecas);
       } else {
         const pecas = await getPecasAtivas(id_empresa);
+        setPecasFiltradas(pecas);
         setPecas(pecas);
       }
       setLoading(false);
@@ -95,6 +101,31 @@ export default function Pecas() {
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Peças</h2>
 
+          {filtrando ? (
+            <CampoFiltros
+              pecas={pecas}
+              inativos={inativos}
+              setPecasFiltradas={setPecasFiltradas}
+              filtrando={filtrando}
+            />
+          ) : inativos ? (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-white/70">
+                Total Peças Inativas:
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-rose-600/20 text-rose-400 text-sm font-medium">
+                {pecas.length}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-white/70">Total Peças Ativas:</span>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-600/20 text-emerald-400 text-sm font-medium">
+                {pecas.length}
+              </span>
+            </div>
+          )}
+
           <div className="flex gap-2">
             <button
               onClick={() => setFiltrando(!filtrando)}
@@ -115,7 +146,7 @@ export default function Pecas() {
         </div>
         <div className="overflow-x-auto">
           <TabelaPecas
-            pecas={pecas}
+            pecas={pecasFiltradas}
             setCardPecas={setCardPecas}
             inativos={inativos}
           />
@@ -132,7 +163,7 @@ export default function Pecas() {
             onClick={() => setInativos(!inativos)}
           >
             <span className="text-sm font-medium">
-              {!inativos ? "Listar Itens Inativos" : "Listar Itens Ativos"}
+              {!inativos ? "Listar Peças Inativas" : "Listar Peças Ativas"}
             </span>
           </button>
         </div>
