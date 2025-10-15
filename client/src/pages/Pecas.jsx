@@ -6,20 +6,28 @@ import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import TabelaPecas from "../components/pecas/TabelaPecas";
 import ModalCadastraPecas from "../components/pecas/ModalCadastraPecas";
 import CampoFiltros from "../components/pecas/CampoFiltros.jsx";
+import Paginacao from "../components/default/Paginacao.jsx";
 import {
   getPecasAtivas,
   getPecasInativas,
 } from "../services/api/pecasServices.js";
-import { tratarErro } from "../components/default/funcoes.js";
+import {
+  dividirEmPartes,
+  tratarErro,
+  useItensPorPagina,
+} from "../components/default/funcoes.js";
 import { useNavigate } from "react-router-dom";
 import { Plus, FunnelPlus, FunnelX } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Pecas() {
   const navigate = useNavigate();
+  const itensPorPagina = useItensPorPagina(50, 240);
 
   const [pecas, setPecas] = useState([]);
   const [pecasFiltradas, setPecasFiltradas] = useState([]);
+
+  const [sessao, setSessao] = useState(0);
   const [pecasOrdenadas, setPecasOrdenadas] = useState([]);
 
   const [cardPecas, setCardPecas] = useState(false);
@@ -65,6 +73,13 @@ export default function Pecas() {
     buscarPecas();
   }, [inativos]);
 
+  useEffect(() => {
+    const ordenados = dividirEmPartes(pecasFiltradas, itensPorPagina);
+    setPecasOrdenadas(ordenados);
+    console.log(ordenados);
+    setSessao(0);
+  }, [pecasFiltradas]);
+
   return (
     <div className="p-4">
       {loading && <Loading />}
@@ -92,6 +107,7 @@ export default function Pecas() {
       )}
       {adiciona && (
         <ModalCadastraPecas
+          buscarPecas={buscarPecas}
           setAdiciona={setAdiciona}
           setNotificacao={setNotificacao}
           setLoading={setLoading}
@@ -136,7 +152,6 @@ export default function Pecas() {
 
             <button
               onClick={() => setAdiciona(true)}
-              to={"/cadastro"}
               className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
             >
               <Plus size={18} />
@@ -146,7 +161,7 @@ export default function Pecas() {
         </div>
         <div className="overflow-x-auto">
           <TabelaPecas
-            pecas={pecasFiltradas}
+            pecas={pecasOrdenadas[sessao]}
             setCardPecas={setCardPecas}
             inativos={inativos}
           />
@@ -168,6 +183,13 @@ export default function Pecas() {
           </button>
         </div>
       </div>
+      {pecasOrdenadas.length > 1 && (
+        <Paginacao
+          sessao={sessao}
+          setSessao={setSessao}
+          ordenadas={pecasOrdenadas}
+        />
+      )}
     </div>
   );
 }

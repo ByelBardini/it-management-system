@@ -2,7 +2,11 @@ import tipos from "./tiposPecas.js";
 import { SearchX } from "lucide-react";
 import { formatToDate, formatToBRL } from "brazilian-values";
 
-export default function TabelaPecas({ pecas, setCardPecas = {}, inativos }) {
+export default function TabelaPecas({
+  pecas = [],
+  setCardPecas = {},
+  inativos,
+}) {
   function abreCard(id) {
     localStorage.setItem("item_id", id);
     setCardPecas(true);

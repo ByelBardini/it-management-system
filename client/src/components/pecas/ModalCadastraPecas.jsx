@@ -17,6 +17,7 @@ export default function ModalCadastraPecas({
   setAdiciona,
   setNotificacao,
   setLoading,
+  buscarPecas,
 }) {
   const navigate = useNavigate();
 
@@ -66,6 +67,7 @@ export default function ModalCadastraPecas({
         titulo: "Peça cadastrada!",
         mensagem: "A peça foi cadastrada com sucesso no inventário.",
       });
+      await buscarPecas();
       setTimeout(() => {
         setAdiciona(false);
         setNotificacao({
