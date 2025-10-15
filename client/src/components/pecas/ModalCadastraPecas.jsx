@@ -2,6 +2,8 @@
 import { X } from "lucide-react";
 import { postPeca } from "../../services/api/pecasServices.js";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { tratarErro } from "../default/funcoes.js";
 
 function formatarRealDinamico(valor) {
   valor = valor.replace(/\D/g, "");
@@ -16,6 +18,8 @@ export default function ModalCadastraPecas({
   setNotificacao,
   setLoading,
 }) {
+  const navigate = useNavigate();
+
   const [tipo, setTipo] = useState("");
   const [nome, setNome] = useState("");
   const [preco, setPreco] = useState("");
@@ -72,12 +76,7 @@ export default function ModalCadastraPecas({
         });
       }, 800);
     } catch (err) {
-      setNotificacao({
-        show: true,
-        tipo: "erro",
-        titulo: "Erro ao salvar",
-        mensagem: err.message || "Ocorreu um erro inesperado.",
-      });
+      tratarErro(setNotificacao, err, navigate);
     } finally {
       setLoading(false);
     }

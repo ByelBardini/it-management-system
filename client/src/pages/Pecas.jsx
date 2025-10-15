@@ -1,13 +1,19 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import Loading from "../components/default/Loading";
 import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import TabelaPecas from "../components/pecas/TabelaPecas";
 import ModalCadastraPecas from "../components/pecas/ModalCadastraPecas";
+import { getPecasAtivas } from "../services/api/pecasServices.js";
+import { tratarErro } from "../components/default/funcoes.js";
+import { useNavigate } from "react-router-dom";
 import { Plus, FunnelPlus, FunnelX } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Pecas() {
+  const navigate = useNavigate();
+
   const [pecas, setPecas] = useState([]);
   const [cardPecas, setCardPecas] = useState(false);
   const [adiciona, setAdiciona] = useState(false);
@@ -27,6 +33,23 @@ export default function Pecas() {
 
   const [inativos, setInativos] = useState(false);
   const [filtrando, setFiltrando] = useState(false);
+
+  async function buscarPecas() {
+    setLoading(true);
+    const id_empresa = localStorage.getItem("empresa_id");
+    try {
+      const pecas = await getPecasAtivas(id_empresa);
+      setPecas(pecas);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      tratarErro(setNotificacao, err, navigate);
+    }
+  }
+
+  useEffect(() => {
+    buscarPecas();
+  }, []);
 
   return (
     <div className="p-4">

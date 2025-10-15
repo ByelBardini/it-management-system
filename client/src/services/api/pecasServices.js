@@ -16,9 +16,9 @@ export async function postPeca(id_empresa, tipo, nome, preco, data_aquisicao) {
   }
 }
 
-export async function getPecas(id) {
+export async function getPecasAtivas(id) {
   try {
-    const response = await api.get(`/pecas/${id}`);
+    const response = await api.get(`/pecas/ativas/${id}`);
     return response.data;
   } catch (err) {
     console.error("Erro em getPecas:", err);

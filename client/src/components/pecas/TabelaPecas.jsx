@@ -19,6 +19,9 @@ export default function TabelaPecas({ pecas, setCardPecas = {}, inativos }) {
             <th className="px-6 py-3 font-medium">
               {inativos ? "Data de Inativação" : "Item Vinculado"}
             </th>
+            {!inativos && (
+              <th className="px-6 py-3 font-medium">Data de Aquisição</th>
+            )}
             {!inativos && <th className="px-6 py-3 font-medium">Em uso</th>}
           </tr>
         </thead>
@@ -46,6 +49,13 @@ export default function TabelaPecas({ pecas, setCardPecas = {}, inativos }) {
                     ? "N/A"
                     : peca.item.item_nome}
                 </td>
+                {!inativos && (
+                  <td className="px-6 py-3">
+                    {formatToDate(
+                      new Date(peca.peca_data_aquisicao + "T03:00:00Z")
+                    )}
+                  </td>
+                )}
                 {!inativos && (
                   <td className="px-6 py-3">
                     {peca.item_em_uso ? (
