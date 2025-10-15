@@ -8,6 +8,33 @@ import Usuario from "./usuarios.js";
 import Workstation from "./workstations.js";
 import Plataforma from "./plataformas.js";
 import Log from "./logs.js";
+import Peca from "./pecas.js";
+
+//Foreign keys de Peças e Empresas
+Empresa.hasMany(Peca, {
+  foreignKey: "peca_empresa_id",
+  sourceKey: "empresa_id",
+  onDelete: "CASCADE",
+  as: "pecas",
+});
+Setor.belongsTo(Peca, {
+  foreignKey: "peca_empresa_id",
+  targetKey: "empresa_id",
+  onDelete: "CASCADE",
+  as: "empresa",
+});
+
+//Foreign keys de Peças e Itens
+Item.hasMany(Peca, {
+  foreignKey: "peca_item_id",
+  sourceKey: "item_id",
+  as: "pecas",
+});
+Item.belongsTo(Peca, {
+  foreignKey: "peca_item_id",
+  targetKey: "item_id",
+  as: "item",
+});
 
 //Foreign keys de Empresas e Setores
 Empresa.hasMany(Setor, {
