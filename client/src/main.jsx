@@ -15,6 +15,7 @@ import Workstations from "./pages/Workstations.jsx";
 import CadastroItem from "./pages/CadastroItem.jsx";
 import Perfil from "./pages/Perfil.jsx";
 import Usuarios from "./pages/Usuarios.jsx";
+import Pecas from "./pages/Pecas.jsx";
 import PageTransition from "./components/default/PageTransition.jsx";
 
 const router = createBrowserRouter([
@@ -103,6 +104,14 @@ const router = createBrowserRouter([
     element: (
       <AppLayout>
         <Perfil />
+      </AppLayout>
+    ),
+  },
+  {
+    path: "/pecas",
+    element: (
+      <AppLayout>
+        <Pecas />
       </AppLayout>
     ),
   },
