@@ -17,7 +17,7 @@ Empresa.hasMany(Peca, {
   onDelete: "CASCADE",
   as: "pecas",
 });
-Setor.belongsTo(Peca, {
+Peca.belongsTo(Empresa, {
   foreignKey: "peca_empresa_id",
   targetKey: "empresa_id",
   onDelete: "CASCADE",
@@ -30,7 +30,7 @@ Item.hasMany(Peca, {
   sourceKey: "item_id",
   as: "pecas",
 });
-Item.belongsTo(Peca, {
+Peca.belongsTo(Item, {
   foreignKey: "peca_item_id",
   targetKey: "item_id",
   as: "item",
@@ -382,4 +382,5 @@ export {
   Workstation,
   Plataforma,
   Log,
+  Peca,
 };
