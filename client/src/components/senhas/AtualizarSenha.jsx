@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Save, X, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import { atualizaSenha } from "../../services/api/senhaServices.js";
@@ -65,6 +66,13 @@ export default function AtualizarSenha({
       tratarErro(setNotificacao, err, navigate);
     }
   }
+
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") setNovaSenha(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center">

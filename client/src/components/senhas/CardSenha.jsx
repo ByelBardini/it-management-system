@@ -77,6 +77,13 @@ export default function CardSenha({
     buscaDadosSenha();
   }, []);
 
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") setCardSenha(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <div className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center">
       {editaSenha && (

@@ -84,6 +84,13 @@ export default function AdicionaWorkstation({
     }
   }, [filtro, setores]);
 
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") setAdicionando(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <div
       onClick={() => setAdicionando(false)}

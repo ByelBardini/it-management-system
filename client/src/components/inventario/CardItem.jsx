@@ -50,6 +50,13 @@ export default function CardItem({
   }
 
   useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") setCardItem(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
+
+  useEffect(() => {
     buscaDados();
   }, []);
 

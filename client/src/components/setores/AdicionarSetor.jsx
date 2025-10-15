@@ -1,8 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { X } from "lucide-react";
 import { postSetor } from "../../services/api/setorServices.js";
 import { useState } from "react";
 import { tratarErro } from "../default/funcoes.js";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function AdicionarSetor({
   setAdicionando,
@@ -55,6 +57,13 @@ export default function AdicionarSetor({
       }
     }
   }
+
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") setAdicionando(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">

@@ -1,8 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { X } from "lucide-react";
 import { useState } from "react";
 import { postUsuario } from "../../services/api/usuariosServices.js";
 import { tratarErro } from "../default/funcoes.js";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function ModalAdicionaUsuario({
   setNotificacao,
@@ -51,6 +53,13 @@ export default function ModalAdicionaUsuario({
       tratarErro(setNotificacao, err, navigate);
     }
   }
+
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") setAdicionaUsuario(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <div

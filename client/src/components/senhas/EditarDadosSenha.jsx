@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { X, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { putSenha } from "../../services/api/senhaServices.js";
@@ -64,6 +65,13 @@ export default function EditarDadosSenha({
       tratarErro(setNotificacao, err, navigate);
     }
   }
+
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") setEditaSenha(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center">

@@ -111,6 +111,13 @@ export default function ModalWorkstation({
     buscaItens();
   }, []);
 
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") setCardWorkstation(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <div
       onClick={() => setCardWorkstation(false)}

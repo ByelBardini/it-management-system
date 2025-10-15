@@ -189,6 +189,13 @@ export default function EditarItem({
     puxarSetoresWorkstations();
   }, []);
 
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") setEditarItem(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-[60]">
       <div

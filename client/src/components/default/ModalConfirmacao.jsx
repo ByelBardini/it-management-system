@@ -1,7 +1,21 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { X, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { useEffect } from "react";
 
-export default function ModalConfirmacao({ onNao, onSim, texto, tipo = "atencao" }) {
+export default function ModalConfirmacao({
+  onNao,
+  onSim,
+  texto,
+  tipo = "atencao",
+}) {
   const isSucesso = tipo === "sucesso";
+
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") onNao();
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <div className="fixed inset-0 z-70 flex items-center justify-center bg-black/70">

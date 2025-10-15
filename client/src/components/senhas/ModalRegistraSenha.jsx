@@ -113,6 +113,13 @@ export default function ModalRegistraSenha({
     buscarPlataformas();
   }, []);
 
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") setAdicionaSenha(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <div
       onClick={() => setAdicionaSenha(false)}

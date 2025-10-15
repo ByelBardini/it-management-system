@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { X, UserX, UserCheck, KeyRound, UserRound } from "lucide-react";
 import {
   inativaUsuario,
@@ -5,6 +6,7 @@ import {
 } from "../../services/api/usuariosServices.js";
 import { tratarErro } from "../default/funcoes.js";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function ExibeUsuario({
   setExibeUsuario,
@@ -92,6 +94,13 @@ export default function ExibeUsuario({
       tratarErro(setNotificacao, err, navigate);
     }
   }
+
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") setExibeUsuario(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <div

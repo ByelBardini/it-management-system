@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import AlterarIntervalo from "./AlterarIntervalo.jsx";
 import { X, Edit, Check, Wrench } from "lucide-react";
 import { formatToDate } from "brazilian-values";
@@ -5,6 +6,7 @@ import { realizarManutencao } from "../../services/api/manutencaoServices.js";
 import { useState } from "react";
 import { tratarErro } from "../default/funcoes.js";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const intervalos = {
   0: "Não é realizado",
@@ -57,6 +59,13 @@ export default function ExibirManutencao({
       tratarErro(setNotificacao, err, navigate);
     }
   }
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") setVisualizando(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <div className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center">
       {editar && (

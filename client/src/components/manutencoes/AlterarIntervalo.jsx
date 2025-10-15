@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { X, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { putManutencao } from "../../services/api/manutencaoServices.js";
@@ -59,6 +60,13 @@ export default function AlterarIntervalo({
       tratarErro(setNotificacao, err, navigate);
     }
   }
+
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") setEditar(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center">
