@@ -13,6 +13,7 @@ import senhaRoutes from "./routes/senhaRoutes.js";
 import manutencoesRoutes from "./routes/manutencoesRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import perfilRoutes from "./routes/perfilRoutes.js";
+import pecasRoutes from "./routes/pecasRoutes.js";
 import { ApiError } from "./middlewares/ApiError.js";
 
 dotenv.config();
@@ -41,6 +42,7 @@ app.use("/senha", senhaRoutes);
 app.use("/manutencao", manutencoesRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/perfil", perfilRoutes);
+app.use("/pecas", pecasRoutes);
 
 app.use((err, req, res, next) => {
   if (err instanceof ApiError) {
