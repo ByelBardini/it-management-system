@@ -18,6 +18,7 @@ export default function ModalCadastraPecas({
   setNotificacao,
   setLoading,
   buscarPecas,
+  setConfirmacao,
 }) {
   const navigate = useNavigate();
 
@@ -61,22 +62,23 @@ export default function ModalCadastraPecas({
         precoFormatado,
         dataAquisicao
       );
-      setNotificacao({
+      setConfirmacao({
         show: true,
+        texto: "Peça cadastrada com sucesso! Deseja cadastrar outra peça?",
+        onNao: () => {
+          setConfirmacao({ show: false, texto: "", onSim: null });
+          setAdiciona(false);
+        },
+        onSim: () => {
+          setConfirmacao({ show: false, texto: "", onSim: null });
+          setTipo("");
+          setNome("");
+          setPreco("");
+          setDataAquisicao("");
+        },
         tipo: "sucesso",
-        titulo: "Peça cadastrada!",
-        mensagem: "A peça foi cadastrada com sucesso no inventário.",
       });
       await buscarPecas();
-      setTimeout(() => {
-        setAdiciona(false);
-        setNotificacao({
-          show: false,
-          tipo: "sucesso",
-          titulo: "",
-          mensagem: "",
-        });
-      }, 800);
     } catch (err) {
       tratarErro(setNotificacao, err, navigate);
     } finally {
@@ -131,6 +133,7 @@ export default function ModalCadastraPecas({
             <input
               onChange={(e) => setNome(e.target.value)}
               type="text"
+              value={nome}
               placeholder="Digite o nome da peça"
               className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -154,6 +157,7 @@ export default function ModalCadastraPecas({
             <input
               onChange={(e) => setDataAquisicao(e.target.value)}
               type="date"
+              value={dataAquisicao}
               className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>

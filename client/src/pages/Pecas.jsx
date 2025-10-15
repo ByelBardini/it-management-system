@@ -86,8 +86,12 @@ export default function Pecas() {
       {confirmacao.show && (
         <ModalConfirmacao
           texto={confirmacao.texto}
-          onNao={() => setConfirmacao({ show: false, texto: "", onSim: null })}
+          onNao={
+            confirmacao.onNao ||
+            setConfirmacao({ show: false, texto: "", onSim: null })
+          }
           onSim={confirmacao.onSim}
+          tipo={confirmacao.tipo || "atencao"}
         />
       )}
       {notificacao.show && (
@@ -111,6 +115,7 @@ export default function Pecas() {
           setAdiciona={setAdiciona}
           setNotificacao={setNotificacao}
           setLoading={setLoading}
+          setConfirmacao={setConfirmacao}
         />
       )}
       <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
