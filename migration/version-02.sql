@@ -30,3 +30,8 @@ ADD CONSTRAINT `peca_item_id`
 ALTER TABLE `it_management_system`.`workstations` 
 ADD COLUMN `workstation_anydesk` VARCHAR(50) NULL AFTER `workstation_nome`,
 ADD COLUMN `workstation_senha_anydesk` VARCHAR(45) NULL AFTER `workstation_anydesk`;
+
+ALTER TABLE `it_management_system`.`pecas` 
+CHANGE COLUMN `item_preco` `peca_preco` DOUBLE NOT NULL ,
+CHANGE COLUMN `item_em_uso` `peca_em_uso` TINYINT NOT NULL DEFAULT '0' ,
+CHANGE COLUMN `item_data_aquisicao` `peca_data_aquisicao` DATE NULL DEFAULT NULL ;
