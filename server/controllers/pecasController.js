@@ -22,13 +22,25 @@ export async function postPeca(req, res) {
   return res.status(201).json({ message: "Peça cadastrada com sucesso" });
 }
 
-export async function getPecas(req, res) {
+export async function getPecasAtivas(req, res) {
   const { id } = req.params;
   if (!id) {
     throw ApiError.badRequest("Id da empresa é obrigatório");
   }
   const pecas = await Peca.findAll({
-    where: { peca_empresa_id: id },
+    where: { peca_empresa_id: id, peca_ativa: 1 },
+    order: [["peca_nome", "ASC"]],
+  });
+  return res.status(200).json(pecas);
+}
+
+export async function getPecasInativas(req, res) {
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("Id da empresa é obrigatório");
+  }
+  const pecas = await Peca.findAll({
+    where: { peca_empresa_id: id, peca_ativa: 0 },
     order: [["peca_nome", "ASC"]],
   });
   return res.status(200).json(pecas);
