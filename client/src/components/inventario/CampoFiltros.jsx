@@ -39,8 +39,10 @@ export default function Filtros({
     }
 
     if (pesquisa != "") {
-      filtrados = filtrados.filter((item) =>
-        item.item_nome.toLowerCase().includes(pesquisa)
+      filtrados = filtrados.filter(
+        (item) =>
+          item.item_nome.toLowerCase().includes(pesquisa) ||
+          item.item_etiqueta.toLowerCase().includes(pesquisa)
       );
     }
 
@@ -138,6 +140,11 @@ export default function Filtros({
       <div className="flex items-center gap-2">
         <input
           value={pesquisa}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              ativaFiltro();
+            }
+          }}
           onChange={(e) => setPesquisa(e.target.value.toLowerCase())}
           type="text"
           placeholder="Buscar..."

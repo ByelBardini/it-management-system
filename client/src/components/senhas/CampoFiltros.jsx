@@ -109,6 +109,11 @@ export default function Filtros({ senhas, setSenhasFiltradas, filtrando }) {
         <input
           value={pesquisa}
           onChange={(e) => setPesquisa(e.target.value.toLowerCase())}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              ativaFiltro();
+            }
+          }}
           type="text"
           placeholder="Buscar..."
           className="px-3 py-1.5 rounded-lg bg-white/10 border border-white/10 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-sky-500"
