@@ -185,7 +185,7 @@ export default function Inventario() {
       <div className="flex items-center justify-between mt-4">
         <div className="w-full flex justify-end">
           <button
-            className={`w1/3 cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${
+            className={`w1/3 z-10 cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${
               !inativos
                 ? "bg-red-600/50 ring-1 ring-red-600/10 text-white/80 hover:bg-red-600/70 transition"
                 : "bg-emerald-600/50 ring-1 ring-emerald-600/10 text-white/80 hover:bg-emerald-600/70 transition"

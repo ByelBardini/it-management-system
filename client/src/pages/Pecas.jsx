@@ -3,13 +3,14 @@ import Loading from "../components/default/Loading";
 import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import TabelaPecas from "../components/pecas/TabelaPecas";
+import ModalCadastraPecas from "../components/pecas/ModalCadastraPecas";
 import { Plus, FunnelPlus, FunnelX } from "lucide-react";
-import { NavLink } from "react-router-dom";
 import { useState } from "react";
 
 export default function Pecas() {
   const [pecas, setPecas] = useState([]);
   const [cardPecas, setCardPecas] = useState(false);
+  const [adiciona, setAdiciona] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [notificacao, setNotificacao] = useState({
@@ -52,6 +53,13 @@ export default function Pecas() {
           }
         />
       )}
+      {adiciona && (
+        <ModalCadastraPecas
+          setAdiciona={setAdiciona}
+          setNotificacao={setNotificacao}
+          setLoading={setLoading}
+        />
+      )}
       <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Peças</h2>
@@ -64,13 +72,14 @@ export default function Pecas() {
               {filtrando ? <FunnelX size={18} /> : <FunnelPlus size={18} />}
             </button>
 
-            <NavLink
+            <button
+              onClick={() => setAdiciona(true)}
               to={"/cadastro"}
               className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
             >
               <Plus size={18} />
               <span className="text-sm font-medium">Adicionar</span>
-            </NavLink>
+            </button>
           </div>
         </div>
         <div className="overflow-x-auto">
