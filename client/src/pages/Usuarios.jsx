@@ -112,7 +112,7 @@ export default function Usuarios() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setAdicionaUsuario(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg 
+              className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-lg 
                          bg-blue-600/80 hover:bg-blue-500 transition text-sm font-medium"
             >
               <UserPlus className="h-4 w-4" />

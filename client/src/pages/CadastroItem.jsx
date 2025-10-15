@@ -229,7 +229,7 @@ export default function CadastroItem() {
         <div className="w-full justify-center flex">
           <button
             onClick={cadastraItem}
-            className="mt-4 text-md cursor-pointer rounded-lg bg-emerald-500/60 px-4 py-2 text-white/90 hover:bg-emerald-500/80"
+            className="cursor-pointer mt-4 text-md rounded-lg bg-emerald-500/60 px-4 py-2 text-white/90 hover:bg-emerald-500/80"
           >
             Cadastrar Item
           </button>

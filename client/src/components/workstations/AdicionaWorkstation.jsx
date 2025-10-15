@@ -169,13 +169,13 @@ export default function AdicionaWorkstation({
         <div className="flex justify-end gap-3 border-t border-white/10 pt-4">
           <button
             onClick={() => setAdicionando(false)}
-            className="px-4 py-2 rounded-lg bg-white/10 text-white/80 text-sm hover:bg-white/20 transition"
+            className="cursor-pointer px-4 py-2 rounded-lg bg-white/10 text-white/80 text-sm hover:bg-white/20 transition"
           >
             Cancelar
           </button>
           <button
             onClick={adiciona}
-            className="px-4 py-2 rounded-lg bg-sky-600 text-white text-sm font-medium hover:bg-sky-500 transition flex items-center gap-2"
+            className="cursor-pointer px-4 py-2 rounded-lg bg-sky-600 text-white text-sm font-medium hover:bg-sky-500 transition flex items-center gap-2"
           >
             <Save className="h-4 w-4" />
             Salvar

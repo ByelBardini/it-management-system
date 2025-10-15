@@ -187,7 +187,7 @@ export default function ExibeUsuario({
                 onSim: inativar,
               })
             }
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-white font-medium ${
+            className={`cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-white font-medium ${
               usuario.usuario_ativo == 1
                 ? "bg-rose-600 hover:bg-rose-500"
                 : "bg-green-600 hover:bg-green-500"
@@ -210,7 +210,7 @@ export default function ExibeUsuario({
                 onSim: resetar,
               })
             }
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-white font-medium bg-sky-600 hover:bg-sky-500 transition cursor-pointer"
+            className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-white font-medium bg-sky-600 hover:bg-sky-500 transition"
           >
             <KeyRound className="h-4 w-4" />
             Resetar Senha

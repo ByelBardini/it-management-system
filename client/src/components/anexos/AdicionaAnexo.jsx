@@ -93,7 +93,7 @@ export default function AdicionaAnexo({ anexos = [], setAnexos }) {
             type="button"
             onClick={adiciona}
             disabled={!podeAdicionar}
-            className="inline-flex h-[38px] w-full items-center justify-center gap-2 rounded-lg bg-sky-600 px-3 text-sm text-white hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
+            className="cursor-pointer inline-flex h-[38px] w-full items-center justify-center gap-2 rounded-lg bg-sky-600 px-3 text-sm text-white hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
             title={
               !podeAdicionar ? "Preencha Tipo, Nome e Arquivo" : "Adicionar"
             }
@@ -124,7 +124,7 @@ export default function AdicionaAnexo({ anexos = [], setAnexos }) {
               <button
                 type="button"
                 onClick={() => removeItem(anexo.id)}
-                className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-red-300 hover:bg-red-500/10 hover:text-red-200"
+                className="cursor-pointer inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-red-300 hover:bg-red-500/10 hover:text-red-200"
                 title="Remover"
               >
                 <Trash2 className="h-4 w-4" />
