@@ -6,25 +6,22 @@ import Loading from "../components/default/Loading";
 import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import CampoFiltros from "../components/senhas/CampoFiltros.jsx";
-import {
-  FunnelX,
-  FunnelPlus,
-  Plus,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import Paginacao from "../components/default/Paginacao.jsx";
+import { FunnelX, FunnelPlus, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getSenhas } from "../services/api/senhaServices.js";
 import {
   getDiffDias,
   dividirEmPartes,
   tratarErro,
+  useItensPorPagina,
 } from "../components/default/funcoes.js";
 import { useNavigate } from "react-router-dom";
 
 export default function Senhas() {
   const navigate = useNavigate();
-  
+  const itensPorPagina = useItensPorPagina(45, 240);
+
   const [senhas, setSenhas] = useState([]);
   const [atrasadas, setAtrasadas] = useState();
 
@@ -83,13 +80,13 @@ export default function Senhas() {
   }, []);
 
   useEffect(() => {
-    const ordenadas = dividirEmPartes(senhasFiltradas, 10);
+    const ordenadas = dividirEmPartes(senhasFiltradas, itensPorPagina);
     setSenhasOrdenadas(ordenadas);
     setSessao(0);
   }, [senhasFiltradas]);
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       {adicionaSenha && (
         <ModalRegistraSenha
           setAdicionaSenha={setAdicionaSenha}
@@ -107,7 +104,6 @@ export default function Senhas() {
           setLoading={setLoading}
         />
       )}
-
       {confirmacao.show && (
         <ModalConfirmacao
           texto={confirmacao.texto}
@@ -172,29 +168,13 @@ export default function Senhas() {
           setCardSenha={setCardSenha}
         />
       </div>
-      <div className="fixed bottom-0 left-0 w-full flex items-center justify-center pb-4">
-        <div className="flex-1 flex justify-center items-center gap-4">
-          <button
-            disabled={sessao === 0}
-            onClick={() => setSessao((prev) => prev - 1)}
-            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
-          >
-            <ChevronLeft size={18} />
-          </button>
-
-          <span className="text-sm text-white/70">
-            Página {sessao + 1} de {senhasOrdenadas.length}
-          </span>
-
-          <button
-            disabled={sessao === senhasOrdenadas.length - 1}
-            onClick={() => setSessao((prev) => prev + 1)}
-            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
-          >
-            <ChevronRight size={18} />
-          </button>
-        </div>
-      </div>
+      {senhasOrdenadas.length > 0 && (
+        <Paginacao
+          sessao={sessao}
+          setSessao={setSessao}
+          ordenadas={senhasOrdenadas}
+        />
+      )}
     </div>
   );
 }

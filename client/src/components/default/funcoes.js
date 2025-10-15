@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 export function formatarIntervalo(intervalo, diffDias) {
   if (intervalo === 0) return "Não é realizado";
 
@@ -73,4 +75,22 @@ export function tratarErro(setNotificacao, err, navigate) {
     titulo: `Erro ${err.status}`,
     mensagem: err.message,
   });
+}
+
+export function useItensPorPagina(itemAltura = 80, margem = 300) {
+  const [itensPorPagina, setItensPorPagina] = useState(10);
+
+  useEffect(() => {
+    function calcular() {
+      const alturaDisponivel = window.innerHeight - margem;
+      const qtd = Math.max(3, Math.floor(alturaDisponivel / itemAltura));
+      setItensPorPagina(qtd);
+    }
+
+    calcular();
+    window.addEventListener("resize", calcular);
+    return () => window.removeEventListener("resize", calcular);
+  }, [itemAltura, margem]);
+
+  return itensPorPagina;
 }

@@ -5,19 +5,22 @@ import Loading from "../components/default/Loading";
 import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import CampoFiltros from "../components/manutencoes/CampoFiltros.jsx";
+import Paginacao from "../components/default/Paginacao.jsx";
 import { useEffect, useState } from "react";
 import { getManutencoes } from "../services/api/manutencaoServices.js";
 import {
   getDiffDias,
   dividirEmPartes,
   tratarErro,
+  useItensPorPagina,
 } from "../components/default/funcoes.js";
-import { FunnelX, FunnelPlus, ChevronLeft, ChevronRight } from "lucide-react";
+import { FunnelX, FunnelPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function Manutencoes() {
   const navigate = useNavigate();
-  
+  const itensPorPagina = useItensPorPagina(45, 240);
+
   const [itens, setItens] = useState([]);
   const [atrasadas, setAtrasadas] = useState("");
 
@@ -75,14 +78,14 @@ export default function Manutencoes() {
   }, []);
 
   useEffect(() => {
-    const ordenados = dividirEmPartes(itensFiltrados, 11);
+    const ordenados = dividirEmPartes(itensFiltrados, itensPorPagina);
     setItensOrdenados(ordenados);
     console.log(ordenados);
     setSessao(0);
   }, [itensFiltrados]);
 
   return (
-    <div>
+    <div className="p-4">
       {visualizando && (
         <ExibirManutencao
           setVisualizando={setVisualizando}
@@ -116,7 +119,7 @@ export default function Manutencoes() {
         />
       )}
       {loading && <Loading />}
-      <div className="mt-4 rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
+      <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Manutenções</h2>
           {filtrando ? (
@@ -147,29 +150,14 @@ export default function Manutencoes() {
           setVisualizando={setVisualizando}
         />
       </div>
-      <div className="fixed bottom-0 left-0 w-full flex items-center justify-center pb-4">
-        <div className="flex justify-center items-center gap-4">
-          <button
-            disabled={sessao === 0}
-            onClick={() => setSessao((prev) => prev - 1)}
-            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
-          >
-            <ChevronLeft size={18} />
-          </button>
 
-          <span className="text-sm text-white/70">
-            Página {sessao + 1} de {itensOrdenados.length}
-          </span>
-
-          <button
-            disabled={sessao === itensOrdenados.length - 1}
-            onClick={() => setSessao((prev) => prev + 1)}
-            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
-          >
-            <ChevronRight size={18} />
-          </button>
-        </div>
-      </div>
+      {itensOrdenados.length > 0 && (
+        <Paginacao
+          sessao={sessao}
+          setSessao={setSessao}
+          ordenadas={itensOrdenados}
+        />
+      )}
     </div>
   );
 }

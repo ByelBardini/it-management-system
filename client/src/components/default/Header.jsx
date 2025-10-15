@@ -45,6 +45,7 @@ export default function Header() {
 
           <nav className="hidden md:flex items-center gap-2">
             <NavButton to="/inventario">Inventário</NavButton>
+            <NavButton to="/pecas">Peças</NavButton>
             <NavButton to="/workstations">Workstations</NavButton>
             <NavButton to="/manutencao">Manutenções</NavButton>
             <NavButton to="/senha">Senhas</NavButton>

@@ -6,15 +6,21 @@ import CardItem from "../components/inventario/CardItem.jsx";
 import Notificacao from "../components/default/Notificacao.jsx";
 import Loading from "../components/default/Loading.jsx";
 import Filtro from "../components/workstations/Filtro.jsx";
-import { Plus, SearchX, ChevronLeft, ChevronRight } from "lucide-react";
+import Paginacao from "../components/default/Paginacao.jsx";
+import { Plus, SearchX } from "lucide-react";
 import { getWorkstation } from "../services/api/workstationServices.js";
 import { useEffect } from "react";
 import { useState } from "react";
-import { dividirEmPartes, tratarErro } from "../components/default/funcoes.js";
+import {
+  dividirEmPartes,
+  tratarErro,
+  useItensPorPagina,
+} from "../components/default/funcoes.js";
 import { useNavigate } from "react-router-dom";
 
 export default function Workstations() {
   const navigate = useNavigate();
+  const itensPorPagina = useItensPorPagina(72, 240) * 3;
 
   const [workstations, setWorkstations] = useState([]);
   const [workstationsFiltradas, setWorkstationsFiltradas] = useState([]);
@@ -65,13 +71,13 @@ export default function Workstations() {
   }, [modificado]);
 
   useEffect(() => {
-    const ordenadas = dividirEmPartes(workstationsFiltradas, 15);
+    const ordenadas = dividirEmPartes(workstationsFiltradas, itensPorPagina);
     setWorkstationsOrdenadas(ordenadas);
     setSessao(0);
   }, [workstationsFiltradas]);
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       {cardItem && <CardItem setCardItem={setCardItem} />}
       {cardWorkstation && (
         <ModalWorkstation
@@ -139,7 +145,7 @@ export default function Workstations() {
             <span className="text-sm font-medium">Adicionar</span>
           </button>
         </div>
-        <div className="overflow-x-auto grid grid-cols-3 gap-4 p-2">
+        <div className="overflow-x-auto grid grid-cols-3 gap-3 p-1">
           {(workstationsOrdenadas[sessao] || []).map((workstation) => (
             <div
               key={workstation.workstation_id}
@@ -170,29 +176,13 @@ export default function Workstations() {
         )}
       </div>
 
-      <div className="fixed bottom-0 left-0 w-full flex items-center justify-center pb-4">
-        <div className="flex-1 flex justify-center items-center gap-4">
-          <button
-            disabled={sessao === 0}
-            onClick={() => setSessao((prev) => prev - 1)}
-            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
-          >
-            <ChevronLeft size={18} />
-          </button>
-
-          <span className="text-sm text-white/70">
-            Página {sessao + 1} de {workstationsOrdenadas.length}
-          </span>
-
-          <button
-            disabled={sessao === workstationsOrdenadas.length - 1}
-            onClick={() => setSessao((prev) => prev + 1)}
-            className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
-          >
-            <ChevronRight size={18} />
-          </button>
-        </div>
-      </div>
+      {workstationsOrdenadas.length > 0 && (
+        <Paginacao
+          sessao={sessao}
+          setSessao={setSessao}
+          ordenadas={workstationsOrdenadas}
+        />
+      )}
     </div>
   );
 }

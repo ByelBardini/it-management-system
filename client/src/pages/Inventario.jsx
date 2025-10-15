@@ -6,21 +6,21 @@ import Loading from "../components/default/Loading";
 import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import CampoFiltros from "../components/inventario/CampoFiltros.jsx";
-import {
-  Plus,
-  FunnelPlus,
-  FunnelX,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import Paginacao from "../components/default/Paginacao.jsx";
+import { Plus, FunnelPlus, FunnelX } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getItens, getItensInativos } from "../services/api/itemServices";
-import { dividirEmPartes, tratarErro } from "../components/default/funcoes.js";
+import {
+  dividirEmPartes,
+  tratarErro,
+  useItensPorPagina,
+} from "../components/default/funcoes.js";
 import { useNavigate } from "react-router-dom";
 
 export default function Inventario() {
   const navigate = useNavigate();
+  const itensPorPagina = useItensPorPagina(50, 240);
 
   const [itens, setItens] = useState([]);
   const [cardItem, setCardItem] = useState(false);
@@ -78,14 +78,14 @@ export default function Inventario() {
   }, [editado, inativos]);
 
   useEffect(() => {
-    const ordenados = dividirEmPartes(itensFiltrados, 9);
+    const ordenados = dividirEmPartes(itensFiltrados, itensPorPagina);
     setItensOrdenados(ordenados);
     console.log(ordenados);
     setSessao(0);
   }, [itensFiltrados]);
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       {loading && <Loading />}
       {confirmacao.show && (
         <ModalConfirmacao
@@ -198,27 +198,13 @@ export default function Inventario() {
           </button>
         </div>
       </div>
-      <div className="fixed bottom-0 left-0 w-full flex items-center justify-center pb-4">
-        <button
-          disabled={sessao === 0}
-          onClick={() => setSessao((prev) => prev - 1)}
-          className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
-        >
-          <ChevronLeft size={18} />
-        </button>
-
-        <span className="mr-4 ml-4 ext-sm text-white/70">
-          Página {sessao + 1} de {itensOrdenados.length}
-        </span>
-
-        <button
-          disabled={sessao === itensOrdenados.length - 1}
-          onClick={() => setSessao((prev) => prev + 1)}
-          className="cursor-pointer px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 disabled:opacity-40 disabled:cursor-default"
-        >
-          <ChevronRight size={18} />
-        </button>
-      </div>
+      {itensOrdenados.length > 1 && (
+        <Paginacao
+          sessao={sessao}
+          setSessao={setSessao}
+          ordenadas={itensOrdenados}
+        />
+      )}
     </div>
   );
 }
