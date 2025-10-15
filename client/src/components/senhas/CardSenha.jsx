@@ -174,7 +174,9 @@ export default function CardSenha({
                 value={
                   senha.senha_tempo_troca == 0
                     ? "Senha não exipira"
-                    : `${senha.senha_tempo_troca} dias`
+                    : senha.senha_tempo_troca == 1
+                    ? "1 mês"
+                    : `${senha.senha_tempo_troca} meses`
                 }
                 disabled
                 className="w-full mt-1 rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white text-sm"

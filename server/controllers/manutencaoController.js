@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import { Item, Setor } from "../models/index.js";
 import { ApiError } from "../middlewares/ApiError.js";
 
@@ -8,7 +9,11 @@ export async function getManutencoes(req, res) {
   }
 
   const itens = await Item.findAll({
-    where: { item_empresa_id: id, item_em_uso: 1 },
+    where: {
+      item_empresa_id: id,
+      item_em_uso: 1,
+      item_intervalo_manutencao: { [Op.ne]: 0 },
+    },
     attributes: [
       "item_id",
       "item_etiqueta",
