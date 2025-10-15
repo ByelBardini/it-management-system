@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Loading from "../components/default/Loading";
 import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";

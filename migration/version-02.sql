@@ -26,3 +26,7 @@ ADD CONSTRAINT `peca_item_id`
   REFERENCES `it_management_system`.`itens` (`item_id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
+
+ALTER TABLE `it_management_system`.`workstations` 
+ADD COLUMN `workstation_anydesk` VARCHAR(50) NULL AFTER `workstation_nome`,
+ADD COLUMN `workstation_senha_anydesk` VARCHAR(45) NULL AFTER `workstation_anydesk`;

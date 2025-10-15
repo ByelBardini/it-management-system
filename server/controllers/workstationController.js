@@ -9,7 +9,12 @@ export async function getWorkstation(req, res) {
   }
 
   const workstation = await Workstation.findAll({
-    attributes: ["workstation_id", "workstation_nome"],
+    attributes: [
+      "workstation_id",
+      "workstation_nome",
+      "workstation_anydesk",
+      "workstation_senha_anydesk",
+    ],
     where: { workstation_empresa_id: id },
     order: [["workstation_nome", "ASC"]],
     include: [
@@ -24,7 +29,13 @@ export async function getWorkstation(req, res) {
 }
 
 export async function postWorkstation(req, res) {
-  const { id_empresa, id_setor, workstation_nome } = req.body;
+  const {
+    id_empresa,
+    id_setor,
+    workstation_nome,
+    workstation_anydesk = null,
+    workstation_senha_anydesk = null,
+  } = req.body;
 
   if (!id_empresa || !id_setor || !workstation_nome) {
     throw ApiError.badRequest("Todos os dados são necessários");
@@ -35,6 +46,8 @@ export async function postWorkstation(req, res) {
       workstation_empresa_id: id_empresa,
       workstation_setor_id: id_setor,
       workstation_nome: workstation_nome,
+      workstation_anydesk: workstation_anydesk,
+      workstation_senha_anydesk: workstation_senha_anydesk,
     },
     { usuarioId: req.usuario.id }
   );

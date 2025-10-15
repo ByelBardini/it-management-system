@@ -23,6 +23,14 @@ Workstation.init(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
+    workstation_anydesk: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
+    workstation_senha_anydesk: {
+      type: DataTypes.STRING(45),
+      allowNull: true,
+    },
   },
   {
     sequelize,

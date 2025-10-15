@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import tipos from "../inventario/tiposItens.js";
-import { X, Trash2, ExternalLink } from "lucide-react";
+import { X, Trash2, ExternalLink, LaptopMinimal } from "lucide-react";
 import {
   getItensWorkstation,
   removerWorkstation,
@@ -20,8 +20,12 @@ export default function ModalWorkstation({
   buscarWorkstations,
 }) {
   const navigate = useNavigate();
+  const anydesk = localStorage.getItem("workstation_anydesk");
+  const senha = localStorage.getItem("workstation_senha_anydesk");
 
   const [itens, setItens] = useState([]);
+
+  const [exibirAnydesk, setExibirAnydesk] = useState(false);
 
   function abreItem(id) {
     localStorage.setItem("item_id", id);
@@ -204,21 +208,48 @@ export default function ModalWorkstation({
             </div>
           )}
         </div>
-        <div className="w-full flex justify-end">
-          <button
-            onClick={() =>
-              setConfirmacao({
-                show: true,
-                texto:
-                  "Você tem certeza que deseja excluir esse workstation? Essa ação é irreversível, todos os itens vinculados perderão o vínculo",
-                onSim: () => excluirWorkstation(),
-              })
-            }
-            className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm transition"
+        <div className="w-full flex items-center justify-between gap-4 py-2">
+          {anydesk != "" && senha != "" && (
+            <button
+              onClick={() => setExibirAnydesk(!exibirAnydesk)}
+              className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-400 hover:bg-red-500 text-white text-sm font-medium shadow-sm transition"
+            >
+              <LaptopMinimal size={16} />
+              <span>Anydesk</span>
+            </button>
+          )}
+
+          {exibirAnydesk && (
+            <div className="flex flex-col items-center text-center px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/80 backdrop-blur-sm shadow-inner transition animate-fade-in">
+              <span className="text-sm font-semibold tracking-wide">
+                {anydesk}
+              </span>
+              <span className="text-xs text-white/60 mt-0.5">
+                Senha: {senha}
+              </span>
+            </div>
+          )}
+
+          <div
+            className={`justify-end flex ${
+              anydesk == "" && senha == "" && "w-full"
+            }`}
           >
-            <Trash2 size={16} />
-            <span className="text-sm font-medium">Excluir Workstation</span>
-          </button>
+            <button
+              onClick={() =>
+                setConfirmacao({
+                  show: true,
+                  texto:
+                    "Você tem certeza que deseja excluir esse workstation? Essa ação é irreversível, todos os itens vinculados perderão o vínculo.",
+                  onSim: () => excluirWorkstation(),
+                })
+              }
+              className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-medium shadow-sm transition"
+            >
+              <Trash2 size={16} />
+              <span>Excluir Workstation</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

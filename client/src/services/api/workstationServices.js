@@ -11,12 +11,20 @@ export async function getWorkstation(id) {
   }
 }
 
-export async function postWorkstation(id_empresa, id_setor, workstation_nome) {
+export async function postWorkstation(
+  id_empresa,
+  id_setor,
+  workstation_nome,
+  workstation_anydesk,
+  workstation_senha_anydesk
+) {
   try {
     const response = await api.post("/workstation", {
       id_empresa,
       id_setor,
       workstation_nome,
+      workstation_anydesk,
+      workstation_senha_anydesk,
     });
 
     return response.data;

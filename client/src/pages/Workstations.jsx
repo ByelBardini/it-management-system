@@ -60,8 +60,10 @@ export default function Workstations() {
     }
   }
 
-  function abreCard(id) {
+  function abreCard(id, anydesk, senha_anydesk) {
     localStorage.setItem("workstation_id", id);
+    localStorage.setItem("workstation_anydesk", anydesk);
+    localStorage.setItem("workstation_senha_anydesk", senha_anydesk);
     setCardWorkstation(true);
   }
 
@@ -149,7 +151,13 @@ export default function Workstations() {
           {(workstationsOrdenadas[sessao] || []).map((workstation) => (
             <div
               key={workstation.workstation_id}
-              onDoubleClick={() => abreCard(workstation.workstation_id)}
+              onDoubleClick={() =>
+                abreCard(
+                  workstation.workstation_id,
+                  workstation.workstation_anydesk,
+                  workstation.workstation_senha_anydesk
+                )
+              }
               className="w-full rounded-xl bg-white/5 ring-1 ring-white/10 shadow-md p-4 hover:bg-white/10 transition"
             >
               <h3 className="text-sm font-semibold text-white">

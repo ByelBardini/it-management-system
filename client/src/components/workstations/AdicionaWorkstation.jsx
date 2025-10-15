@@ -20,6 +20,8 @@ export default function AdicionaWorkstation({
 
   const [nome, setNome] = useState("");
   const [setor, setSetor] = useState("");
+  const [anydesk, setAnydesk] = useState("");
+  const [senhaAnydesk, setSenhaAnydesk] = useState("");
 
   async function buscarSetores() {
     try {
@@ -43,7 +45,7 @@ export default function AdicionaWorkstation({
     } else {
       setCarregando(true);
       try {
-        await postWorkstation(id_empresa, setor, nome);
+        await postWorkstation(id_empresa, setor, nome, anydesk, senhaAnydesk);
         setNotificacao({
           show: true,
           tipo: "sucesso",
@@ -163,6 +165,32 @@ export default function AdicionaWorkstation({
                 )}
               </ul>
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm text-white/70 mb-1">
+              Anydesk da Workstation
+            </label>
+            <input
+              onChange={(e) => setAnydesk(e.target.value)}
+              type="text"
+              placeholder="Ex.: 123 456 789"
+              className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white text-sm placeholder-white/40 
+                         focus:outline-none focus:ring-2 focus:ring-sky-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-white/70 mb-1">
+              Senha do Anydesk
+            </label>
+            <input
+              onChange={(e) => setSenhaAnydesk(e.target.value)}
+              type="password"
+              placeholder="*********"
+              className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white text-sm placeholder-white/40 
+                         focus:outline-none focus:ring-2 focus:ring-sky-500"
+            />
           </div>
         </div>
 
