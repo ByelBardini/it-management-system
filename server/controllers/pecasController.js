@@ -45,3 +45,21 @@ export async function getPecasInativas(req, res) {
   });
   return res.status(200).json(pecas);
 }
+
+export async function inativarPeca(req, res){
+  const { id } = req.params;
+  if (!id) {
+    throw ApiError.badRequest("Id da peça é obrigatório");
+  }
+  const peca = await Peca.findByPk(id);
+  if(!peca){
+    throw ApiError.notFound("Peça não encontrada");
+  }
+  if(peca.peca_em_uso){
+    throw ApiError.badRequest("Peça está em uso e não pode ser inativada");
+  }
+  peca.peca_ativa = 0;
+  peca.peca_data_inativacao = new Date();
+  await peca.save({ usuarioId: req.usuario.id });
+  return res.status(200).json({ message: "Peça inativada com sucesso" });
+}

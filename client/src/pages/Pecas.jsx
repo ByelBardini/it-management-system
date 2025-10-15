@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
 import Loading from "../components/default/Loading";
 import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
@@ -10,6 +9,7 @@ import Paginacao from "../components/default/Paginacao.jsx";
 import {
   getPecasAtivas,
   getPecasInativas,
+  inativarPeca,
 } from "../services/api/pecasServices.js";
 import {
   dividirEmPartes,
@@ -30,7 +30,6 @@ export default function Pecas() {
   const [sessao, setSessao] = useState(0);
   const [pecasOrdenadas, setPecasOrdenadas] = useState([]);
 
-  const [cardPecas, setCardPecas] = useState(false);
   const [adiciona, setAdiciona] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -63,6 +62,32 @@ export default function Pecas() {
         setPecas(pecas);
       }
       setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      tratarErro(setNotificacao, err, navigate);
+    }
+  }
+
+  async function inativar(id) {
+    setLoading(true);
+    try {
+      await inativarPeca(id);
+      await buscarPecas();
+      setNotificacao({
+        show: true,
+        tipo: "sucesso",
+        titulo: "Peça inativada",
+        mensagem: "Peça inativada com sucesso.",
+      });
+      setLoading(false);
+      setTimeout(() => {
+        setNotificacao({
+          show: false,
+          tipo: "sucesso",
+          titulo: "",
+          mensagem: "",
+        });
+      }, 800);
     } catch (err) {
       setLoading(false);
       tratarErro(setNotificacao, err, navigate);
@@ -164,18 +189,18 @@ export default function Pecas() {
             </button>
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <TabelaPecas
-            pecas={pecasOrdenadas[sessao]}
-            setCardPecas={setCardPecas}
-            inativos={inativos}
-          />
-        </div>
+        <TabelaPecas
+          pecas={pecasOrdenadas[sessao]}
+          setConfirmacao={setConfirmacao}
+          setNotificacao={setNotificacao}
+          inativos={inativos}
+          inativar={inativar}
+        />
       </div>
       <div className="flex items-center justify-between mt-4">
         <div className="w-full flex justify-end">
           <button
-            className={`w1/3 cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${
+            className={`w1/3 cursor-pointer z-10 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${
               !inativos
                 ? "bg-red-600/50 ring-1 ring-red-600/10 text-white/80 hover:bg-red-600/70 transition"
                 : "bg-emerald-600/50 ring-1 ring-emerald-600/10 text-white/80 hover:bg-emerald-600/70 transition"

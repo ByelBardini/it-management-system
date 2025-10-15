@@ -35,3 +35,13 @@ export async function getPecasInativas(id) {
     throw err;
   }
 }
+
+export async function inativarPeca(id) {
+  try {
+    const response = await api.put(`/pecas/inativar/${id}`);
+    return response.data;
+  } catch (err) {
+    console.error("Erro em inativarPeca:", err);
+    throw err;
+  }
+}
