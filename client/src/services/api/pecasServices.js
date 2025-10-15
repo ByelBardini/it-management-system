@@ -21,7 +21,17 @@ export async function getPecasAtivas(id) {
     const response = await api.get(`/pecas/ativas/${id}`);
     return response.data;
   } catch (err) {
-    console.error("Erro em getPecas:", err);
+    console.error("Erro em getPecasAtivas:", err);
+    throw err;
+  }
+}
+
+export async function getPecasInativas(id) {
+  try {
+    const response = await api.get(`/pecas/inativas/${id}`);
+    return response.data;
+  } catch (err) {
+    console.error("Erro em getPecasInativas:", err);
     throw err;
   }
 }

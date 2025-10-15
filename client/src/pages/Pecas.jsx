@@ -5,7 +5,10 @@ import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import TabelaPecas from "../components/pecas/TabelaPecas";
 import ModalCadastraPecas from "../components/pecas/ModalCadastraPecas";
-import { getPecasAtivas } from "../services/api/pecasServices.js";
+import {
+  getPecasAtivas,
+  getPecasInativas,
+} from "../services/api/pecasServices.js";
 import { tratarErro } from "../components/default/funcoes.js";
 import { useNavigate } from "react-router-dom";
 import { Plus, FunnelPlus, FunnelX } from "lucide-react";
@@ -38,8 +41,13 @@ export default function Pecas() {
     setLoading(true);
     const id_empresa = localStorage.getItem("empresa_id");
     try {
-      const pecas = await getPecasAtivas(id_empresa);
-      setPecas(pecas);
+      if (inativos) {
+        const pecas = await getPecasInativas(id_empresa);
+        setPecas(pecas);
+      } else {
+        const pecas = await getPecasAtivas(id_empresa);
+        setPecas(pecas);
+      }
       setLoading(false);
     } catch (err) {
       setLoading(false);
@@ -49,7 +57,7 @@ export default function Pecas() {
 
   useEffect(() => {
     buscarPecas();
-  }, []);
+  }, [inativos]);
 
   return (
     <div className="p-4">
