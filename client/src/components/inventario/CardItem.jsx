@@ -212,7 +212,7 @@ export default function CardItem({
                 <label className="block text-sm text-white/60">
                   Observações
                 </label>
-                <div className="rounded-lg bg-white/10 p-3 text-white h-24">
+                <div className="rounded-lg bg-white/10 p-3 text-white h-32 overflow-auto whitespace-pre-wrap">
                   {item.caracteristicas != null &&
                   item.caracteristicas.find(
                     (caracteristica) =>
