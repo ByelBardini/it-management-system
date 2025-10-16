@@ -1,5 +1,5 @@
 import { ApiError } from "../middlewares/ApiError.js";
-import { Peca } from "../models/index.js";
+import { Peca, Item } from "../models/index.js";
 
 export async function postPeca(req, res) {
   const { id_empresa, tipo, nome, preco, data_aquisicao } = req.body;
@@ -30,6 +30,13 @@ export async function getPecasAtivas(req, res) {
   const pecas = await Peca.findAll({
     where: { peca_empresa_id: id, peca_ativa: 1 },
     order: [["peca_nome", "ASC"]],
+    include: [
+      {
+        model: Item,
+        as: "item",
+        attributes: ["item_id", "item_nome"],
+      },
+    ],
   });
   return res.status(200).json(pecas);
 }
@@ -46,16 +53,16 @@ export async function getPecasInativas(req, res) {
   return res.status(200).json(pecas);
 }
 
-export async function inativarPeca(req, res){
+export async function inativarPeca(req, res) {
   const { id } = req.params;
   if (!id) {
     throw ApiError.badRequest("Id da peça é obrigatório");
   }
   const peca = await Peca.findByPk(id);
-  if(!peca){
+  if (!peca) {
     throw ApiError.notFound("Peça não encontrada");
   }
-  if(peca.peca_em_uso){
+  if (peca.peca_em_uso) {
     throw ApiError.badRequest("Peça está em uso e não pode ser inativada");
   }
   peca.peca_ativa = 0;

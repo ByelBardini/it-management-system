@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs";
 import sequelize from "../config/database.js";
+import { Op } from "sequelize";
 import {
   Anexo,
   Caracteristica,
@@ -329,6 +330,17 @@ export async function putItem(req, res) {
     }
   }
 
+  let pecasIds = [];
+  if (b.pecas) {
+    try {
+      const parsed = JSON.parse(b.pecas);
+      if (Array.isArray(parsed))
+        pecasIds = parsed.map((n) => Number(n)).filter((n) => !Number.isNaN(n));
+    } catch {
+      throw new ApiError.badRequest("Peças inválidas");
+    }
+  }
+
   const item = await Item.findByPk(id);
   if (!item) {
     throw ApiError.notFound("Item não encontrado");
@@ -348,22 +360,76 @@ export async function putItem(req, res) {
   item.item_em_uso = item_em_uso;
 
   item.save({ usuarioId: req.usuario.id });
-
-  for (const c of caracteristicas) {
-    const caracteristica = await Caracteristica.findByPk(c.caracteristica_id);
-    if (caracteristica) {
-      caracteristica.caracteristica_valor = c.caracteristica_valor;
-      await caracteristica.save({ usuarioId: req.usuario.id });
-    } else {
-      await Caracteristica.create(
-        {
-          caracteristica_item_id: id,
-          caracteristica_nome: c.caracteristica_nome,
-          caracteristica_valor: c.caracteristica_valor,
-        },
-        { usuarioId: req.usuario.id }
-      );
+  if (item.item_tipo !== "desktop") {
+    for (const c of caracteristicas) {
+      const caracteristica = await Caracteristica.findByPk(c.caracteristica_id);
+      if (caracteristica) {
+        caracteristica.caracteristica_valor = c.caracteristica_valor;
+        await caracteristica.save({ usuarioId: req.usuario.id });
+      } else {
+        await Caracteristica.create(
+          {
+            caracteristica_item_id: id,
+            caracteristica_nome: c.caracteristica_nome,
+            caracteristica_valor: c.caracteristica_valor,
+          },
+          { usuarioId: req.usuario.id }
+        );
+      }
     }
+  } else {
+    await sequelize.transaction(async (t) => {
+      const atuais = await Peca.findAll({
+        where: { peca_item_id: id, peca_ativa: 1 },
+        transaction: t,
+      });
+      const atuaisIds = atuais.map((p) => p.peca_id);
+      const novos = pecasIds;
+
+      const paraDesvincular = atuais.filter((p) => !novos.includes(p.peca_id));
+      for (const p of paraDesvincular) {
+        p.peca_item_id = null;
+        p.peca_em_uso = 0;
+        await p.save({ transaction: t, usuarioId: req.usuario.id });
+      }
+
+      const paraVincularIds = novos.filter((idp) => !atuaisIds.includes(idp));
+      if (paraVincularIds.length) {
+        const paraVincular = await Peca.findAll({
+          where: {
+            peca_id: paraVincularIds,
+            peca_ativa: 1,
+            [Op.or]: [{ peca_item_id: null }, { peca_item_id: id }],
+          },
+          transaction: t,
+        });
+        const encontrados = paraVincular.map((p) => p.peca_id);
+        const faltantes = paraVincularIds.filter(
+          (pid) => !encontrados.includes(pid)
+        );
+        if (faltantes.length) {
+          throw new ApiError.badRequest(
+            "Algumas peças são inválidas ou já estão em uso"
+          );
+        }
+        for (const p of paraVincular) {
+          p.peca_item_id = id;
+          p.peca_em_uso = 1;
+          await p.save({ transaction: t, usuarioId: req.usuario.id });
+        }
+      }
+
+      const finais = await Peca.findAll({
+        where: { peca_item_id: id, peca_ativa: 1 },
+        transaction: t,
+      });
+      const soma = finais.reduce(
+        (acc, p) => acc + Number(p.peca_preco || 0),
+        0
+      );
+      item.item_preco = soma;
+      await item.save({ transaction: t, usuarioId: req.usuario.id });
+    });
   }
   const anexosBanco = await Anexo.findAll({ where: { anexo_item_id: id } });
 
