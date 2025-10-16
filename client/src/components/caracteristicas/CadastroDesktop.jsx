@@ -71,8 +71,6 @@ export default function CadastroDesktop({
     []
   );
 
-  // resumo visual é construído abaixo em chips; função antiga removida
-
   return (
     <div className="w-full p-2 space-y-2">
       {linhas.map((linha) => {

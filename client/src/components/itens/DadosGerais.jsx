@@ -9,13 +9,18 @@ export default function DadosGerais({ value, onChange }) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div>
-        <div className="4 flex items-center gap-1">
-          <label className="mb-1 block text-sm text-white/70">Nome</label>{" "}
-          <span className="rounded text-xs text-red-400">*</span>
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-1">
+            <label className="block text-sm text-white/70">Nome</label>
+            <span className="text-xs text-red-400">*</span>
+          </div>
+          <span className="text-xs text-white/50">{value.nome.length}/150</span>
         </div>
+
         <input
           onChange={(e) => onChange({ nome: e.target.value })}
           type="text"
+          maxLength={150}
           value={value.nome}
           placeholder="Ex.: Desktop Financeiro 01"
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
@@ -114,30 +119,42 @@ export default function DadosGerais({ value, onChange }) {
       </div>
 
       <div>
-        <div className="flex items-center gap-1">
-          <label className="mb-1 block text-sm text-white/70">Etiqueta</label>{" "}
-          <span className="rounded text-xs text-red-400">*</span>
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-1">
+            <label className="block text-sm text-white/70">Etiqueta</label>
+            <span className="text-xs text-red-400">*</span>
+          </div>
+          <span className="text-xs text-white/50">
+            {value.etiqueta.length}/10
+          </span>
         </div>
         <input
           value={value.etiqueta}
           onChange={(e) => onChange({ etiqueta: e.target.value })}
           type="text"
+          maxLength={10}
           placeholder="Ex.: INV-000123"
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />
       </div>
 
       <div>
-        <div className="flex items-center gap-1">
-          <label className="mb-1 block text-sm text-white/70">
-            Número de Série
-          </label>{" "}
-          <span className="rounded text-xs text-red-400">*</span>
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-1">
+            <label className="block text-sm text-white/70">
+              Número de Série
+            </label>
+            <span className="text-xs text-red-400">*</span>
+          </div>
+          <span className="text-xs text-white/50">
+            {value.numSerie.length}/50
+          </span>
         </div>
         <input
           value={value.numSerie}
           onChange={(e) => onChange({ numSerie: e.target.value })}
           type="text"
+          maxLength={50}
           placeholder="Ex.: SN-9XYZA123"
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />

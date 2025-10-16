@@ -35,3 +35,6 @@ ALTER TABLE `it_management_system`.`pecas`
 CHANGE COLUMN `item_preco` `peca_preco` DOUBLE NOT NULL ,
 CHANGE COLUMN `item_em_uso` `peca_em_uso` TINYINT NOT NULL DEFAULT '0' ,
 CHANGE COLUMN `item_data_aquisicao` `peca_data_aquisicao` DATE NULL DEFAULT NULL ;
+
+ALTER TABLE `it_management_system`.`caracteristicas` 
+CHANGE COLUMN `caracteristica_valor` `caracteristica_valor` TEXT NOT NULL ;

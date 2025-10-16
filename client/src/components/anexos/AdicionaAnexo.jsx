@@ -62,13 +62,20 @@ export default function AdicionaAnexo({ anexos = [], setAnexos }) {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm text-white/70">Nome</label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-sm text-white/70">Nome</label>
+            <span className="text-xs text-white/50">{nome.length}/75</span>
+          </div>
+
           <input
             type="text"
             value={nome}
+            maxLength={75}
             onChange={(e) => setNome(e.target.value)}
             placeholder="Ex.: NF impressora, Manual do switch..."
-            className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+            className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white 
+               placeholder-white/40 ring-1 ring-white/10 
+               focus:outline-none focus:ring-2 focus:ring-sky-500/60"
           />
         </div>
 
