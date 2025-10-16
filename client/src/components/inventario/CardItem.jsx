@@ -208,25 +208,23 @@ export default function CardItem({
                       </div>
                     ))}
               </div>
-              <div>
-                <label className="block text-sm text-white/60">
-                  Observações
-                </label>
-                <div className="rounded-lg bg-white/10 p-3 text-white h-32 overflow-auto whitespace-pre-wrap">
-                  {item.caracteristicas != null &&
-                  item.caracteristicas.find(
-                    (caracteristica) =>
-                      caracteristica.caracteristica_nome == "observacoes"
-                  )
-                    ? item.caracteristicas.find(
-                        (caracteristica) =>
-                          caracteristica.caracteristica_nome == "observacoes"
-                      ).caracteristica_valor
-                    : "N/A"}
-                </div>
-              </div>
             </>
           )}
+          <div>
+            <label className="block text-sm text-white/60">Observações</label>
+            <div className="rounded-lg bg-white/10 p-3 text-white h-32 overflow-auto whitespace-pre-wrap">
+              {item.caracteristicas != null &&
+              item.caracteristicas.find(
+                (caracteristica) =>
+                  caracteristica.caracteristica_nome == "observacoes"
+              )
+                ? item.caracteristicas.find(
+                    (caracteristica) =>
+                      caracteristica.caracteristica_nome == "observacoes"
+                  ).caracteristica_valor
+                : "N/A"}
+            </div>
+          </div>
         </div>
 
         {showAnexos && (

@@ -114,8 +114,13 @@ export default function EditarItem({
       fd.append("item_em_uso", emUsonum);
       if (isDesktop) {
         const ids = Object.values(pecasSelecionadas || []).flat();
+
+        const observacoes = caracteristicas.filter(
+          (c) =>
+            c.caracteristica_nome === "observacoes" && c.caracteristica_valor
+        );
         fd.append("pecas", JSON.stringify(ids));
-        fd.append("caracteristicas", JSON.stringify([]));
+        fd.append("caracteristicas", JSON.stringify(observacoes));
       } else {
         fd.append("caracteristicas", JSON.stringify(caracteristicas || []));
       }
@@ -173,6 +178,7 @@ export default function EditarItem({
       return;
     }
     try {
+      await salvarItem();
       await inativaItem(item.item_id);
       setNotificacao({
         show: true,

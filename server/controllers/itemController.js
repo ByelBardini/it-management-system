@@ -430,6 +430,32 @@ export async function putItem(req, res) {
       );
       item.item_preco = soma;
       await item.save({ transaction: t, usuarioId: req.usuario.id });
+
+      for (const c of caracteristicas) {
+        if (c.caracteristica_nome === "observacoes") {
+          const existente = await Caracteristica.findOne({
+            where: {
+              caracteristica_item_id: id,
+              caracteristica_nome: "observacoes",
+            },
+            transaction: t,
+          });
+
+          if (existente) {
+            existente.caracteristica_valor = c.caracteristica_valor;
+            await existente.save({ transaction: t, usuarioId: req.usuario.id });
+          } else {
+            await Caracteristica.create(
+              {
+                caracteristica_item_id: id,
+                caracteristica_nome: "observacoes",
+                caracteristica_valor: c.caracteristica_valor,
+              },
+              { transaction: t, usuarioId: req.usuario.id }
+            );
+          }
+        }
+      }
     });
   }
   const anexosBanco = await Anexo.findAll({ where: { anexo_item_id: id } });
