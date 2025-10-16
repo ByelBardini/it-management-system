@@ -144,11 +144,15 @@ export default function DadosGerais({ value, onChange }) {
             <label className="block text-sm text-white/70">
               Número de Série
             </label>
-            <span className="text-xs text-red-400">*</span>
+            {value.tipo != "desktop" && (
+              <span className="text-xs text-red-400">*</span>
+            )}
           </div>
-          <span className="text-xs text-white/50">
-            {value.numSerie.length}/50
-          </span>
+          {value.tipo != "desktop" && (
+            <span className="text-xs text-white/50">
+              {value.numSerie.length}/50
+            </span>
+          )}
         </div>
         <input
           value={value.numSerie}
@@ -156,7 +160,10 @@ export default function DadosGerais({ value, onChange }) {
           type="text"
           maxLength={50}
           placeholder="Ex.: SN-9XYZA123"
-          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+          disabled={value.tipo === "desktop"}
+          className={`w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60 ${
+            value.tipo === "desktop" ? "opacity-70 cursor-not-allowed" : ""
+          }`}
         />
       </div>
 

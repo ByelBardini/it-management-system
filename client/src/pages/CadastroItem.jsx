@@ -52,13 +52,31 @@ export default function CadastroItem() {
   async function cadastraItem() {
     const id_empresa = localStorage.getItem("empresa_id");
     if (
-      form.nome == "" ||
-      form.tipo == "" ||
-      form.etiqueta == "" ||
-      form.numSerie == "" ||
-      form.preco == "R$ 0,00" ||
-      form.manutencao == "" ||
-      form.intervalo == ""
+      form.tipo == "desktop" &&
+      (form.nome == "" ||
+        form.tipo == "" ||
+        form.etiqueta == "" ||
+        form.preco == "R$ 0,00" ||
+        form.manutencao == "" ||
+        form.intervalo == "")
+    ) {
+      console.log(2);
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Dados imcompletos",
+        mensagem: "Preencha todos os campos obrigatórios",
+      });
+      return;
+    } else if (
+      form.tipo != "desktop" &&
+      (form.nome == "" ||
+        form.tipo == "" ||
+        form.etiqueta == "" ||
+        form.numSerie == "" ||
+        form.preco == "R$ 0,00" ||
+        form.manutencao == "" ||
+        form.intervalo == "")
     ) {
       setNotificacao({
         show: true,
@@ -77,6 +95,7 @@ export default function CadastroItem() {
       return;
     } else {
       try {
+        console.log(4);
         setLoading(true);
         const fd = new FormData();
         const precoFormatado =

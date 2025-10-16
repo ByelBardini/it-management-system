@@ -181,7 +181,8 @@ export async function postItem(req, res) {
   const item_nome = b.item_nome;
   const item_tipo = b.item_tipo;
   const item_etiqueta = b.item_etiqueta;
-  const item_num_serie = b.item_num_serie;
+  const item_num_serie =
+    b.item_tipo === "desktop" ? "N/A" : b.item_num_serie || "";
   const item_preco = Number(b.item_preco);
   const item_data_aquisicao = b.item_data_aquisicao;
   const item_em_uso = String(b.item_em_uso).toLowerCase() === "true";
@@ -193,7 +194,7 @@ export async function postItem(req, res) {
     try {
       caracteristicas = JSON.parse(b.caracteristicas);
     } catch {
-      throw new ApiError.badRequest("Características inválidas");
+      throw ApiError.badRequest("Características inválidas");
     }
   }
   let pecasIds = [];
@@ -203,7 +204,7 @@ export async function postItem(req, res) {
       if (Array.isArray(parsed))
         pecasIds = parsed.map((n) => Number(n)).filter((n) => !Number.isNaN(n));
     } catch {
-      throw new ApiError.badRequest("Peças inválidas");
+      throw ApiError.badRequest("Peças inválidas");
     }
   }
 
@@ -219,7 +220,7 @@ export async function postItem(req, res) {
     Number.isNaN(item_intervalo_manutencao);
 
   if (faltando) {
-    throw new ApiError.badRequest("Campos obrigatórios faltando");
+    throw ApiError.badRequest("Campos obrigatórios faltando");
   }
 
   const anexosArr = Array.isArray(req.anexos) ? req.anexos : [];
@@ -228,7 +229,7 @@ export async function postItem(req, res) {
     let precoFinal = item_preco;
     if (item_tipo === "desktop") {
       if (!Array.isArray(pecasIds) || pecasIds.length === 0) {
-        throw new ApiError.badRequest("Selecione as peças do desktop");
+        throw ApiError.badRequest("Selecione as peças do desktop");
       }
       const pecasPreco = await Peca.findAll({
         attributes: ["peca_id", "peca_preco"],
@@ -271,7 +272,7 @@ export async function postItem(req, res) {
       }
     } else {
       if (!Array.isArray(pecasIds) || pecasIds.length === 0) {
-        throw new ApiError.badRequest("Selecione as peças do desktop");
+        throw ApiError.badRequest("Selecione as peças do desktop");
       }
       const pecas = await Peca.findAll({
         where: { peca_id: pecasIds, peca_ativa: 1, peca_item_id: null },
@@ -280,7 +281,7 @@ export async function postItem(req, res) {
       const encontrados = pecas.map((p) => p.peca_id);
       const faltantes = pecasIds.filter((id) => !encontrados.includes(id));
       if (faltantes.length) {
-        throw new ApiError.badRequest(
+        throw ApiError.badRequest(
           "Algumas peças são inválidas ou já estão em uso"
         );
       }
@@ -326,7 +327,7 @@ export async function putItem(req, res) {
     try {
       caracteristicas = JSON.parse(b.caracteristicas);
     } catch {
-      throw new ApiError.badRequest("Características inválidas");
+      throw ApiError.badRequest("Características inválidas");
     }
   }
 
@@ -337,7 +338,7 @@ export async function putItem(req, res) {
       if (Array.isArray(parsed))
         pecasIds = parsed.map((n) => Number(n)).filter((n) => !Number.isNaN(n));
     } catch {
-      throw new ApiError.badRequest("Peças inválidas");
+      throw ApiError.badRequest("Peças inválidas");
     }
   }
 
@@ -408,7 +409,7 @@ export async function putItem(req, res) {
           (pid) => !encontrados.includes(pid)
         );
         if (faltantes.length) {
-          throw new ApiError.badRequest(
+          throw ApiError.badRequest(
             "Algumas peças são inválidas ou já estão em uso"
           );
         }
