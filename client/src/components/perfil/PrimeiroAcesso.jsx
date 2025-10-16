@@ -73,11 +73,15 @@ export default function PrimeiroAcesso({
 
         <div className="space-y-4">
           <div>
-            <label className="text-sm text-white/70">Nova Senha</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">Nova Senha</label>
+              <span className="text-xs text-white/50">{senha.length}/50</span>
+            </div>
             <div className="relative mt-1">
               <input
                 type={visualizaSenha ? "text" : "password"}
                 placeholder="Insira a nova senha"
+                maxLength={50}
                 onChange={(e) => setSenha(e.target.value)}
                 className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white placeholder-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
               />
@@ -92,11 +96,15 @@ export default function PrimeiroAcesso({
 
           <div>
             <div>
-              <label className="text-sm text-white/70">Confirmar Senha</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-sm text-white/70">Confirmar Senha</label>
+                <span className="text-xs text-white/50">{senha.length}/50</span>
+              </div>
               <div className="relative mt-1">
                 <input
                   type={visualizaConfirmaSenha ? "text" : "password"}
                   placeholder="Confirme a nova senha"
+                  maxLength={50}
                   onChange={(e) => setConfirmaSenha(e.target.value)}
                   className={`w-full rounded-lg px-3 py-2 text-white placeholder-white/40 text-sm focus:outline-none focus:ring-2 transition ${
                     senhaValida || senha == ""

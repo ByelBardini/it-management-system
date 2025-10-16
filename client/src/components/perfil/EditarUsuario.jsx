@@ -130,10 +130,14 @@ export default function EditarFuncionario({
           </div>
 
           <div>
-            <label className="text-sm text-white/70">Nome</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">Nome</label>
+              <span className="text-xs text-white/50">{nome.length}/100</span>
+            </div>
             <input
               type="text"
               value={nome}
+              maxLength={100}
               onChange={(e) => setNome(e.target.value)}
               placeholder="Digite o novo nome"
               className="mt-1 w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white placeholder-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
