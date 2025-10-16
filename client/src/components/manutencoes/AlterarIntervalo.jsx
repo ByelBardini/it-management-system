@@ -68,6 +68,9 @@ export default function AlterarIntervalo({
       if (e.key === "Escape") setEditar(false);
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (

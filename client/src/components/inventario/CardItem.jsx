@@ -57,6 +57,9 @@ export default function CardItem({
       if (e.key === "Escape") setCardItem(false);
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   useEffect(() => {

@@ -32,6 +32,9 @@ export default function ModalSelecionaPeca({
       if (e.key === "Escape") onClose?.();
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   function toggle(id) {

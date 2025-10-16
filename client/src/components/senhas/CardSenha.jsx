@@ -84,6 +84,9 @@ export default function CardSenha({
       if (e.key === "Escape") setCardSenha(false);
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (

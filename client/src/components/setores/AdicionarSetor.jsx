@@ -65,6 +65,9 @@ export default function AdicionarSetor({
       if (e.key === "Escape") setAdicionando(false);
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (

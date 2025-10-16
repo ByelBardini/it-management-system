@@ -120,6 +120,9 @@ export default function ModalRegistraSenha({
       if (e.key === "Escape") setAdicionaSenha(false);
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (

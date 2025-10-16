@@ -102,6 +102,9 @@ export default function ExibeUsuario({
       if (e.key === "Escape") setExibeUsuario(false);
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (

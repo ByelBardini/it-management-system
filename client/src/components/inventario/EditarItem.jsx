@@ -237,6 +237,9 @@ export default function EditarItem({
       if (e.key === "Escape") setEditarItem(false);
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (

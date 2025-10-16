@@ -78,6 +78,9 @@ export default function AtualizarSenha({
       if (e.key === "Escape") setTrocaSenha(false);
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (

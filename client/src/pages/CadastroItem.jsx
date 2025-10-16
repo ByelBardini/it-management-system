@@ -197,6 +197,9 @@ export default function CadastroItem() {
           setSelecionaPeca({ open: false, tipo: null, multi: false });
         }
       }
+      return () => {
+        window.removeEventListener("keydown", onKeyDown);
+      };
     }
     window.addEventListener("keydown", onKeyDown, { capture: true });
     return () =>

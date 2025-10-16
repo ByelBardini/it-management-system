@@ -42,6 +42,9 @@ export default function ModalCadastraPecas({
       if (e.key === "Escape") setAdiciona(false);
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   async function handleSalvar() {

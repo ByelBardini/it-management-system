@@ -83,6 +83,9 @@ export default function EditarFuncionario({
       if (e.key === "Escape") setEditarPerfil(false);
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (

@@ -66,6 +66,9 @@ export default function ExibirManutencao({
       if (e.key === "Escape") setVisualizando(false);
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (

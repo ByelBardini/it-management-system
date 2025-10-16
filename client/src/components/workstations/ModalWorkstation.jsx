@@ -122,6 +122,9 @@ export default function ModalWorkstation({
       if (e.key === "Escape") setCardWorkstation(false);
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (

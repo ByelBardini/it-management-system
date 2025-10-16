@@ -17,6 +17,9 @@ export default function ModalConfirmacao({
       if (e.key === "Escape") onNao();
     }
     window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (
