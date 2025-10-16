@@ -1,10 +1,13 @@
 import CadastroCaracteristica from "../components/caracteristicas/CadastroCaracteristica.jsx";
+import CadastroDesktop from "../components/caracteristicas/CadastroDesktop.jsx";
 import DadosGerais from "../components/itens/DadosGerais.jsx";
 import AdicionaAnexo from "../components/anexos/AdicionaAnexo.jsx";
 import Loading from "../components/default/Loading.jsx";
 import ModalConfirmacao from "../components/default/ModalConfirmacao.jsx";
 import Notificacao from "../components/default/Notificacao.jsx";
-import { useState, useCallback } from "react";
+import ModalSelecionaPeca from "../components/caracteristicas/ModalSelecionaPeca.jsx";
+import { useState, useCallback, useEffect } from "react";
+import { getPecasAtivas } from "../services/api/pecasServices.js";
 import { postItem } from "../services/api/itemServices.js";
 import { NavLink, useNavigate } from "react-router-dom";
 import { tratarErro } from "../components/default/funcoes.js";
@@ -13,15 +16,21 @@ export default function CadastroItem() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-
   const [modalConfirmacao, setModalConfirmacao] = useState(false);
-
   const [notificacao, setNotificacao] = useState({
     show: false,
     tipo: "sucesso",
     titulo: "",
     mensagem: "",
   });
+
+  const [selecionaPeca, setSelecionaPeca] = useState({
+    open: false,
+    tipo: null,
+    multi: false,
+  });
+  const [pecasSelecionadas, setPecasSelecionadas] = useState({});
+  const [pecas, setPecas] = useState([]);
 
   function limpaTela() {
     setForm({
@@ -84,7 +93,16 @@ export default function CadastroItem() {
         fd.append("item_ultima_manutencao", form.manutencao);
         fd.append("item_intervalo_manutencao", String(form.intervalo));
 
-        fd.append("caracteristicas", JSON.stringify(caracteristicas || []));
+        if (form.tipo === "desktop") {
+          const ids = Object.values(pecasSelecionadas || [])
+            .flat()
+            .filter((v) => typeof v === "number" || typeof v === "string")
+            .map((v) => Number(v));
+          fd.append("pecas", JSON.stringify(ids));
+          fd.append("caracteristicas", JSON.stringify([]));
+        } else {
+          fd.append("caracteristicas", JSON.stringify(caracteristicas || []));
+        }
 
         (anexos || []).forEach((a) => {
           fd.append("id[]", a.id ?? "");
@@ -128,6 +146,63 @@ export default function CadastroItem() {
     []
   );
 
+  function formatarRealDinamico(valor) {
+    valor = String(valor).replace(/\D/g, "");
+    if (!valor) return "R$ 0,00";
+    valor = (parseInt(valor, 10) / 100).toFixed(2);
+    valor = valor.replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return `R$ ${valor}`;
+  }
+
+  useEffect(() => {
+    if (form.tipo !== "desktop") return;
+    const ids = Object.values(pecasSelecionadas || []).flat();
+    const soma = ids
+      .map((id) => pecas.find((p) => p.peca_id === id))
+      .filter(Boolean)
+      .reduce((acc, p) => acc + Number(p.peca_preco || 0), 0);
+    const centavos = Math.round(soma * 100);
+    setForm((prev) => ({
+      ...prev,
+      preco: formatarRealDinamico(String(centavos)),
+    }));
+  }, [pecasSelecionadas, pecas, form.tipo]);
+
+  useEffect(() => {
+    async function fetchPecas() {
+      try {
+        const idEmpresa = localStorage.getItem("empresa_id");
+        const lista = await getPecasAtivas(idEmpresa);
+        setPecas(lista);
+      } catch {
+        setNotificacao({
+          show: true,
+          tipo: "erro",
+          titulo: "Erro ao buscar peças",
+          mensagem: "Não foi possível carregar a lista de peças.",
+        });
+      }
+    }
+    if (form.tipo === "desktop") {
+      fetchPecas();
+    }
+  }, [form.tipo]);
+
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        if (selecionaPeca.open) {
+          setSelecionaPeca({ open: false, tipo: null, multi: false });
+        }
+      }
+    }
+    window.addEventListener("keydown", onKeyDown, { capture: true });
+    return () =>
+      window.removeEventListener("keydown", onKeyDown, { capture: true });
+  }, [selecionaPeca.open]);
+
   const updateCaracteristica = (nome, valor) => {
     setCaracteristicas((prev) => {
       const i = prev.findIndex((c) => c.nome === nome);
@@ -163,6 +238,29 @@ export default function CadastroItem() {
               mensagem: "",
             })
           }
+        />
+      )}
+      {selecionaPeca.open && (
+        <ModalSelecionaPeca
+          pecas={pecas.filter(
+            (p) =>
+              p.peca_tipo === selecionaPeca.tipo &&
+              !p.peca_em_uso &&
+              (p.peca_item_id == null || p.peca_item_id === 0)
+          )}
+          selectedIds={pecasSelecionadas[selecionaPeca.tipo] || []}
+          multi={selecionaPeca.multi}
+          tipo={selecionaPeca.tipo}
+          onClose={() =>
+            setSelecionaPeca({ open: false, tipo: null, multi: false })
+          }
+          onConfirm={(ids) => {
+            setPecasSelecionadas((prev) => ({
+              ...prev,
+              [selecionaPeca.tipo]: ids,
+            }));
+            setSelecionaPeca({ open: false, tipo: null, multi: false });
+          }}
         />
       )}
 
@@ -205,19 +303,32 @@ export default function CadastroItem() {
           <section className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
             <div className="mb-4 flex items-center gap-2">
               <h2 className="text-base font-medium text-white">
-                Características
+                {`${form.tipo == "desktop" ? "Peças" : "Características"}`}
               </h2>
               <span className="rounded bg-red-500/20 px-2 py-0.5 text-xs text-red-400">
                 * Obrigatório
               </span>
             </div>
-            <CadastroCaracteristica
-              tipo={form.tipo}
-              setCaracteristicas={updateCaracteristica}
-              resetCaracteristicas={() => setCaracteristicas([])}
-              caracteristicas={caracteristicas}
-              setCaracteristicaValida={setCaracteristicaValida}
-            />
+            {form.tipo != "desktop" ? (
+              <CadastroCaracteristica
+                tipo={form.tipo}
+                setCaracteristicas={updateCaracteristica}
+                resetCaracteristicas={() => setCaracteristicas([])}
+                caracteristicas={caracteristicas}
+                setCaracteristicaValida={setCaracteristicaValida}
+              />
+            ) : (
+              <CadastroDesktop
+                setPecas={setPecas}
+                setCaracteristicas={setCaracteristicas}
+                resetCaracteristicas={() => setCaracteristicas([])}
+                caracteristicas={caracteristicas}
+                setCaracteristicaValida={setCaracteristicaValida}
+                setSelecionaPeca={setSelecionaPeca}
+                pecasSelecionadas={pecasSelecionadas}
+                pecas={pecas}
+              />
+            )}
           </section>
 
           <section className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">

@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Desktop from "./cadastro/Desktop.jsx";
 import Notebook from "./cadastro/Notebook.jsx";
 import Movel from "./cadastro/Movel.jsx";
 import Cadeira from "./cadastro/Cadeira.jsx";
@@ -30,14 +29,6 @@ export default function CadastroCaracteristica({
 
   const selecionado = tipo;
   switch (selecionado) {
-    case "desktop":
-      return (
-        <Desktop
-          setCaracteristicas={setCaracteristicas}
-          caracteristicas={caracteristicas}
-          setCaracteristicaValida={setCaracteristicaValida}
-        />
-      );
     case "notebook":
       return (
         <Notebook

@@ -90,12 +90,12 @@ export default function TabelaPecas({
                   <div className="flex items-center justify-start gap-2 relative">
                     <span
                       className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 ${
-                        peca.item_em_uso
+                        peca.peca_em_uso
                           ? "bg-emerald-500/20 text-emerald-400"
                           : "bg-rose-500/20 text-rose-400"
                       }`}
                     >
-                      {peca.item_em_uso ? "Sim" : "Não"}
+                      {peca.peca_em_uso ? "Sim" : "Não"}
                     </span>
 
                     {selecionado === peca.peca_id && (
@@ -117,7 +117,7 @@ export default function TabelaPecas({
                               texto:
                                 "tem certeza que deseja inativar esta peça?",
                               onSim: () =>
-                                inativaItem(peca.peca_id, peca.item_em_uso),
+                                inativaItem(peca.peca_id, peca.peca_em_uso),
                               tipo: "atencao",
                             })
                           }

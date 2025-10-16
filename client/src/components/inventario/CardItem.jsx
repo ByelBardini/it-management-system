@@ -153,42 +153,70 @@ export default function CardItem({
         </div>
 
         <div>
-          <h3 className="text-md font-medium text-white mb-3">
-            Características
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-            {item.caracteristicas != null &&
-              item.caracteristicas
-                .filter(
-                  (caracteristica) =>
-                    caracteristica.caracteristica_nome != "observacoes"
-                )
-                .map((caracteristica) => (
-                  <div key={caracteristica.caractetistica_id}>
-                    <label className="block text-sm text-white/60">
-                      {tipos[caracteristica.caracteristica_nome]}
-                    </label>
-                    <div className="rounded-lg bg-white/10 p-2 text-white">
-                      {caracteristica.caracteristica_valor}
+          {item.item_tipo === "desktop" ? (
+            <>
+              <h3 className="text-md font-medium text-white mb-3">Peças</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                {Array.isArray(item.pecas) && item.pecas.length > 0 ? (
+                  item.pecas.map((p) => (
+                    <div
+                      key={p.peca_id}
+                      className="rounded-lg bg-white/10 p-3 text-white"
+                    >
+                      <div className="text-xs text-white/60">{p.peca_tipo}</div>
+                      <div className="text-sm font-medium">{p.peca_nome}</div>
+                      <div className="text-xs text-white/60">
+                        {formatToBRL(p.peca_preco)}
+                      </div>
                     </div>
-                  </div>
-                ))}
-          </div>
-          <div>
-            <label className="block text-sm text-white/60">Observações</label>
-            <div className="rounded-lg bg-white/10 p-3 text-white h-24">
-              {item.caracteristicas != null &&
-              item.caracteristicas.find(
-                (caracteristica) =>
-                  caracteristica.caracteristica_nome == "observacoes"
-              )
-                ? item.caracteristicas.find(
+                  ))
+                ) : (
+                  <div className="text-white/60">Nenhuma peça vinculada</div>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <h3 className="text-md font-medium text-white mb-3">
+                Características
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                {item.caracteristicas != null &&
+                  item.caracteristicas
+                    .filter(
+                      (caracteristica) =>
+                        caracteristica.caracteristica_nome != "observacoes"
+                    )
+                    .map((caracteristica) => (
+                      <div key={caracteristica.caractetistica_id}>
+                        <label className="block text-sm text-white/60">
+                          {tipos[caracteristica.caracteristica_nome]}
+                        </label>
+                        <div className="rounded-lg bg-white/10 p-2 text-white">
+                          {caracteristica.caracteristica_valor}
+                        </div>
+                      </div>
+                    ))}
+              </div>
+              <div>
+                <label className="block text-sm text-white/60">
+                  Observações
+                </label>
+                <div className="rounded-lg bg-white/10 p-3 text-white h-24">
+                  {item.caracteristicas != null &&
+                  item.caracteristicas.find(
                     (caracteristica) =>
                       caracteristica.caracteristica_nome == "observacoes"
-                  ).caracteristica_valor
-                : "N/A"}
-            </div>
-          </div>
+                  )
+                    ? item.caracteristicas.find(
+                        (caracteristica) =>
+                          caracteristica.caracteristica_nome == "observacoes"
+                      ).caracteristica_valor
+                    : "N/A"}
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {showAnexos && (
