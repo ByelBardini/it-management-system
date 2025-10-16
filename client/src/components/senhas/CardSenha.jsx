@@ -79,6 +79,8 @@ export default function CardSenha({
 
   useEffect(() => {
     function onKeyDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (e.key === "Escape") setCardSenha(false);
     }
     window.addEventListener("keydown", onKeyDown);

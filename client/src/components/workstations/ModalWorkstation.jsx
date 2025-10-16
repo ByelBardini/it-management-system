@@ -117,6 +117,8 @@ export default function ModalWorkstation({
 
   useEffect(() => {
     function onKeyDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (e.key === "Escape") setCardWorkstation(false);
     }
     window.addEventListener("keydown", onKeyDown);

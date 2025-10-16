@@ -59,6 +59,8 @@ export default function AdicionarPlataforma({
 
   useEffect(() => {
     function onKeyDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (e.key === "Escape") setAdicionando(false);
     }
     window.addEventListener("keydown", onKeyDown);

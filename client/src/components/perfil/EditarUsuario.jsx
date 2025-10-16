@@ -78,6 +78,8 @@ export default function EditarFuncionario({
 
   useEffect(() => {
     function onKeyDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (e.key === "Escape") setEditarPerfil(false);
     }
     window.addEventListener("keydown", onKeyDown);

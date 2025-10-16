@@ -27,6 +27,8 @@ export default function ModalSelecionaPeca({
 
   useEffect(() => {
     function onKeyDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (e.key === "Escape") onClose?.();
     }
     window.addEventListener("keydown", onKeyDown);

@@ -97,6 +97,8 @@ export default function ExibeUsuario({
 
   useEffect(() => {
     function onKeyDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (e.key === "Escape") setExibeUsuario(false);
     }
     window.addEventListener("keydown", onKeyDown);

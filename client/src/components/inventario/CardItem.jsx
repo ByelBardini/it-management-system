@@ -52,6 +52,8 @@ export default function CardItem({
 
   useEffect(() => {
     function onKeyDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (e.key === "Escape") setCardItem(false);
     }
     window.addEventListener("keydown", onKeyDown);

@@ -36,6 +36,8 @@ export default function ModalCadastraPecas({
 
   useEffect(() => {
     function onKeyDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (e.key === "Escape") setAdiciona(false);
     }
     window.addEventListener("keydown", onKeyDown);

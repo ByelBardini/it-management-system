@@ -12,6 +12,8 @@ export default function ModalConfirmacao({
 
   useEffect(() => {
     function onKeyDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (e.key === "Escape") onNao();
     }
     window.addEventListener("keydown", onKeyDown);

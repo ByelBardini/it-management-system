@@ -63,6 +63,8 @@ export default function AlterarIntervalo({
 
   useEffect(() => {
     function onKeyDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (e.key === "Escape") setEditar(false);
     }
     window.addEventListener("keydown", onKeyDown);

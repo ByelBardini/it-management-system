@@ -69,6 +69,8 @@ export default function AtualizarSenha({
 
   useEffect(() => {
     function onKeyDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (e.key === "Escape") setNovaSenha(false);
     }
     window.addEventListener("keydown", onKeyDown);
@@ -111,10 +113,11 @@ export default function AtualizarSenha({
           </div>
 
           <div>
-            
             <div className="flex items-center justify-between mb-1">
               <label className="text-sm text-white/70">Confirmar Senha</label>
-              <span className="text-xs text-white/50">{confirmaSenha.length}/50</span>
+              <span className="text-xs text-white/50">
+                {confirmaSenha.length}/50
+              </span>
             </div>
             <div className="relative mt-1">
               <input
