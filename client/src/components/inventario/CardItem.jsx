@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import tipos from "./tiposCarac.js";
+import tiposPecas from "../pecas/tiposPecas.js";
 import { useState } from "react";
 import { Download, X, Inbox } from "lucide-react";
 import { getItemFull } from "../../services/api/itemServices.js";
@@ -163,7 +164,9 @@ export default function CardItem({
                       key={p.peca_id}
                       className="rounded-lg bg-white/10 p-3 text-white"
                     >
-                      <div className="text-xs text-white/60">{p.peca_tipo}</div>
+                      <div className="text-xs text-white/60">
+                        {tiposPecas[p.peca_tipo] ?? p.peca_tipo}
+                      </div>
                       <div className="text-sm font-medium">{p.peca_nome}</div>
                       <div className="text-xs text-white/60">
                         {formatToBRL(p.peca_preco)}

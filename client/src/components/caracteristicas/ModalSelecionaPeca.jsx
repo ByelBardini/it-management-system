@@ -48,7 +48,7 @@ export default function ModalSelecionaPeca({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-4xl bg-white/5 backdrop-blur-2xl rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6 text-white"
+        className="w-full max-w-4xl bg-zinc-900 rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6 text-white"
       >
         <div className="flex items-center justify-between border-b border-white/10 pb-3">
           <h2 className="text-lg font-semibold text-white/90">

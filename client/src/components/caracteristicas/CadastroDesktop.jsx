@@ -31,11 +31,9 @@ export default function CadastroDesktop({
   pecasSelecionadas,
   pecas,
 }) {
-
   useEffect(() => {
     resetCaracteristicas();
   }, []);
-
 
   useEffect(() => {
     const novas = [];

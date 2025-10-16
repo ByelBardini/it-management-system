@@ -1,5 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import tipos from "./tiposCarac.js";
+import tiposPecas from "../pecas/tiposPecas.js";
+import ModalSelecionaPeca from "../caracteristicas/ModalSelecionaPeca.jsx";
+import { getPecasAtivas } from "../../services/api/pecasServices.js";
 import EditarAnexos from "../anexos/EditarAnexos.jsx";
 import { X, Paperclip } from "lucide-react";
 import { getSetoresWorkstations } from "../../services/api/empresaServices.js";
@@ -32,6 +35,23 @@ export default function EditarItem({
     item.caracteristicas || []
   );
   const [anexos, setAnexos] = useState(item.anexos || []);
+
+  const isDesktop = item.item_tipo === "desktop";
+  const [pecas, setPecas] = useState([]);
+  const [pecasSelecionadas, setPecasSelecionadas] = useState(() => {
+    if (!isDesktop || !Array.isArray(item.pecas)) return {};
+    const grouped = {};
+    item.pecas.forEach((p) => {
+      if (!grouped[p.peca_tipo]) grouped[p.peca_tipo] = [];
+      grouped[p.peca_tipo].push(p.peca_id);
+    });
+    return grouped;
+  });
+  const [selecionaPeca, setSelecionaPeca] = useState({
+    open: false,
+    tipo: null,
+    multi: false,
+  });
 
   const [abrirAnexos, setAbrirAnexos] = useState(false);
 
@@ -69,15 +89,17 @@ export default function EditarItem({
       });
       return;
     }
-    for (const c of caracteristicas) {
-      if (!c.caracteristica_valor) {
-        setNotificacao({
-          show: true,
-          tipo: "erro",
-          titulo: "Características Inválidas",
-          mensagem: "Nenhum campo de característica pode estar vazio.",
-        });
-        return;
+    if (!isDesktop) {
+      for (const c of caracteristicas) {
+        if (!c.caracteristica_valor) {
+          setNotificacao({
+            show: true,
+            tipo: "erro",
+            titulo: "Características Inválidas",
+            mensagem: "Nenhum campo de característica pode estar vazio.",
+          });
+          return;
+        }
       }
     }
     setLoading(true);
@@ -90,8 +112,13 @@ export default function EditarItem({
       fd.append("item_setor_id", setorId || null);
       fd.append("item_workstation_id", workstationId || null);
       fd.append("item_em_uso", emUsonum);
-
-      fd.append("caracteristicas", JSON.stringify(caracteristicas || []));
+      if (isDesktop) {
+        const ids = Object.values(pecasSelecionadas || []).flat();
+        fd.append("pecas", JSON.stringify(ids));
+        fd.append("caracteristicas", JSON.stringify([]));
+      } else {
+        fd.append("caracteristicas", JSON.stringify(caracteristicas || []));
+      }
 
       (anexos || []).forEach((a) => {
         if (a.anexo_id) {
@@ -189,6 +216,20 @@ export default function EditarItem({
     puxarSetoresWorkstations();
   }, []);
 
+  // Buscar peças (desktop)
+  useEffect(() => {
+    async function fetchPecas() {
+      try {
+        const idEmpresa = localStorage.getItem("empresa_id");
+        const lista = await getPecasAtivas(idEmpresa);
+        setPecas(lista);
+      } catch (err) {
+        tratarErro(setNotificacao, err, navigate);
+      }
+    }
+    if (isDesktop) fetchPecas();
+  }, [isDesktop]);
+
   useEffect(() => {
     function onKeyDown(e) {
       if (e.key === "Escape") setEditarItem(false);
@@ -281,37 +322,110 @@ export default function EditarItem({
           </div>
         </div>
 
-        <div>
-          <h3 className="text-md font-medium text-white mb-3">
-            Características
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {caracteristicas
-              .filter(
-                (caracteristica) =>
-                  caracteristica.caracteristica_nome != "observacoes"
-              )
-              .map((caracteristica) => (
-                <div key={caracteristica.caracteristica_id}>
-                  <label className="block text-sm text-white/60">
-                    {tipos[caracteristica.caracteristica_nome]}
-                  </label>
-                  <input
-                    value={caracteristica.caracteristica_valor}
-                    onChange={(e) =>
-                      mudarCaracteristica(
-                        caracteristica.caracteristica_nome,
-                        e.target.value
-                      )
-                    }
-                    type="text"
-                    placeholder="Digite aqui..."
-                    className="w-full rounded-lg bg-white/10 p-2 text-white focus:outline-none"
-                  />
-                </div>
-              ))}
+        {isDesktop ? (
+          <div>
+            <h3 className="text-md font-medium text-white mb-3">Peças</h3>
+            <div className="w-full p-2 rounded-lg ring-1 ring-white/10 bg-white/5">
+              {[
+                { tipo: "processador", multi: false },
+                { tipo: "placa-video", multi: false },
+                { tipo: "placa-mae", multi: false },
+                { tipo: "ram", multi: true },
+                { tipo: "armazenamento", multi: true },
+                { tipo: "fonte", multi: false },
+                { tipo: "placa-rede", multi: false },
+                { tipo: "gabinete", multi: false },
+                { tipo: "outros", multi: true },
+              ].map((linha) => {
+                const ids = pecasSelecionadas[linha.tipo] || [];
+                const nomes = ids
+                  .map((id) => pecas.find((p) => p.peca_id === id))
+                  .filter(Boolean)
+                  .map((p) => p.peca_nome)
+                  .join(", ");
+                return (
+                  <div
+                    key={linha.tipo}
+                    className="flex items-center justify-between border-b border-white/10 p-2"
+                  >
+                    <span className="text-sm font-bold text-white/70 w-1/3">
+                      {tiposPecas[linha.tipo]}
+                    </span>
+                    <span className="text-sm text-white/90 w-1/3 text-center truncate">
+                      {nomes || "Não selecionado"}
+                    </span>
+                    <button
+                      onClick={() =>
+                        setSelecionaPeca({
+                          open: true,
+                          tipo: linha.tipo,
+                          multi: linha.multi,
+                        })
+                      }
+                      className="cursor-pointer text-sm font-medium px-3 py-1.5 rounded-lg bg-sky-600/40 hover:bg-sky-500/60 transition"
+                    >
+                      Selecione...
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+            {selecionaPeca.open && (
+              <ModalSelecionaPeca
+                pecas={pecas.filter(
+                  (p) =>
+                    p.peca_tipo === selecionaPeca.tipo &&
+                    (!p.peca_em_uso || p.peca_item_id === item.item_id)
+                )}
+                selectedIds={pecasSelecionadas[selecionaPeca.tipo] || []}
+                multi={selecionaPeca.multi}
+                tipo={selecionaPeca.tipo}
+                onClose={() =>
+                  setSelecionaPeca({ open: false, tipo: null, multi: false })
+                }
+                onConfirm={(ids) => {
+                  setPecasSelecionadas((prev) => ({
+                    ...prev,
+                    [selecionaPeca.tipo]: ids,
+                  }));
+                  setSelecionaPeca({ open: false, tipo: null, multi: false });
+                }}
+              />
+            )}
           </div>
-        </div>
+        ) : (
+          <div>
+            <h3 className="text-md font-medium text-white mb-3">
+              Características
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {caracteristicas
+                .filter(
+                  (caracteristica) =>
+                    caracteristica.caracteristica_nome != "observacoes"
+                )
+                .map((caracteristica) => (
+                  <div key={caracteristica.caracteristica_id}>
+                    <label className="block text-sm text-white/60">
+                      {tipos[caracteristica.caracteristica_nome]}
+                    </label>
+                    <input
+                      value={caracteristica.caracteristica_valor}
+                      onChange={(e) =>
+                        mudarCaracteristica(
+                          caracteristica.caracteristica_nome,
+                          e.target.value
+                        )
+                      }
+                      type="text"
+                      placeholder="Digite aqui..."
+                      className="w-full rounded-lg bg-white/10 p-2 text-white focus:outline-none"
+                    />
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
 
         <div>
           <label className="block text-sm text-white/60">Observações</label>
