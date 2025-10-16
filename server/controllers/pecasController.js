@@ -2,8 +2,8 @@ import { ApiError } from "../middlewares/ApiError.js";
 import { Peca, Item } from "../models/index.js";
 
 export async function postPeca(req, res) {
-  const { id_empresa, tipo, nome, preco, data_aquisicao } = req.body;
-  if (!id_empresa || !tipo || !nome || !preco || !data_aquisicao) {
+  const { id_empresa, tipo, nome, preco, data_aquisicao, numSerie } = req.body;
+  if (!id_empresa || !tipo || !nome || !preco || !data_aquisicao || !numSerie) {
     throw ApiError.badRequest("Todos os dados são necessários");
   }
   await Peca.create(
@@ -12,6 +12,7 @@ export async function postPeca(req, res) {
       peca_ativa: 1,
       peca_tipo: tipo,
       peca_nome: nome,
+      peca_num_serie: numSerie,
       peca_preco: preco,
       peca_em_uso: 0,
       peca_data_aquisicao: data_aquisicao,

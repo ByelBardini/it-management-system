@@ -38,3 +38,6 @@ CHANGE COLUMN `item_data_aquisicao` `peca_data_aquisicao` DATE NULL DEFAULT NULL
 
 ALTER TABLE `it_management_system`.`caracteristicas` 
 CHANGE COLUMN `caracteristica_valor` `caracteristica_valor` TEXT NOT NULL ;
+
+ALTER TABLE `it_management_system`.`pecas` 
+ADD COLUMN `peca_num_serie` VARCHAR(150) NOT NULL AFTER `peca_nome`;

@@ -25,6 +25,7 @@ export default function ModalCadastraPecas({
   const [tipo, setTipo] = useState("");
   const [nome, setNome] = useState("");
   const [preco, setPreco] = useState("");
+  const [numSerie, setNumSerie] = useState("");
   const [dataAquisicao, setDataAquisicao] = useState("");
 
   const [valido, setValido] = useState(false);
@@ -62,7 +63,8 @@ export default function ModalCadastraPecas({
         tipo,
         nome,
         precoFormatado,
-        dataAquisicao
+        dataAquisicao,
+        numSerie
       );
       setConfirmacao({
         show: true,
@@ -77,6 +79,7 @@ export default function ModalCadastraPecas({
           setNome("");
           setPreco("");
           setDataAquisicao("");
+          setNumSerie("");
         },
         tipo: "sucesso",
       });
@@ -131,12 +134,33 @@ export default function ModalCadastraPecas({
           </div>
 
           <div>
-            <label className="block text-sm text-white/70 mb-1">Nome</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">Nome</label>
+              <span className="text-xs text-white/50">{nome.length}/150</span>
+            </div>
             <input
               onChange={(e) => setNome(e.target.value)}
               type="text"
+              maxLength={150}
               value={nome}
               placeholder="Digite o nome da peça"
+              className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">Número de Série</label>
+              <span className="text-xs text-white/50">
+                {numSerie.length}/150
+              </span>
+            </div>
+            <input
+              onChange={(e) => setNumSerie(e.target.value)}
+              type="text"
+              maxLength={150}
+              value={numSerie}
+              placeholder="Digite o número de série da peça"
               className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>

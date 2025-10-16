@@ -1,6 +1,13 @@
 import { api } from "../api.js";
 
-export async function postPeca(id_empresa, tipo, nome, preco, data_aquisicao) {
+export async function postPeca(
+  id_empresa,
+  tipo,
+  nome,
+  preco,
+  data_aquisicao,
+  numSerie
+) {
   try {
     const response = await api.post("/pecas", {
       id_empresa,
@@ -8,6 +15,7 @@ export async function postPeca(id_empresa, tipo, nome, preco, data_aquisicao) {
       nome,
       preco,
       data_aquisicao,
+      numSerie,
     });
     return response.data;
   } catch (err) {

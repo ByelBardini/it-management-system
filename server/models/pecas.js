@@ -46,6 +46,10 @@ Peca.init(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
+    peca_num_serie: {
+      type: DataTypes.STRING(150),
+      allowNull: false,
+    },
     peca_preco: {
       type: DataTypes.DOUBLE,
       allowNull: false,
