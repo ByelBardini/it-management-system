@@ -114,22 +114,27 @@ export default function AdicionaWorkstation({
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm text-white/70 mb-1">
-              Nome da Workstation
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">
+                Nome da Workstation
+              </label>
+              <span className="text-xs text-white/50">{nome.length}/100</span>
+            </div>
+
             <input
               onChange={(e) => setNome(e.target.value)}
               type="text"
+              maxLength={100}
               placeholder="Ex.: PC-Administrativo-01"
-              className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white text-sm placeholder-white/40 
-                         focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full rounded-lg bg-white/10 border border-white/10 
+               px-3 py-2 text-sm text-white placeholder-white/40 
+               focus:outline-none focus:ring-2 focus:ring-sky-500/60"
             />
           </div>
 
           <div>
             <label className="block text-sm text-white/70 mb-2">Setor</label>
 
-            {/* Campo de busca */}
             <input
               onChange={(e) => setFiltro(e.target.value)}
               type="text"
@@ -168,28 +173,42 @@ export default function AdicionaWorkstation({
           </div>
 
           <div>
-            <label className="block text-sm text-white/70 mb-1">
-              Anydesk da Workstation
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">
+                Anydesk da Workstation
+              </label>
+              <span className="text-xs text-white/50">{anydesk.length}/50</span>
+            </div>
+
             <input
               onChange={(e) => setAnydesk(e.target.value)}
               type="text"
+              maxLength={50}
+              value={anydesk}
               placeholder="Ex.: 123 456 789"
-              className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white text-sm placeholder-white/40 
-                         focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 
+                 text-white text-sm placeholder-white/40 
+                 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
             />
           </div>
 
           <div>
-            <label className="block text-sm text-white/70 mb-1">
-              Senha do Anydesk
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">Senha do Anydesk</label>
+              <span className="text-xs text-white/50">
+                {senhaAnydesk.length}/45
+              </span>
+            </div>
+
             <input
               onChange={(e) => setSenhaAnydesk(e.target.value)}
               type="password"
+              maxLength={45}
+              value={senhaAnydesk}
               placeholder="*********"
-              className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white text-sm placeholder-white/40 
-                         focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 
+                 text-white text-sm placeholder-white/40 
+                 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
             />
           </div>
         </div>
