@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { X, Check } from "lucide-react";
+import { X, Check, PackageX } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const tipoLabels = {
@@ -49,6 +49,10 @@ export default function ModalSelecionaPeca({
     }
   }
 
+  const pecasFiltradas = pecas.filter((p) =>
+    p.peca_nome.toLowerCase().includes(busca.toLowerCase())
+  );
+
   return (
     <div
       onClick={onClose}
@@ -82,12 +86,17 @@ export default function ModalSelecionaPeca({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pr-2">
-          {pecas
-            .filter((p) =>
-              p.peca_nome.toLowerCase().includes(busca.toLowerCase())
-            )
-            .map((p) => {
+        {pecasFiltradas.length === 0 ? (
+          <div className="flex flex-col items-center justify-center text-center py-16 text-white/60">
+            <PackageX size={64} className="mb-4 text-gray-400" />
+            <p className="text-base">Nenhuma peça disponível</p>
+            <p className="text-sm text-white/40 mt-1">
+              Cadastre peças antes de tentar vinculá-las.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pr-2">
+            {pecasFiltradas.map((p) => {
               const marcado = selecionados.includes(p.peca_id);
               return (
                 <div
@@ -115,11 +124,17 @@ export default function ModalSelecionaPeca({
                     <span className="text-xs text-white/60">
                       {tipoLabels[p.peca_tipo]}
                     </span>
+                    {p.peca_num_serie && (
+                      <span className="text-xs text-white/50 italic">
+                        Nº de Série: {p.peca_num_serie}
+                      </span>
+                    )}
                   </div>
                 </div>
               );
             })}
-        </div>
+          </div>
+        )}
 
         <div className="flex justify-end border-t border-white/10 pt-4">
           <button
