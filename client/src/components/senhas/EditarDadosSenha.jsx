@@ -93,11 +93,15 @@ export default function EditarDadosSenha({
 
         <div className="space-y-4">
           <div>
-            <label className="text-sm text-white/60">Nome</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">Nome</label>
+              <span className="text-xs text-white/50">{nome.length}/150</span>
+            </div>
             <input
               type="text"
               onChange={(e) => setNome(e.target.value)}
               value={nome}
+              maxLength={150}
               placeholder="Insira o novo nome da senha..."
               className="w-full mt-1 rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white text-sm"
             />

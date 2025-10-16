@@ -143,12 +143,19 @@ export default function ModalRegistraSenha({
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm text-white/70 mb-1">Nome</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">Nome</label>
+              <span className="text-xs text-white/50">{nome.length}/150</span>
+            </div>
+
             <input
               onChange={(e) => setNome(e.target.value)}
               type="text"
+              maxLength={150}
               placeholder="Digite um nome para a senha"
-              className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full rounded-lg bg-white/10 border border-white/10 
+               px-3 py-2 text-sm text-white placeholder-white/40 
+               focus:outline-none focus:ring-2 focus:ring-sky-500/60"
             />
           </div>
 
@@ -176,12 +183,16 @@ export default function ModalRegistraSenha({
               </select>
             </div>
             <div>
-              <label className="block text-sm text-white/70 mb-1">
-                Usuário
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-sm text-white/70">Usuario</label>
+                <span className="text-xs text-white/50">
+                  {usuario.length}/100
+                </span>
+              </div>
               <input
                 onChange={(e) => setUsuario(e.target.value)}
                 type="text"
+                maxLength={100}
                 placeholder="Digite o usuário"
                 className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-sky-500"
               />
@@ -209,23 +220,31 @@ export default function ModalRegistraSenha({
           </div>
 
           <div>
-            <label className="block text-sm text-white/70 mb-1">Senha</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">Senha</label>
+              <span className="text-xs text-white/50">{senha.length}/50</span>
+            </div>
             <input
               onChange={(e) => setSenha(e.target.value)}
               type="password"
+              maxLength={50}
               autoComplete="new-password"
               placeholder="Digite a senha"
               className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-sky-500"
             />
           </div>
           <div>
-            <label className="block text-sm text-white/70 mb-1">
-              Confirme a Senha
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">Confirme a Senha</label>
+              <span className="text-xs text-white/50">
+                {confirmaSenha.length}/50
+              </span>
+            </div>
             <input
               onChange={(e) => setConfirmaSenha(e.target.value)}
               type="password"
               autoComplete="new-password"
+              maxLength={50}
               placeholder="Repita a senha"
               className={`w-full rounded-lg px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 transition ${
                 senhaIgual
