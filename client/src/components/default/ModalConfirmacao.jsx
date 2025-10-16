@@ -12,9 +12,11 @@ export default function ModalConfirmacao({
 
   useEffect(() => {
     function onKeyDown(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (e.key === "Escape") onNao();
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        onNao();
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => {

@@ -216,7 +216,6 @@ export default function EditarItem({
     puxarSetoresWorkstations();
   }, []);
 
-  // Buscar peças (desktop)
   useEffect(() => {
     async function fetchPecas() {
       try {
@@ -232,9 +231,11 @@ export default function EditarItem({
 
   useEffect(() => {
     function onKeyDown(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (e.key === "Escape") setEditarItem(false);
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        setEditarItem(false);
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => {

@@ -68,9 +68,11 @@ export default function EditarDadosSenha({
 
   useEffect(() => {
     function onKeyDown(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (e.key === "Escape") setEditaSenha(false);
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        setEditaSenha(false);
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => {

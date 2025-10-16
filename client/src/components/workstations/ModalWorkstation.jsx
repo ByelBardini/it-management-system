@@ -117,9 +117,11 @@ export default function ModalWorkstation({
 
   useEffect(() => {
     function onKeyDown(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (e.key === "Escape") setCardWorkstation(false);
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        setCardWorkstation(false);
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => {

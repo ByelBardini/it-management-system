@@ -73,9 +73,11 @@ export default function AtualizarSenha({
 
   useEffect(() => {
     function onKeyDown(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (e.key === "Escape") setTrocaSenha(false);
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        setTrocaSenha(false);
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => {

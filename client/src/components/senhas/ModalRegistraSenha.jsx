@@ -115,9 +115,11 @@ export default function ModalRegistraSenha({
 
   useEffect(() => {
     function onKeyDown(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (e.key === "Escape") setAdicionaSenha(false);
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        setAdicionaSenha(false);
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => {

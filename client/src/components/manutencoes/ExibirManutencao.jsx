@@ -61,9 +61,11 @@ export default function ExibirManutencao({
   }
   useEffect(() => {
     function onKeyDown(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (e.key === "Escape") setVisualizando(false);
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        setVisualizando(false);
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => {

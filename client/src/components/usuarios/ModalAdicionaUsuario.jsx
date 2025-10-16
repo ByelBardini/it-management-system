@@ -56,9 +56,11 @@ export default function ModalAdicionaUsuario({
 
   useEffect(() => {
     function onKeyDown(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (e.key === "Escape") setAdicionaUsuario(false);
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        setAdicionaUsuario(false);
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => {
