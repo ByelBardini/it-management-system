@@ -84,12 +84,14 @@ export default function ModalAdicionaUsuario({
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm text-white/70 mb-1">
-              Nome Completo
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">Nome Completo</label>
+              <span className="text-xs text-white/50">{nome.length}/100</span>
+            </div>
             <input
               type="text"
               value={nome}
+              maxLength={100}
               onChange={(e) => setNome(e.target.value)}
               placeholder="Ex: João da Silva"
               className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-sky-500"
@@ -97,10 +99,14 @@ export default function ModalAdicionaUsuario({
           </div>
 
           <div>
-            <label className="block text-sm text-white/70 mb-1">Usuário</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">Usuário</label>
+              <span className="text-xs text-white/50">{usuario.length}/50</span>
+            </div>
             <input
               type="text"
               value={usuario}
+              maxLength={50}
               onChange={(e) => setUsuario(e.target.value)}
               placeholder="Ex: joao.silva"
               className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-sky-500"
