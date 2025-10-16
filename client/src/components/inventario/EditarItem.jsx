@@ -265,7 +265,10 @@ export default function EditarItem({
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="col-span-2">
-            <label className="block text-sm text-white/60">Nome</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">Nome</label>
+              <span className="text-xs text-white/50">{nome.length}/150</span>
+            </div>
             <input
               value={nome}
               onChange={(e) => setNome(e.target.value)}
@@ -449,9 +452,14 @@ export default function EditarItem({
                 )
                 .map((caracteristica) => (
                   <div key={caracteristica.caracteristica_id}>
-                    <label className="block text-sm text-white/60">
-                      {tipos[caracteristica.caracteristica_nome]}
-                    </label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm text-white/70">
+                        {tipos[caracteristica.caracteristica_nome]}
+                      </label>
+                      <span className="text-xs text-white/50">
+                        {caracteristica.caracteristica_valor.length}/50
+                      </span>
+                    </div>
                     <input
                       value={caracteristica.caracteristica_valor}
                       onChange={(e) =>
@@ -461,6 +469,7 @@ export default function EditarItem({
                         )
                       }
                       type="text"
+                      maxLength={50}
                       placeholder="Digite aqui..."
                       className="w-full rounded-lg bg-white/10 p-2 text-white focus:outline-none"
                     />
@@ -471,7 +480,15 @@ export default function EditarItem({
         )}
 
         <div>
-          <label className="block text-sm text-white/60">Observações</label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-sm text-white/70">Observações</label>
+            <span className="text-xs text-white/50">
+              {caracteristicas.find(
+                (c) => c.caracteristica_nome === "observacoes"
+              )?.caracteristica_valor?.length || 0}
+              /500
+            </span>
+          </div>
           <textarea
             value={
               caracteristicas.find(
@@ -486,6 +503,7 @@ export default function EditarItem({
             }
             onChange={(e) => mudarCaracteristica("observacoes", e.target.value)}
             rows="3"
+            maxLength={500}
             placeholder="Digite observações..."
             className="w-full rounded-lg bg-white/10 p-3 text-white focus:outline-none resize-none"
           />
