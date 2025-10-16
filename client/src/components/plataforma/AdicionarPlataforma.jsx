@@ -81,14 +81,20 @@ export default function AdicionarPlataforma({
 
         <div className="p-6 space-y-4">
           <div>
-            <label className="block text-sm text-white/70 mb-1">
-              Nome da Plataforma
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">
+                Nome da Plataforma
+              </label>
+              <span className="text-xs text-white/50">
+                {nomePlataforma.length}/150
+              </span>
+            </div>
             <input
               onChange={(e) => {
                 setNomePlataforma(e.target.value);
               }}
               type="text"
+              maxLength={150}
               onKeyDown={enter}
               placeholder="Digite o nome..."
               className="w-full rounded-lg bg-white/10 px-3 py-2 text-white text-sm placeholder-white/40 

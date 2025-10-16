@@ -80,15 +80,19 @@ export default function AdicionarSetor({
 
         <div className="p-6 space-y-4">
           <div>
-            <label className="block text-sm text-white/70 mb-1">
-              Nome do Setor
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm text-white/70">Nome do Setor</label>
+              <span className="text-xs text-white/50">
+                {nomeSetor.length}/150
+              </span>
+            </div>
             <input
               onChange={(e) => {
                 setNomeSetor(e.target.value);
               }}
               type="text"
               onKeyDown={enter}
+              maxLength={150}
               placeholder="Digite o nome..."
               className="w-full rounded-lg bg-white/10 px-3 py-2 text-white text-sm placeholder-white/40 
                          focus:outline-none focus:ring-2 focus:ring-sky-500/60 ring-1 ring-white/10"
