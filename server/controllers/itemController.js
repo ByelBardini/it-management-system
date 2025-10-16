@@ -7,6 +7,7 @@ import {
   Item,
   Setor,
   Workstation,
+  Peca,
 } from "../models/index.js";
 import { ApiError } from "../middlewares/ApiError.js";
 
@@ -106,6 +107,19 @@ export async function getItemFull(req, res) {
         attributes: ["workstation_id", "workstation_nome"],
       },
       {
+        model: Peca,
+        as: "pecas",
+        attributes: [
+          "peca_id",
+          "peca_tipo",
+          "peca_nome",
+          "peca_preco",
+          "peca_em_uso",
+        ],
+        separate: true,
+        order: [["peca_id", "ASC"]],
+      },
+      {
         model: Caracteristica,
         as: "caracteristicas",
         attributes: [
@@ -181,6 +195,16 @@ export async function postItem(req, res) {
       throw new ApiError.badRequest("Características inválidas");
     }
   }
+  let pecasIds = [];
+  if (b.pecas) {
+    try {
+      const parsed = JSON.parse(b.pecas);
+      if (Array.isArray(parsed))
+        pecasIds = parsed.map((n) => Number(n)).filter((n) => !Number.isNaN(n));
+    } catch {
+      throw new ApiError.badRequest("Peças inválidas");
+    }
+  }
 
   const faltando =
     !item_empresa_id ||
@@ -188,7 +212,7 @@ export async function postItem(req, res) {
     !item_tipo ||
     !item_etiqueta ||
     !item_num_serie ||
-    Number.isNaN(item_preco) ||
+    (item_tipo !== "desktop" && Number.isNaN(item_preco)) ||
     !item_data_aquisicao ||
     !item_ultima_manutencao ||
     Number.isNaN(item_intervalo_manutencao);
@@ -200,6 +224,23 @@ export async function postItem(req, res) {
   const anexosArr = Array.isArray(req.anexos) ? req.anexos : [];
 
   await sequelize.transaction(async (t) => {
+    let precoFinal = item_preco;
+    if (item_tipo === "desktop") {
+      if (!Array.isArray(pecasIds) || pecasIds.length === 0) {
+        throw new ApiError.badRequest("Selecione as peças do desktop");
+      }
+      const pecasPreco = await Peca.findAll({
+        attributes: ["peca_id", "peca_preco"],
+        where: { peca_id: pecasIds, peca_ativa: 1, peca_item_id: null },
+        transaction: t,
+      });
+      const soma = pecasPreco.reduce(
+        (acc, p) => acc + Number(p.peca_preco || 0),
+        0
+      );
+      precoFinal = soma;
+    }
+
     const item = await Item.create(
       {
         item_empresa_id,
@@ -207,7 +248,7 @@ export async function postItem(req, res) {
         item_tipo,
         item_etiqueta,
         item_num_serie,
-        item_preco,
+        item_preco: precoFinal,
         item_data_aquisicao,
         item_em_uso,
         item_ultima_manutencao,
@@ -216,15 +257,37 @@ export async function postItem(req, res) {
       { transaction: t, usuarioId: req.usuario.id }
     );
 
-    for (const c of caracteristicas) {
-      await Caracteristica.create(
-        {
-          caracteristica_item_id: item.item_id,
-          caracteristica_nome: c.nome,
-          caracteristica_valor: c.valor,
-        },
-        { transaction: t, usuarioId: req.usuario.id }
-      );
+    if (item_tipo !== "desktop") {
+      for (const c of caracteristicas) {
+        await Caracteristica.create(
+          {
+            caracteristica_item_id: item.item_id,
+            caracteristica_nome: c.nome,
+            caracteristica_valor: c.valor,
+          },
+          { transaction: t, usuarioId: req.usuario.id }
+        );
+      }
+    } else {
+      if (!Array.isArray(pecasIds) || pecasIds.length === 0) {
+        throw new ApiError.badRequest("Selecione as peças do desktop");
+      }
+      const pecas = await Peca.findAll({
+        where: { peca_id: pecasIds, peca_ativa: 1, peca_item_id: null },
+        transaction: t,
+      });
+      const encontrados = pecas.map((p) => p.peca_id);
+      const faltantes = pecasIds.filter((id) => !encontrados.includes(id));
+      if (faltantes.length) {
+        throw new ApiError.badRequest(
+          "Algumas peças são inválidas ou já estão em uso"
+        );
+      }
+      for (const p of pecas) {
+        p.peca_item_id = item.item_id;
+        p.peca_em_uso = 1;
+        await p.save({ transaction: t, usuarioId: req.usuario.id });
+      }
     }
 
     for (const a of anexosArr) {
