@@ -30,6 +30,10 @@ app.use(
   })
 );
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 app.use("/", authRoutes);
 app.use("/", downloadRoutes);
 app.use("/usuario", usuarioRoutes);
