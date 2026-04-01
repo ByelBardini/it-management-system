@@ -16,7 +16,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --watch server/server.js"
+    "start": "node --watch server.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
