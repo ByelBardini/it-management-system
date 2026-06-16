@@ -1,21 +1,17 @@
 import jwt from "jsonwebtoken";
 import { ApiError } from "./ApiError.js";
-
-const CHAVE = process.env.SECRET_KEY_LOGIN || "sua_chave_secreta";
+import { extrairToken } from "../config/seguranca.js";
 
 export function autenticar(req, _res, next) {
-  const authHeader = req.headers["authorization"];
-  if (!authHeader) {
+  // Cookie httpOnly primeiro; header Authorization como fallback.
+  const token = extrairToken(req);
+  if (!token) {
     throw ApiError.unauthorized("Token não fornecido");
   }
 
-  const [scheme, token] = authHeader.split(" ");
-  if (scheme !== "Bearer" || !token) {
-    throw ApiError.unauthorized("Formato de token inválido");
-  }
-
   try {
-    const payload = jwt.verify(token, CHAVE);
+    // Lê o segredo em tempo de chamada (env já carregada no boot via validarAmbiente).
+    const payload = jwt.verify(token, process.env.SECRET_KEY_LOGIN);
 
     req.usuario = {
       id: payload.usuario_id,

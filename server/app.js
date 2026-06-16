@@ -1,6 +1,8 @@
 import cors from "cors";
 import express from "express";
 import dotenv from "dotenv";
+import helmet from "helmet";
+import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
 import usuarioRoutes from "./routes/usuarioRoutes.js";
 import empresaRoutes from "./routes/empresaRoutes.js";
@@ -15,20 +17,51 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 import perfilRoutes from "./routes/perfilRoutes.js";
 import pecasRoutes from "./routes/pecasRoutes.js";
 import { ApiError } from "./middlewares/ApiError.js";
+import { origemPermitida, origemConfiavel } from "./config/seguranca.js";
 
 dotenv.config();
 
+const isProd = process.env.NODE_ENV === "production";
+const allowlist = (process.env.CORS_ORIGIN || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+// Em dev sem CORS_ORIGIN configurado, libera tudo para não travar o fluxo local
+// (Vite proxy em localhost). Em produção, a allowlist é obrigatória.
+const liberarTudo = !isProd && allowlist.length === 0;
+
 const app = express();
 
-app.use(express.json());
+// Atrás do reverse proxy (nginx do front / Traefik do Coolify): confia no
+// primeiro hop para ler IP real (rate-limit) e protocolo (X-Forwarded-Proto).
+app.set("trust proxy", 1);
+
+app.use(helmet());
+app.use(express.json({ limit: "1mb" }));
+app.use(cookieParser());
+
 app.use(
   cors({
-    origin: true,
+    origin: (origin, cb) => {
+      if (liberarTudo) return cb(null, true);
+      return cb(null, origemPermitida(origin, allowlist));
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// CSRF defense-in-depth: além do cookie SameSite=Strict, mutações precisam vir
+// de uma Origin/Referer da allowlist.
+app.use((req, _res, next) => {
+  if (liberarTudo) return next();
+  if (!origemConfiavel(req, allowlist)) {
+    return next(ApiError.forbidden("Origem não permitida"));
+  }
+  next();
+});
 
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok" });

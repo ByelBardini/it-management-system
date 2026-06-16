@@ -3,9 +3,18 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import { Usuario } from "../models/index.js";
 import { ApiError } from "../middlewares/ApiError.js";
+import { opcoesCookie } from "../config/seguranca.js";
 dotenv.config();
 
 const CHAVE = process.env.SECRET_KEY_LOGIN;
+
+// secure só faz sentido sob HTTPS. COOKIE_SECURE permite forçar; senão segue NODE_ENV.
+function cookieSeguro() {
+  if (process.env.COOKIE_SECURE != null) {
+    return process.env.COOKIE_SECURE === "true";
+  }
+  return process.env.NODE_ENV === "production";
+}
 
 export async function login(req, res) {
   const { usuario_login, usuario_senha } = req.body;
@@ -43,9 +52,10 @@ export async function login(req, res) {
       expiresIn: "8h",
     });
 
+    // Sessão por cookie httpOnly: o token não trafega mais no corpo da resposta.
+    res.cookie("token", token, opcoesCookie(cookieSeguro()));
 
     return res.status(200).json({
-      token: token,
       resposta: {
         usuario_id: usuario.usuario_id,
         usuario_login: usuario.usuario_login,
@@ -60,4 +70,10 @@ export async function login(req, res) {
     if (err instanceof ApiError) throw err;
     throw ApiError.internal("Erro ao validar usuário");
   }
+}
+
+export async function logout(req, res) {
+  // Limpa o cookie com os mesmos atributos com que foi criado (path/sameSite/secure).
+  res.clearCookie("token", opcoesCookie(cookieSeguro()));
+  return res.status(200).json({ mensagem: "Logout realizado" });
 }
