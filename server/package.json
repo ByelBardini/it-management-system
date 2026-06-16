@@ -15,8 +15,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --watch server.js"
+    "start": "node --watch server.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -29,5 +30,8 @@
     "multer": "^2.0.2",
     "mysql2": "^3.14.4",
     "sequelize": "^6.37.7"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.9"
   }
 }
