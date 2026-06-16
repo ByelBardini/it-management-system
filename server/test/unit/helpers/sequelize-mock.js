@@ -36,6 +36,7 @@ const STATIC_METHODS = [
   "findByPk",
   "findOne",
   "findAndCountAll",
+  "findOrCreate",
   "create",
   "bulkCreate",
   "update",
