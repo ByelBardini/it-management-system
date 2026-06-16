@@ -4,9 +4,10 @@
 #   docker compose up --build
 #   Front: http://localhost:8080   |   API (direta): http://localhost:3032
 #
-# Primeiro acesso: o backend só roda o MIGRATE no start (não o seed). Para criar
-# o admin/empresa, rode uma vez:  docker compose exec backend npm run db:seed
-# (login/senha default: admin / admin123).
+# Primeiro acesso: o backend roda MIGRATE + SEED guardado no start. Num banco
+# zerado o admin/empresa são criados sozinhos (login/senha default: admin /
+# admin123); se já houver dados, o seed é ignorado. Para forçar o seed em dev:
+# docker compose exec backend npm run db:seed
 
 services:
   mysql:

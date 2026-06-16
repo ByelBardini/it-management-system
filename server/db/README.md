@@ -21,6 +21,7 @@ server/db/
 |---|---|---|
 | `npm run db:migrate` | Aplica as migrations pendentes, em ordem. Forward-only, idempotente, **não-destrutivo**. | dev **e** deploy |
 | `npm run db:seed` | Insere admin + empresa (+ plataformas/setor). Idempotente (`findOrCreate`). | dev / 1ª vez |
+| `npm run db:seed:deploy` | Igual ao `db:seed`, mas **só semeia se o banco estiver vazio** (sem usuários nem empresas). | deploy (start do container) |
 | `npm run dev:db` | `db:migrate` + `db:seed` em sequência. | dev |
 | `npm run db:reset` | **DEV-ONLY, DESTRUTIVO**: dropa todas as tabelas, re-aplica do zero e roda o seed. Nunca no deploy. | dev |
 
@@ -37,10 +38,13 @@ server/db/
 
 ## Deploy
 
-O `dockerfile` roda `node db/migrate.js && node server.js` — migração forward-only
-antes do app. **O seed não roda no deploy** (produção é semeada uma vez, manualmente).
-Para múltiplas réplicas, mova o `migrate` para um *release command* do Coolify em vez do
-start, evitando corrida entre réplicas.
+O `dockerfile` roda `node db/migrate.js && node db/seed.js --se-vazio && node server.js`:
+migração forward-only, depois o **seed guardado** e então o app. O seed guardado
+(`--se-vazio`) só insere a carga inicial **se o banco não tiver usuários nem empresas** —
+ou seja, roda no **1º deploy** e é **ignorado** nos redeploys seguintes (não recria defaults
+apagados pelo operador nem ressuscita o admin/senha padrão a cada deploy). Para múltiplas
+réplicas, mova o `migrate + seed` para um *release command* do Coolify em vez do start,
+evitando corrida entre réplicas.
 
 ## Adicionar uma migration nova
 

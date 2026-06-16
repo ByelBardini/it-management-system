@@ -74,14 +74,19 @@ redeploy**. No recurso **backend → Storages**, adicione um *Persistent Storage
 
 ## 4. Migração do banco
 
-O `Dockerfile` do backend roda `node db/migrate.js && node server.js` no start — aplica as
-migrações pendentes (forward-only, idempotente) antes de subir a API. **O seed não roda no
-deploy.**
+O `Dockerfile` do backend roda `node db/migrate.js && node db/seed.js --se-vazio && node server.js`
+no start — aplica as migrações pendentes (forward-only, idempotente) e roda o **seed guardado**
+antes de subir a API.
 
-- **Primeiro deploy:** após subir, crie o admin/empresa rodando o seed uma vez (terminal do
-  recurso): `npm run db:seed`. Login/senha default: `admin` / `admin123` — **troque depois**.
-- **Múltiplas réplicas:** mova o `node db/migrate.js` para um *Pre-deployment Command* do
-  Coolify e deixe o `CMD` só com `node server.js`, evitando corrida entre réplicas.
+- **Primeiro deploy:** o seed roda **sozinho** e cria admin/empresa **apenas se o banco estiver
+  vazio** (sem usuários nem empresas). Login/senha default: `admin` / `admin123` — **troque
+  depois**. Não é preciso rodar nada na mão.
+- **Redeploys:** o seed é **ignorado** quando o banco já tem dados (não recria defaults apagados
+  nem ressuscita o admin/senha padrão). Quer forçar/refazer a carga em dev? Use `npm run db:seed`
+  (sem o `--se-vazio`).
+- **Múltiplas réplicas:** mova o `node db/migrate.js && node db/seed.js --se-vazio` para um
+  *Pre-deployment Command* do Coolify e deixe o `CMD` só com `node server.js`, evitando corrida
+  entre réplicas.
 
 ## 5. Domínios e HTTPS
 
@@ -105,6 +110,7 @@ A raiz tem um `docker-compose.yml` com a mesma topologia (mysql + backend + fron
 
 ```
 docker compose up --build
-docker compose exec backend npm run db:seed   # cria admin/empresa (uma vez)
+# O backend roda migrate + seed guardado no start: num banco zerado o
+# admin/empresa são criados sozinhos (login/senha default: admin / admin123).
 # Front: http://localhost:8080
 ```

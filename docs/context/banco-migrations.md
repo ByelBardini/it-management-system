@@ -20,6 +20,7 @@ server/test/unit/db/pendentes.spec.js   teste da função pura
 |---|---|
 | `npm run db:migrate` | Aplica pendentes em ordem. Forward-only, idempotente, **não-destrutivo**. Roda em dev **e** no deploy. |
 | `npm run db:seed` | Admin + empresa (+ plataformas/setor). Idempotente (`findOrCreate`). |
+| `npm run db:seed:deploy` | `db:seed` **guardado** (`--se-vazio`): só semeia se o banco não tiver usuários nem empresas. Roda no deploy (start do container). |
 | `npm run dev:db` | `db:migrate` + `db:seed`. |
 | `npm run db:reset` | **DEV-ONLY, DESTRUTIVO**: dropa tudo, re-aplica e semeia. Nunca no deploy. |
 
@@ -35,9 +36,12 @@ server/test/unit/db/pendentes.spec.js   teste da função pura
   baseline é `CREATE TABLE IF NOT EXISTS`, re-executável com segurança.
 
 ## Deploy
-`dockerfile`: `node db/migrate.js && node server.js` (migrate forward-only antes do app).
-**Seed não roda no deploy.** Para múltiplas réplicas, mover o migrate para um *release
-command* do Coolify evita corrida.
+`dockerfile`: `node db/migrate.js && node db/seed.js --se-vazio && node server.js` (migrate
+forward-only, depois o **seed guardado**, então o app). O `--se-vazio` só semeia quando o
+banco não tem **usuários nem empresas** — roda no **1º deploy** e é ignorado nos redeploys
+(não recria defaults apagados nem ressuscita admin/senha padrão). O `semearSeVazio()` checa
+`Usuario.count()` + `Empresa.count()` e delega a `semear()`. Para múltiplas réplicas, mover
+o `migrate + seed` para um *release command* do Coolify evita corrida.
 
 ## Decisões de schema (baseline vs. SQL antigo)
 - `pecas.peca_empresa_id` → empresas **CASCADE** (corrige o `NO ACTION` antigo; alinha ao

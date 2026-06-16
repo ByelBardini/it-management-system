@@ -194,7 +194,8 @@ deploy (front em nginx fazendo proxy de `/api`):
 
 ```
 docker compose up --build
-docker compose exec backend npm run db:seed   # cria admin/empresa (uma vez)
+# O backend roda migrate + seed guardado no start: num banco zerado o
+# admin/empresa são criados sozinhos (admin / admin123); com dados, o seed é ignorado.
 # Front: http://localhost:8080
 ```
 
