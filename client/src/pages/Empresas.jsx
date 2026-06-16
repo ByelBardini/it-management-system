@@ -5,7 +5,7 @@ import Loading from "../components/default/Loading.jsx";
 import PrimeiroAcesso from "../components/perfil/PrimeiroAcesso.jsx";
 import { LogOut, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { api } from "../services/api.js";
+import { deslogar as encerrarSessao } from "../services/auth/authService.js";
 import { getEmpresas } from "../services/api/empresaServices.js";
 import { useEffect, useState } from "react";
 import { tratarErro } from "../components/default/funcoes.js";
@@ -37,16 +37,8 @@ export default function Empresas() {
     }
   }
 
-  function deslogar() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("usuario_tipo");
-    localStorage.removeItem("usuario_nome");
-    localStorage.removeItem("usuario_troca_senha");
-    localStorage.removeItem("usuario_nome");
-    localStorage.removeItem("usuario_caminho_foto");
-
-    delete api.defaults.headers.common.Authorization;
-
+  async function deslogar() {
+    await encerrarSessao();
     navigate("/", { replace: true });
   }
 

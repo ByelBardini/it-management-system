@@ -25,15 +25,12 @@ export default function CardItem({
   }
 
   async function baixar(caminho) {
-    const url = `POST ${
+    const url = `${
       import.meta.env.VITE_API_BASE_URL
-    }/login/download?path=${encodeURIComponent(caminho)}`;
-    const token = localStorage.getItem("token");
+    }/download?path=${encodeURIComponent(caminho)}`;
+    // Cookie httpOnly de sessão vai junto via credentials: "include".
     const resp = await fetch(url, {
       credentials: "include",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
     if (!resp.ok) {
       return;

@@ -15,7 +15,9 @@ export default defineConfig(({ mode }) => {
   const apiTarget = env.VITE_API_PROXY_TARGET || "http://localhost:3003";
 
   return {
-    base: "./",
+    // base "/" para servir na raiz do domínio (nginx). Com "./" (herança do
+    // Tauri) os assets quebram ao dar refresh numa rota profunda (ex.: /inventario).
+    base: "/",
     plugins: [react(), tailwindcss()],
     server: {
       proxy: {
