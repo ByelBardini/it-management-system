@@ -1,0 +1,64 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npm test*)",
+      "Bash(npm install*)",
+      "Bash(npm ci*)",
+      "Bash(npx vitest *)",
+      "Bash(npx eslint *)",
+      "Bash(node --version)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git switch *)",
+      "Bash(git checkout -b *)",
+      "Bash(git branch *)",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(rm -rf node_modules*)",
+      "Bash(rm -rf dist*)",
+      "Bash(rm -rf coverage*)",
+      "Bash(rm -rf client/dist*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/block-destructive.sh",
+            "timeout": 10,
+            "statusMessage": "Checando segurança do comando..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/post-edit-verify.sh",
+            "timeout": 120,
+            "statusMessage": "Verificando lint do arquivo..."
+          }
+        ]
+      },
+      {
+        "matcher": "Grep|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/truncation-check.sh",
+            "timeout": 10,
+            "statusMessage": "Checando truncamento..."
+          }
+        ]
+      }
+    ]
+  }
+}
