@@ -1,15 +1,78 @@
-version: '3.8'
+# Stack local completa (mysql + backend + frontend), espelhando a topologia do
+# Coolify (3 apps no mesmo projeto) para validar os Dockerfiles antes do deploy.
+#
+#   docker compose up --build
+#   Front: http://localhost:8080   |   API (direta): http://localhost:3032
+#
+# Primeiro acesso: o backend só roda o MIGRATE no start (não o seed). Para criar
+# o admin/empresa, rode uma vez:  docker compose exec backend npm run db:seed
+# (login/senha default: admin / admin123).
 
 services:
-  backend:
-    build: ./server
-    ports:
-      - "3032:3032"
-    env_file:
-      - .env
-    restart: always
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: infrahub
+    # Sem publicar porta no host: o backend acessa via rede do compose (mysql:3306).
+    # Se quiser conectar um cliente DB do host, descomente — use 3307 para não
+    # colidir com um MySQL local já rodando em 3306.
+    # ports:
+    #   - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - appnet
+
+  backend:
+    build: ./server
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_DATABASE: infrahub
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_HOST: mysql
+      DB_PORT: 3306
+      PORT: 3032
+      NODE_ENV: production
+      # Origem do front (CSRF + CORS). Casa com a porta publicada do frontend.
+      CORS_ORIGIN: http://localhost:8080
+      # HTTP local: o cookie NÃO pode ser Secure, senão o navegador não o guarda.
+      COOKIE_SECURE: "false"
+      # Troque por chaves fortes. SECRET_KEY_PASSWORD precisa ter 32 caracteres.
+      SECRET_KEY_LOGIN: troque-esta-chave-de-login-local
+      SECRET_KEY_PASSWORD: "12345678901234567890123456789012"
+    ports:
+      - "3032:3032"
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - appnet
+    restart: always
+
+  frontend:
+    build: ./client
+    depends_on:
+      - backend
+    environment:
+      # Endereço interno do backend na rede do compose (nome do serviço).
+      BACKEND_URL: http://backend:3032
+    ports:
+      - "8080:80"
+    networks:
+      - appnet
+    restart: always
+
+volumes:
+  mysql_data:
+  uploads_data:
 
 networks:
   appnet:
