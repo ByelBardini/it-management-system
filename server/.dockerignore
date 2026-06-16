@@ -1,5 +1,11 @@
 node_modules
 npm-debug.log
 Dockerfile
+.dockerignore
 docker-compose.yml
 .env
+.env.*
+uploads
+test
+.git
+.gitignore
