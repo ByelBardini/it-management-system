@@ -12,6 +12,7 @@ Estes documentos são a **fonte de verdade leve** para os agentes (`/plan`, `/ex
 ## Núcleos transversais (leia sempre que tocar a camada)
 - [backend-core.md](backend-core.md) — Express 5, `ApiError`, autenticação/autorização, hooks de auditoria, Sequelize, transações, cripto, testes.
 - [frontend-core.md](frontend-core.md) — React/JSX, Tailwind v4 "dark glass", `services/api`, `Notificacao`/`ModalConfirmacao`/`Loading`/`Paginacao`, `funcoes.js`, `tratarErro`, localStorage, testes.
+- [banco-migrations.md](banco-migrations.md) — runner de migração (`server/db/`), `schema_migrations`, comandos `db:migrate`/`db:seed`/`dev:db`/`db:reset`, baseline `0001_init.sql`, seed idempotente e passo de deploy.
 
 ## Domínios
 | Área | Doc | Backend | Frontend |

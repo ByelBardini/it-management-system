@@ -56,6 +56,6 @@ server/
   controllers/  models/  routes/  middlewares/  config/database.js  app.js  server.js
   test/unit/<recurso>/<recurso>.controller.spec.js
   test/unit/helpers/  (sequelize-mock.js, http-mock.js)
-migration/version-XX.sql   # SQL cru versionado
+  db/  migrate.js  seed.js  pendentes.js  migrations/000N_*.sql   # runner + baseline
 ```
-Testes: **Vitest** (`pool: "forks"`), de dentro de `server/` (`cd server && npm test`). Mocke models via `createModelsMock()` + `vi.mock("../../../models/index.js", ...)`. Guia completo: comando `/infrahub-backend-tests`. Migrações: agente `migracoes-sql`.
+Testes: **Vitest** (`pool: "forks"`), de dentro de `server/` (`cd server && npm test`). Mocke models via `createModelsMock()` + `vi.mock("../../../models/index.js", ...)`. Guia completo: comando `/infrahub-backend-tests`. **Banco/migrações:** runner próprio em `server/db/` — `npm run db:migrate`/`db:seed`/`dev:db` (forward-only, rastreado em `schema_migrations`); detalhes em [banco-migrations.md](banco-migrations.md). Geração de `.sql`: agente `migracoes-sql`.
