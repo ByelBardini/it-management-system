@@ -1,0 +1,35 @@
+server {
+    listen 80;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Uploads de anexos podem ser grandes (multer aceita até 20MB por arquivo).
+    client_max_body_size 25m;
+
+    # Encaminha /api/* para o backend tirando o prefixo /api (a barra final no
+    # proxy_pass faz o strip — igual ao rewrite do proxy do Vite no dev).
+    # Ex.: /api/login -> ${BACKEND_URL}/login
+    location /api/ {
+        proxy_pass ${BACKEND_URL}/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # Não reescreve o path do Set-Cookie: o backend grava Path=/ e o navegador
+        # envia o cookie em /api/* (mesma origem do front).
+        proxy_cookie_path / /;
+    }
+
+    # SPA: qualquer rota desconhecida cai no index.html (React Router cuida do resto),
+    # com os cabeçalhos de segurança do documento.
+    location / {
+        add_header X-Frame-Options "DENY" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Content-Security-Policy "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; font-src 'self' data:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'" always;
+        try_files $uri $uri/ /index.html;
+    }
+}
