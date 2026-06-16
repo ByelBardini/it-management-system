@@ -9,7 +9,8 @@ Leia junto com [backend-core.md](backend-core.md) e [frontend-core.md](frontend-
 ## Endpoints
 | Método | Path | Papel | Ação |
 |---|---|---|---|
-| POST | `/login` | público | valida login/senha (bcrypt) + `usuario_ativo`; gera JWT 8h; retorna `{ token, resposta }` |
+| POST | `/login` | público (rate-limit) | valida login/senha (bcrypt) + `usuario_ativo`; gera JWT 8h; **grava cookie httpOnly `token`** e retorna `{ resposta }` (sem token no body) |
+| POST | `/logout` | público | limpa o cookie de sessão (`res.clearCookie`) |
 | GET | `/usuario/` | adm | lista usuários (sem o hash) |
 | POST | `/usuario/` | adm | cria usuário (nome, login, tipo); senha padrão **"12345"**, `usuario_troca_senha=1` |
 | PUT | `/usuario/inativa/:id` | adm | alterna `usuario_ativo` |
@@ -22,7 +23,7 @@ Leia junto com [backend-core.md](backend-core.md) e [frontend-core.md](frontend-
 `usuario_id` (PK), `usuario_nome`, `usuario_login`, `usuario_senha` (**hash bcrypt**), `usuario_tipo` ENUM(`"adm"`,`"usuario"`), `usuario_caminho_foto` (nullable), `usuario_ativo` TINYINT (default 1), `usuario_troca_senha` TINYINT (default 1).
 
 ## Fluxo de login
-`Login.jsx` → `authService.logar()` → `POST /login`. Backend confere login → `usuario_ativo=1` → `bcrypt.compare`. JWT assinado com `{ usuario_id, usuario_tipo, usuario_nome }`, `SECRET_KEY_LOGIN`, `expiresIn: "8h"`. Front grava `token` + dados em localStorage (ver [frontend-core](frontend-core.md)). Logout = limpar localStorage (sem endpoint).
+`Login.jsx` → `authService.logar()` → `POST /login`. Backend confere login → `usuario_ativo=1` → `bcrypt.compare`. JWT assinado com `{ usuario_id, usuario_tipo, usuario_nome }`, `SECRET_KEY_LOGIN`, `expiresIn: "8h"`, gravado em **cookie httpOnly** (`Secure`+`SameSite=Strict`, opções em `config/seguranca.js#opcoesCookie`). O token **não** volta no body. Front grava só dados de UI em localStorage (sem `token`). **Logout:** `authService.deslogar()` → `POST /logout` (limpa o cookie) + limpa o localStorage. Rate-limit no `/login` via `middlewares/rateLimit.js`.
 
 ## Regras / gotchas
 - **Nunca retornar `usuario_senha`** (hash) em resposta.

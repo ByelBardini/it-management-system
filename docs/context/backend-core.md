@@ -5,7 +5,7 @@ Convenções transversais do backend. **Leia sempre que tocar `server/`.**
 ## Stack e fluxo
 - Node 18+ (roda em Node 24), **Express 5**, **Sequelize 6 + mysql2**, JWT, bcrypt, `node:crypto`, multer, dotenv. **JS puro (ESM)**, `"type": "module"`. Sem TypeScript.
 - Fluxo: `routes/ → middlewares → controllers/ → models/`. **A regra de negócio vive no controller** (sem service/repository). Porta padrão **3032** (`server.js`).
-- Entrada: `app.js` (CORS liberado, `express.json`, monta as rotas, **handler central de erro**).
+- Entrada: `app.js` — `trust proxy`, **helmet**, `express.json({ limit })`, **cookie-parser**, **CORS por allowlist** (`CORS_ORIGIN`), middleware **CSRF** (Origin/Referer em mutações), monta as rotas, **handler central de erro**. Boot em `server.js` chama `validarAmbiente(process.env)` (falha rápido sem segredos). Helpers puros em `config/seguranca.js`.
 
 ## Erros — `ApiError` (`middlewares/ApiError.js`)
 Controllers **lançam** `ApiError`; não montam resposta de erro na mão. O **Express 5 encaminha rejeições async** ao handler de `app.js`, que converte `ApiError` em `{ status, code, message, details }`. Erro não-`ApiError` vira 500 genérico.
@@ -24,7 +24,7 @@ export async function getX(req, res) {
 Use try/catch **só** para efeito colateral (ex.: mover arquivo de anexo), não para erro de negócio.
 
 ## Autenticação e autorização (`middlewares/autenticaToken.js`)
-- `autenticar` — lê `Authorization: Bearer <token>`, valida com `SECRET_KEY_LOGIN`, popula `req.usuario = { id, tipo, nome }`. Token por **header** (não cookie), expira em **8h**.
+- `autenticar` — lê o token via `extrairToken(req)` (**cookie httpOnly `token` primeiro**, header `Authorization: Bearer` como fallback), valida com `SECRET_KEY_LOGIN`, popula `req.usuario = { id, tipo, nome }`. Expira em **8h**. `login` grava o cookie (`opcoesCookie`); `logout` o limpa. Sem segredo fallback (validado no boot).
 - `autorizarRole(role)` — libera o `role` pedido **e sempre `adm`** (adm passa em tudo).
 - `autorizarUser()` — libera o **próprio usuário** (`req.usuario.id == req.params.id`) **ou `adm`**.
 - Rotas tipicamente: `router.use(autenticar); router.use(autorizarRole("adm"));` antes dos verbos.
@@ -53,8 +53,10 @@ await registro.save({ usuarioId: req.usuario.id });
 ## Estrutura e testes
 ```
 server/
-  controllers/  models/  routes/  middlewares/  config/database.js  app.js  server.js
+  controllers/  models/  routes/  middlewares/  config/database.js  config/seguranca.js  app.js  server.js
+  Dockerfile  .dockerignore   # imagem do backend (migrate + start)
   test/unit/<recurso>/<recurso>.controller.spec.js
+  test/unit/config/seguranca.spec.js   # funções puras de segurança
   test/unit/helpers/  (sequelize-mock.js, http-mock.js)
   db/  migrate.js  seed.js  pendentes.js  migrations/000N_*.sql   # runner + baseline
 ```
