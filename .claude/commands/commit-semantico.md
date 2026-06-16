@@ -7,12 +7,13 @@ description: Orienta a criar commits semânticos e descritivos (Conventional Com
 ## Comandos Permitidos
 
 **Usar APENAS:**
-- `git switch -c` / `git checkout -b` — criar a branch do plano (antes do primeiro commit)
 - `git branch --show-current` / `git status` — inspeção
 - `git add` — adicionar ao stage
 - `git commit` — criar commit com mensagem
 
-Não usar: `git push`, `git pull`, `git merge`, `git stash`, `git reset` ou outros que reescrevem histórico ou tocam o remoto.
+Os commits vão **sempre na branch atual** — este projeto **não usa PR**. Por isso **não crie nem troque de branch**.
+
+Não usar: `git switch -c` / `git checkout -b` (criar branch), `git switch` / `git checkout <branch>` (trocar), `git push`, `git pull`, `git merge`, `git stash`, `git reset` ou outros que reescrevem histórico ou tocam o remoto.
 
 ---
 
@@ -74,13 +75,12 @@ Responda **o quê** (arquivos/funções/endpoints/telas), **por quê** (problema
 git status
 ```
 
-### 2. Criar a branch específica do plano (antes do primeiro commit)
-Nunca commite direto na `main` nem reaproveite a branch de outro plano.
-- **Nome:** `<tipo>/<nome-do-plano>`, onde `<nome-do-plano>` é o slug do plano em `.claude/plans/` e `<tipo>` é `feat` (funcionalidade) ou `fix` (correção) — o mesmo do commit principal.
+### 2. Confirmar a branch atual (sem criar/trocar)
+Commite **na branch atual** — este projeto não usa PR, então **não crie branch nova**.
 ```bash
-git switch -c feat/<nome-do-plano>
+git branch --show-current
 ```
-- **Idempotente:** confira com `git branch --show-current`; se já estiver na branch do plano, pule a criação.
+- Apenas confirme onde está; não rode `git switch`/`git checkout`.
 
 ### 3. Agrupar por escopo
 Classifique os arquivos: testes, `server/**`, `client/**`, `migration/**`, outros.
@@ -104,12 +104,12 @@ git commit -m "feat(setor): valida empresa e audita exclusão" -m "Garante setor
 
 ## Checklist antes de commitar
 ```
-- [ ] Branch do plano criada antes do primeiro commit (feat/fix + slug)
+- [ ] Commits feitos na branch atual (sem criar nem trocar de branch)
 - [ ] Arquivos agrupados por escopo (testes / server / client / migration)
 - [ ] Nenhum escopo misturado no mesmo commit
 - [ ] Ordem: testes → backend → frontend
 - [ ] Resumo específico + corpo (o quê/por quê/como)
-- [ ] Apenas git switch -c, git add e git commit
+- [ ] Apenas git add e git commit
 ```
 
 ---
