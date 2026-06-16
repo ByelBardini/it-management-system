@@ -20,6 +20,7 @@
     "test:watch": "vitest",
     "db:migrate": "node db/migrate.js",
     "db:seed": "node db/seed.js",
+    "db:seed:deploy": "node db/seed.js --se-vazio",
     "dev:db": "node db/migrate.js && node db/seed.js",
     "db:reset": "node db/migrate.js --reset"
   },

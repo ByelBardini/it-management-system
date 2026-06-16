@@ -68,14 +68,35 @@ export async function semear() {
   console.log("Seed concluído.");
 }
 
+// Semeia SÓ quando o banco ainda não tem dados (primeiro deploy): pula se houver
+// QUALQUER usuário ou QUALQUER empresa. semear() já é idempotente (findOrCreate),
+// mas o guard dá a semântica de "1º deploy" — evita recriar defaults que o
+// operador apagou de propósito e ressuscitar o admin/senha padrão a cada redeploy.
+export async function semearSeVazio() {
+  const usuarios = await Usuario.count();
+  const empresas = await Empresa.count();
+  if (usuarios > 0 || empresas > 0) {
+    console.log(
+      `Banco já possui dados (${usuarios} usuário(s), ${empresas} empresa(s)) — seed ignorado.`
+    );
+    return false;
+  }
+  await semear();
+  return true;
+}
+
 // Execução direta (`node db/seed.js`): semeia e fecha a conexão própria.
-// Quando importado (ex.: por migrate.js --reset), só exporta semear() — quem
+//   sem flag        → semear() sempre (uso manual / dev).
+//   flag --se-vazio → semearSeVazio() guardado (deploy: só no 1º, banco vazio).
+// Quando importado (ex.: por migrate.js --reset), só exporta as funções — quem
 // importa cuida de fechar o Sequelize.
 const ehMain =
   process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+const SE_VAZIO = process.argv.slice(2).includes("--se-vazio");
 
 if (ehMain) {
-  semear()
+  const acao = SE_VAZIO ? semearSeVazio : semear;
+  acao()
     .catch((erro) => {
       console.error("Falha no seed:", erro.message);
       process.exitCode = 1;

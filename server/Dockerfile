@@ -24,7 +24,10 @@ RUN mkdir -p /app/uploads
 
 EXPOSE 3032
 
-# migrate forward-only (idempotente, não-destrutivo) antes de subir a API.
-# Em múltiplas réplicas, prefira rodar o migrate num release/pre-deploy command
-# do Coolify e deixar o CMD apenas com "node server.js".
-CMD ["sh", "-c", "node db/migrate.js && node server.js"]
+# 1) migrate forward-only (idempotente, não-destrutivo);
+# 2) seed guardado (--se-vazio): só semeia se o banco não tem usuários nem
+#    empresas — roda no 1º deploy e é ignorado nos redeploys seguintes;
+# 3) sobe a API.
+# Em múltiplas réplicas, prefira rodar o "migrate + seed" num release/pre-deploy
+# command do Coolify e deixar o CMD apenas com "node server.js", evitando corrida.
+CMD ["sh", "-c", "node db/migrate.js && node db/seed.js --se-vazio && node server.js"]
