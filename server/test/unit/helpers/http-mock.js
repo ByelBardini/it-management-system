@@ -24,5 +24,7 @@ export function mockRes() {
   res.end = vi.fn(() => res);
   res.set = vi.fn(() => res);
   res.download = vi.fn(() => res);
+  res.cookie = vi.fn(() => res);
+  res.clearCookie = vi.fn(() => res);
   return res;
 }
