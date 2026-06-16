@@ -20,7 +20,7 @@ Caracteristica.init(
       allowNull: false,
     },
     caracteristica_valor: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.TEXT,
       allowNull: false,
     },
   },

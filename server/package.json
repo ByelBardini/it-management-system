@@ -17,7 +17,11 @@
   "scripts": {
     "start": "node --watch server.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:migrate": "node db/migrate.js",
+    "db:seed": "node db/seed.js",
+    "dev:db": "node db/migrate.js && node db/seed.js",
+    "db:reset": "node db/migrate.js --reset"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
