@@ -5,7 +5,7 @@
 ![React 19](https://img.shields.io/badge/react-19-61dafb)
 ![Web](https://img.shields.io/badge/web-app-61dafb)
 
-Sistema **web** para gestão de TI (inventário, senhas, manutenções, setores/workstations, dashboard) com React + Vite + TailwindCSS no front, Node.js + Express + Sequelize + MySQL no back. Implantável no **Coolify** (front, back e MySQL como apps de um mesmo projeto; front e back via Dockerfile).
+Sistema **web** para gestão de TI (inventário, manutenções, setores/workstations, dashboard) com React + Vite + TailwindCSS no front, Node.js + Express + Sequelize + MySQL no back. Implantável no **Coolify** (front, back e MySQL como apps de um mesmo projeto; front e back via Dockerfile).
 
 > **Monorepo** com dois projetos: `server/` onde está localizado o _backend_ e `client/` com o _frontend_ (SPA servida por nginx em produção, que faz reverse-proxy de `/api` para o backend).
 
@@ -44,11 +44,6 @@ Sistema **web** para gestão de TI (inventário, senhas, manutenções, setores/
 ![Tabela de Manutenções](docs/screens/tabela-manutencoes.png)
 ![Detalhes da manutenção](docs/screens/detalhes-manutencao.png)
 
-### Senhas
-
-![Tabela de Senhas](docs/screens/tabela-senhas.png)
-![Detalhes da Senha](docs/screens/detalhes-senha.png)
-
 ### Configurações Empresa
 
 ![Configurações da Empresa](docs/screens/configs-empresa.png)
@@ -66,7 +61,6 @@ Sistema **web** para gestão de TI (inventário, senhas, manutenções, setores/
   > Cada item possui características únicas, cujas quantidades e nomes são ditadas pela categoria.
 - **Anexos por Item**: Capacidade de enviar anexos individuais por itens, sem mistura entre eles.
 - **Manutenções**: Controle do intervalo entre manutenções, tendo a função de realizar a manutenção, com atualização dinâmica entre a última manutenção e o prazo entre elas.
-- **Senhas por Plataforma**: Senhas salvas criptografadas, descriptografadas apenas quando selecionadas individualmente, relação de trocas periódicas semelhante à manutenção.
 - **Dashboard Dinâmico**: Atualizado automaticamente com os dados cadastrados no sistema, exibindo os principais indicadores dos dados cadastrados.
 - **Perfil do Usuário**: Personalização leve, permitindo trocar seu nome, foto e senha, podendo ser realizado apenas pelo próprio usuário.
 
@@ -211,7 +205,6 @@ Dockerfile). Passo a passo, variáveis por app, rede interna e volume de uploads
 - Front e API na **mesma origem** (nginx faz proxy de `/api`) — sem CORS no navegador
 - CORS por **allowlist** (`CORS_ORIGIN`), **rate-limit** no `/login`, **helmet** e `trust proxy`
 - Segredos validados no boot (`SECRET_KEY_PASSWORD` precisa ter 32 caracteres)
-- Senhas de plataformas são criptografadas com `AES‑256‑CBC` usando `SECRET_KEY_PASSWORD`
 
 ## Resumo dos endpoints
 
@@ -250,21 +243,6 @@ Base URL: `http://<host>:3032`
 - `PUT /:id` **multipart** (editar + anexos)
 - `PUT /inativa/:id` inativar
 - `PUT /workstation/remover/:id` desvincular
-
-### Plataforma (`/plataforma`) - adm
-
-- `GET /` listar
-- `POST /` criar
-- `DELETE /:id` remover
-
-### Senha (`/senha`)
-
-- `GET /:id` listar por empresa
-- `GET /full/:id` detalhe com **descriptografia**
-- `POST /` criar (criptografa)
-- `PUT /atualiza/:id` atualizar metadados
-- `PUT /:id` alterar senha (recriptografa)
-- `DELETE /:id` **adm**
 
 ### Manutenção (`/manutencao`) - adm
 
@@ -311,8 +289,6 @@ npm run preview       // serve build
 ## TODO
 
 - [ ] Atualizar a tela para onde usuários de tipo `usuario` são redirecionados
-- [ ] Permitir que usuários de tipo `usuario` vejam apenas as senhas que eles mesmos cadastraram
-- [ ] Criar o tipo de usuário `supervisor` (por setor) e permitir que veja as senhas dos liderados
 - [ ] Criar o tipo de item `peça` e permitir vínculo a `desktop`/`notebook`, somando no valor final
 - [ ] Melhorar as animações, para maior fluidez
 - [ ] Ajuste de possíveis bugs visuais quando tabelas vazias ou situações mais específicas

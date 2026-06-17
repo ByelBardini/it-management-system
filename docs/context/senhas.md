@@ -2,9 +2,11 @@
 
 Leia junto com [backend-core.md](backend-core.md) e [frontend-core.md](frontend-core.md). **Domínio sensível** — ver agente `seguranca-infrahub`.
 
+> **Status: frontend inativado.** A parte de **armazenamento de senhas foi removida do frontend** (página, componentes, services, link no menu, cartão no dashboard e gestão de plataformas em `Configuracoes`). O **backend permanece intacto** (controllers, rotas, models, criptografia) e as tabelas `senhas`/`plataformas` continuam no banco — os endpoints abaixo seguem respondendo, apenas sem consumidor no front. Para reativar, recrie os arquivos de front descritos abaixo.
+
 ## Arquivos
-- Backend: `controllers/senhaController.js`, `plataformaController.js`; `routes/senhaRoutes.js`, `plataformaRoutes.js`; `models/senhas.js`, `plataformas.js`.
-- Frontend: `pages/Senhas.jsx`; `components/senhas/*` (TabelaSenhas, CardSenha, ModalRegistraSenha, AtualizarSenha, EditarDadosSenha, CampoFiltros, Filtro), `components/plataforma/AdicionarPlataforma.jsx`; `services/api/senhaServices.js`, `plataformaServices.js`.
+- Backend (**ativo**): `controllers/senhaController.js`, `plataformaController.js`; `routes/senhaRoutes.js`, `plataformaRoutes.js`; `models/senhas.js`, `plataformas.js`.
+- Frontend (**removido / inativado**): eram `pages/Senhas.jsx`; `components/senhas/*` (TabelaSenhas, CardSenha, ModalRegistraSenha, AtualizarSenha, EditarDadosSenha, CampoFiltros, Filtro), `components/plataforma/AdicionarPlataforma.jsx`; `services/api/senhaServices.js`, `plataformaServices.js`. Não existem mais — a rota `/senha`, o link no `Header`, o cartão "Senhas cadastradas" no dashboard (`pages/App.jsx`) e a seção "Plataformas" em `pages/Configuracoes.jsx` também foram removidos.
 
 ## Endpoints
 | Método | Path | Papel | Ação |
