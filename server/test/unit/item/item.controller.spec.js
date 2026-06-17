@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import * as db from "../../../models/index.js";
-import { getItens, postItem } from "../../../controllers/itemController.js";
+import {
+  getItens,
+  postItem,
+  importarItens,
+} from "../../../controllers/itemController.js";
 import { mockReq, mockRes } from "../helpers/http-mock.js";
 
 vi.mock("../../../models/index.js", async () => {
@@ -71,6 +75,267 @@ describe("itemController", () => {
       expect(dados).toMatchObject({ item_marca_id: "3", item_modelo_id: "8" });
       expect(dados).not.toHaveProperty("item_nome");
       expect(res.status).toHaveBeenCalledWith(201);
+    });
+  });
+
+  describe("importarItens", () => {
+    function linhaValida(over = {}) {
+      return {
+        tipo: "monitor",
+        etiqueta: "MON-1",
+        num_serie: "SN1",
+        marca: "",
+        modelo: "",
+        subtipo: "",
+        preco: "500.00",
+        data_aquisicao: "2024-01-01",
+        ultima_manutencao: "2024-01-01",
+        intervalo_manutencao: "6",
+        em_uso: "sim",
+        ...over,
+      };
+    }
+
+    beforeEach(() => {
+      // Pré-checagem de número de série já existente: por padrão, nada no banco.
+      db.Item.findAll.mockResolvedValue([]);
+    });
+
+    it("importa linhas válidas criando itens e resolvendo marca/modelo por nome", async () => {
+      db.Marca.findOne.mockResolvedValue(null);
+      db.Marca.create.mockResolvedValue({ marca_id: 3 });
+      db.Modelo.findOne.mockResolvedValue(null);
+      db.Modelo.create.mockResolvedValue({ modelo_id: 9 });
+      db.Item.create.mockResolvedValue({ item_id: 10 });
+
+      const req = mockReq({
+        body: {
+          item_empresa_id: "1",
+          itens: [linhaValida({ marca: "Dell", modelo: "P2419" })],
+        },
+      });
+      const res = mockRes();
+
+      await importarItens(req, res);
+
+      const [dados] = db.Item.create.mock.calls[0];
+      expect(dados).toMatchObject({
+        item_empresa_id: "1",
+        item_marca_id: 3,
+        item_modelo_id: 9,
+        item_tipo: "monitor",
+        item_etiqueta: "MON-1",
+        item_num_serie: "SN1",
+      });
+      expect(res.status).toHaveBeenCalledWith(201);
+      const corpo = res.json.mock.calls[0][0];
+      expect(corpo).toMatchObject({ criados: 1 });
+    });
+
+    it("grava a característica de subtipo nos tipos que têm subtipo", async () => {
+      db.Marca.findOne.mockResolvedValue({ marca_id: 3 });
+      db.Item.create.mockResolvedValue({ item_id: 5 });
+
+      const req = mockReq({
+        body: {
+          item_empresa_id: "1",
+          itens: [
+            linhaValida({ tipo: "periferico", subtipo: "Teclado", marca: "Logitech" }),
+          ],
+        },
+      });
+      const res = mockRes();
+
+      await importarItens(req, res);
+
+      const whereMarca = db.Marca.findOne.mock.calls[0][0].where;
+      expect(whereMarca).toMatchObject({
+        marca_dominio: "item",
+        marca_tipo: "periferico",
+        marca_subtipo: "Teclado",
+        marca_nome: "Logitech",
+      });
+      const [carac] = db.Caracteristica.create.mock.calls[0];
+      expect(carac).toMatchObject({
+        caracteristica_item_id: 5,
+        caracteristica_nome: "tipo",
+        caracteristica_valor: "Teclado",
+      });
+    });
+
+    it("reaproveita marca/modelo já existentes sem duplicar", async () => {
+      db.Marca.findOne.mockResolvedValue({ marca_id: 3 });
+      db.Item.create.mockResolvedValue({ item_id: 11 });
+
+      const req = mockReq({
+        body: {
+          item_empresa_id: "1",
+          itens: [linhaValida({ marca: "Dell" })],
+        },
+      });
+      const res = mockRes();
+
+      await importarItens(req, res);
+
+      expect(db.Marca.create).not.toHaveBeenCalled();
+      const [dados] = db.Item.create.mock.calls[0];
+      expect(dados).toMatchObject({ item_marca_id: 3 });
+    });
+
+    it("rejeita o lote inteiro quando uma linha é desktop", async () => {
+      const req = mockReq({
+        body: {
+          item_empresa_id: "1",
+          itens: [linhaValida(), linhaValida({ tipo: "desktop" })],
+        },
+      });
+      const res = mockRes();
+
+      await expect(importarItens(req, res)).rejects.toMatchObject({ status: 400 });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+
+    it("rejeita o lote quando uma linha tem campo obrigatório faltando", async () => {
+      const req = mockReq({
+        body: {
+          item_empresa_id: "1",
+          itens: [linhaValida({ etiqueta: "" })],
+        },
+      });
+      const res = mockRes();
+
+      await expect(importarItens(req, res)).rejects.toMatchObject({ status: 400 });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+
+    it("lança 400 quando o corpo não traz empresa ou lista de itens", async () => {
+      const req = mockReq({ body: { item_empresa_id: "1", itens: [] } });
+      const res = mockRes();
+
+      await expect(importarItens(req, res)).rejects.toMatchObject({ status: 400 });
+    });
+
+    it("rejeita número de série duplicado dentro da própria planilha", async () => {
+      const req = mockReq({
+        body: {
+          item_empresa_id: "1",
+          itens: [linhaValida({ num_serie: "DUP" }), linhaValida({ num_serie: "DUP" })],
+        },
+      });
+      const res = mockRes();
+
+      await expect(importarItens(req, res)).rejects.toMatchObject({ status: 400 });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+
+    it("rejeita número de série que já existe no inventário", async () => {
+      db.Item.findAll.mockResolvedValue([{ item_num_serie: "SN1" }]);
+      const req = mockReq({
+        body: { item_empresa_id: "1", itens: [linhaValida({ num_serie: "SN1" })] },
+      });
+      const res = mockRes();
+
+      await expect(importarItens(req, res)).rejects.toMatchObject({ status: 400 });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+
+    it("rejeita data fora do formato AAAA-MM-DD", async () => {
+      const req = mockReq({
+        body: {
+          item_empresa_id: "1",
+          itens: [linhaValida({ data_aquisicao: "15/01/2024" })],
+        },
+      });
+      const res = mockRes();
+
+      await expect(importarItens(req, res)).rejects.toMatchObject({ status: 400 });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+
+    it("rejeita número de série acima do limite de coluna", async () => {
+      const req = mockReq({
+        body: {
+          item_empresa_id: "1",
+          itens: [linhaValida({ num_serie: "X".repeat(300) })],
+        },
+      });
+      const res = mockRes();
+
+      await expect(importarItens(req, res)).rejects.toMatchObject({ status: 400 });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+
+    it("rejeita preço não numérico (ex.: Infinity)", async () => {
+      const req = mockReq({
+        body: {
+          item_empresa_id: "1",
+          itens: [linhaValida({ preco: "Infinity" })],
+        },
+      });
+      const res = mockRes();
+
+      await expect(importarItens(req, res)).rejects.toMatchObject({ status: 400 });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+
+    it("rejeita subtipo acima do limite de coluna (100 caracteres)", async () => {
+      const req = mockReq({
+        body: {
+          item_empresa_id: "1",
+          itens: [
+            linhaValida({ tipo: "periferico", subtipo: "S".repeat(120) }),
+          ],
+        },
+      });
+      const res = mockRes();
+
+      await expect(importarItens(req, res)).rejects.toMatchObject({ status: 400 });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+
+    it("registra o subtipo no cadastro central ao importar", async () => {
+      db.Marca.findOne.mockResolvedValue({ marca_id: 3 });
+      db.Item.create.mockResolvedValue({ item_id: 5 });
+      db.Subtipo.findOrCreate.mockResolvedValue([{ subtipo_id: 1 }, true]);
+
+      const req = mockReq({
+        body: {
+          item_empresa_id: "1",
+          itens: [linhaValida({ tipo: "periferico", subtipo: "Teclado", marca: "Logitech" })],
+        },
+      });
+      const res = mockRes();
+
+      await importarItens(req, res);
+
+      const [args] = db.Subtipo.findOrCreate.mock.calls[0];
+      expect(args.where).toMatchObject({
+        subtipo_tipo: "periferico",
+        subtipo_nome: "Teclado",
+      });
+    });
+
+    it("resolve a mesma marca uma única vez para linhas repetidas (cache do lote)", async () => {
+      db.Marca.findOne.mockResolvedValue(null);
+      db.Marca.create.mockResolvedValue({ marca_id: 3 });
+      db.Item.create.mockResolvedValue({ item_id: 10 });
+
+      const req = mockReq({
+        body: {
+          item_empresa_id: "1",
+          itens: [
+            linhaValida({ num_serie: "SN1", marca: "Dell" }),
+            linhaValida({ num_serie: "SN2", marca: "Dell" }),
+          ],
+        },
+      });
+      const res = mockRes();
+
+      await importarItens(req, res);
+
+      expect(db.Marca.findOne).toHaveBeenCalledTimes(1);
+      expect(db.Marca.create).toHaveBeenCalledTimes(1);
+      expect(db.Item.create).toHaveBeenCalledTimes(2);
     });
   });
 });
