@@ -11,6 +11,7 @@ import { getPecasAtivas } from "../services/api/pecasServices.js";
 import { postItem } from "../services/api/itemServices.js";
 import { NavLink, useNavigate } from "react-router-dom";
 import { tratarErro } from "../components/default/funcoes.js";
+import { temSubtipo } from "../components/inventario/tiposComSubtipo.js";
 
 export default function CadastroItem() {
   const navigate = useNavigate();
@@ -34,7 +35,9 @@ export default function CadastroItem() {
 
   function limpaTela() {
     setForm({
-      nome: "",
+      marcaId: null,
+      modeloId: null,
+      subtipo: "",
       tipo: "",
       etiqueta: "",
       numSerie: "",
@@ -53,14 +56,12 @@ export default function CadastroItem() {
     const id_empresa = localStorage.getItem("empresa_id");
     if (
       form.tipo == "desktop" &&
-      (form.nome == "" ||
-        form.tipo == "" ||
+      (form.tipo == "" ||
         form.etiqueta == "" ||
         form.preco == "R$ 0,00" ||
         form.manutencao == "" ||
         form.intervalo == "")
     ) {
-      console.log(2);
       setNotificacao({
         show: true,
         tipo: "erro",
@@ -70,10 +71,10 @@ export default function CadastroItem() {
       return;
     } else if (
       form.tipo != "desktop" &&
-      (form.nome == "" ||
-        form.tipo == "" ||
+      (form.tipo == "" ||
         form.etiqueta == "" ||
         form.numSerie == "" ||
+        (temSubtipo(form.tipo) && !form.subtipo) ||
         form.preco == "R$ 0,00" ||
         form.manutencao == "" ||
         form.intervalo == "")
@@ -95,14 +96,14 @@ export default function CadastroItem() {
       return;
     } else {
       try {
-        console.log(4);
         setLoading(true);
         const fd = new FormData();
         const precoFormatado =
           parseInt(form.preco.replace(/\D/g, ""), 10) / 100;
 
         fd.append("item_empresa_id", id_empresa);
-        fd.append("item_nome", form.nome);
+        fd.append("item_marca_id", form.marcaId ?? "");
+        fd.append("item_modelo_id", form.modeloId ?? "");
         fd.append("item_tipo", form.tipo);
         fd.append("item_etiqueta", form.etiqueta);
         fd.append("item_num_serie", form.numSerie);
@@ -120,7 +121,14 @@ export default function CadastroItem() {
           fd.append("pecas", JSON.stringify(ids));
           fd.append("caracteristicas", JSON.stringify([]));
         } else {
-          fd.append("caracteristicas", JSON.stringify(caracteristicas || []));
+          let caracteristicasFinais = caracteristicas || [];
+          if (temSubtipo(form.tipo) && form.subtipo) {
+            caracteristicasFinais = [
+              ...caracteristicasFinais.filter((c) => c.nome !== "tipo"),
+              { nome: "tipo", valor: form.subtipo },
+            ];
+          }
+          fd.append("caracteristicas", JSON.stringify(caracteristicasFinais));
         }
 
         (anexos || []).forEach((a) => {
@@ -141,7 +149,9 @@ export default function CadastroItem() {
   }
 
   const [form, setForm] = useState({
-    nome: "",
+    marcaId: null,
+    modeloId: null,
+    subtipo: "",
     tipo: "",
     etiqueta: "",
     numSerie: "",
@@ -319,7 +329,11 @@ export default function CadastroItem() {
               </span>
             </div>
 
-            <DadosGerais value={form} onChange={updateForm} />
+            <DadosGerais
+              value={form}
+              onChange={updateForm}
+              setNotificacao={setNotificacao}
+            />
           </section>
 
           <section className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">

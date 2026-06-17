@@ -21,7 +21,6 @@ export default function CardItem({
     const dados = await getItemFull(id);
     setItem(dados);
     setItemSelecionado(dados);
-    console.log(dados);
   }
 
   async function baixar(caminho) {
@@ -104,9 +103,15 @@ export default function CardItem({
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm text-white/60">Nome</label>
+            <label className="block text-sm text-white/60">Marca</label>
             <div className="rounded-lg bg-white/10 p-2 text-white">
-              {item.item_nome}
+              {item.marca?.marca_nome ?? "-"}
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm text-white/60">Modelo</label>
+            <div className="rounded-lg bg-white/10 p-2 text-white">
+              {item.modelo?.modelo_nome ?? "-"}
             </div>
           </div>
           <div>
@@ -171,7 +176,11 @@ export default function CardItem({
                       <div className="text-xs text-white/60">
                         {tiposPecas[p.peca_tipo] ?? p.peca_tipo}
                       </div>
-                      <div className="text-sm font-medium">{p.peca_nome}</div>
+                      <div className="text-sm font-medium">
+                        {`${p.marca?.marca_nome ?? "Sem marca"} ${
+                          p.modelo?.modelo_nome ?? ""
+                        }`.trim()}
+                      </div>
                       <div className="text-xs text-white/60">
                         {formatToBRL(p.peca_preco)}
                       </div>

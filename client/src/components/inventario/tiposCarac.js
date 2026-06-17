@@ -1,5 +1,4 @@
 const tipos = {
-  modelo: "Marca / Modelo",
   fonte: "Fonte",
   poe: "PoE",
   mac: "Endereço MAC",

@@ -9,6 +9,9 @@ import { getSetoresWorkstations } from "../../services/api/empresaServices.js";
 import { useEffect, useState } from "react";
 import { putItem, inativaItem } from "../../services/api/itemServices.js";
 import { tratarErro } from "../default/funcoes.js";
+import SelecaoMarcaModelo from "./SelecaoMarcaModelo.jsx";
+import SelecaoSubtipo from "./SelecaoSubtipo.jsx";
+import { temSubtipo } from "./tiposComSubtipo.js";
 import { useNavigate } from "react-router-dom";
 
 export default function EditarItem({
@@ -25,7 +28,13 @@ export default function EditarItem({
   const [setores, setSetores] = useState([]);
   const [workstations, setWorkstations] = useState([]);
 
-  const [nome, setNome] = useState(item.item_nome);
+  const [subtipo, setSubtipo] = useState(
+    (item.caracteristicas || []).find(
+      (c) => c.caracteristica_nome === "tipo"
+    )?.caracteristica_valor ?? ""
+  );
+  const [marcaId, setMarcaId] = useState(item.item_marca_id ?? null);
+  const [modeloId, setModeloId] = useState(item.item_modelo_id ?? null);
   const [setor, setSetor] = useState(item.setor ? item.setor.setor_id : "");
   const [emUso, setEmUso] = useState(item.item_em_uso == 1 ? true : false);
   const [workstation, setWorkstation] = useState(
@@ -77,15 +86,35 @@ export default function EditarItem({
     });
   }
 
+  function aplicarMarcaModelo(patch) {
+    if ("marcaId" in patch) setMarcaId(patch.marcaId);
+    if ("modeloId" in patch) setModeloId(patch.modeloId);
+  }
+
+  function aplicarSubtipo(nome) {
+    setSubtipo(nome);
+    setMarcaId(null);
+    setModeloId(null);
+  }
+
   async function salvarItem() {
     const id = item.item_id;
-    if (!nome || setor.setor_id != workstation.workstation_setor_id) {
+    if (setor.setor_id != workstation.workstation_setor_id) {
       setNotificacao({
         show: true,
         tipo: "erro",
         titulo: "Informações Incorretas",
         mensagem:
-          "Você não pode deixar o nome em branco, ou selecionar um workstation que não pertence ao setor.",
+          "Você não pode selecionar um workstation que não pertence ao setor.",
+      });
+      return;
+    }
+    if (!isDesktop && temSubtipo(item.item_tipo) && !subtipo) {
+      setNotificacao({
+        show: true,
+        tipo: "erro",
+        titulo: "Subtipo obrigatório",
+        mensagem: "Selecione um subtipo antes de salvar.",
       });
       return;
     }
@@ -108,7 +137,8 @@ export default function EditarItem({
       const workstationId = emUso ? workstation : "";
       const emUsonum = emUso ? 1 : 0;
       const fd = new FormData();
-      fd.append("item_nome", nome);
+      fd.append("item_marca_id", marcaId ?? "");
+      fd.append("item_modelo_id", modeloId ?? "");
       fd.append("item_setor_id", setorId || null);
       fd.append("item_workstation_id", workstationId || null);
       fd.append("item_em_uso", emUsonum);
@@ -122,7 +152,28 @@ export default function EditarItem({
         fd.append("pecas", JSON.stringify(ids));
         fd.append("caracteristicas", JSON.stringify(observacoes));
       } else {
-        fd.append("caracteristicas", JSON.stringify(caracteristicas || []));
+        let caracteristicasFinais = caracteristicas || [];
+        if (temSubtipo(item.item_tipo)) {
+          caracteristicasFinais = caracteristicasFinais.map((c) =>
+            c.caracteristica_nome === "tipo"
+              ? { ...c, caracteristica_valor: subtipo }
+              : c
+          );
+          const temTipo = caracteristicasFinais.some(
+            (c) => c.caracteristica_nome === "tipo"
+          );
+          if (!temTipo && subtipo) {
+            caracteristicasFinais = [
+              ...caracteristicasFinais,
+              {
+                caracteristica_id: null,
+                caracteristica_nome: "tipo",
+                caracteristica_valor: subtipo,
+              },
+            ];
+          }
+        }
+        fd.append("caracteristicas", JSON.stringify(caracteristicasFinais));
       }
 
       (anexos || []).forEach((a) => {
@@ -276,19 +327,23 @@ export default function EditarItem({
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="col-span-2">
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-sm text-white/70">Nome</label>
-              <span className="text-xs text-white/50">{nome.length}/150</span>
-            </div>
-            <input
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              type="text"
-              placeholder="Digite o nome"
-              className="w-full rounded-lg bg-white/10 p-2 text-white focus:outline-none"
+          {temSubtipo(item.item_tipo) && (
+            <SelecaoSubtipo
+              tipo={item.item_tipo}
+              subtipo={subtipo}
+              onChange={aplicarSubtipo}
+              setNotificacao={setNotificacao}
             />
-          </div>
+          )}
+          <SelecaoMarcaModelo
+            dominio="item"
+            tipo={item.item_tipo}
+            subtipo={subtipo}
+            marcaId={marcaId}
+            modeloId={modeloId}
+            onChange={aplicarMarcaModelo}
+            setNotificacao={setNotificacao}
+          />
           <div>
             <label className="block text-sm text-white/60">Setor</label>
             <select
@@ -398,7 +453,9 @@ export default function EditarItem({
                                 key={p.peca_id}
                                 className="inline-flex items-center gap-2 text-xs px-2 py-1 rounded-full bg-white/10 ring-1 ring-white/10 text-white/90"
                               >
-                                {p.peca_nome}
+                                {`${p.marca?.marca_nome ?? "Sem marca"} ${
+                                  p.modelo?.modelo_nome ?? ""
+                                }`.trim()}
                               </span>
                             ))}
                         </div>
@@ -460,7 +517,8 @@ export default function EditarItem({
               {caracteristicas
                 .filter(
                   (caracteristica) =>
-                    caracteristica.caracteristica_nome != "observacoes"
+                    caracteristica.caracteristica_nome != "observacoes" &&
+                    caracteristica.caracteristica_nome != "tipo"
                 )
                 .map((caracteristica) => (
                   <div key={caracteristica.caracteristica_id}>

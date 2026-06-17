@@ -8,7 +8,6 @@ export default function Notebook({
 }) {
   const campos = [
     "sistema-operacional",
-    "modelo",
     "processador",
     "ram",
     "armazenamento",
@@ -19,7 +18,6 @@ export default function Notebook({
 
   const [contadores, setContadores] = useState({
     "sistema-operacional": 0,
-    modelo: 0,
     processador: 0,
     ram: 0,
     armazenamento: 0,
@@ -65,24 +63,6 @@ export default function Notebook({
           onChange={(e) =>
             handleChange("sistema-operacional", e.target.value, 50)
           }
-          className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 
-                     ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
-        />
-      </div>
-
-      <div>
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-1">
-            <label className="text-sm text-white/70">Marca / Modelo</label>
-            <span className="text-xs text-red-400">*</span>
-          </div>
-          <span className="text-xs text-white/50">{contadores.modelo}/50</span>
-        </div>
-        <input
-          type="text"
-          maxLength={50}
-          placeholder="Ex.: Dell Inspiron 15 - ABC123"
-          onChange={(e) => handleChange("modelo", e.target.value, 50)}
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 
                      ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
         />

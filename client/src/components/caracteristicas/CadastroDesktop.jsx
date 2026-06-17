@@ -42,7 +42,11 @@ export default function CadastroDesktop({
       const nomes = lista
         .map((id) => pecas.find((p) => p.peca_id === id))
         .filter(Boolean)
-        .map((p) => p.peca_nome);
+        .map((p) =>
+          `${p.marca?.marca_nome ?? "Sem marca"} ${
+            p.modelo?.modelo_nome ?? ""
+          }`.trim()
+        );
       if (nomes.length > 0) {
         novas.push({ nome: tipoLabels[tipo] || tipo, valor: nomes.join(", ") });
       }
@@ -120,7 +124,9 @@ export default function CadastroDesktop({
                         key={p.peca_id}
                         className="inline-flex items-center gap-2 text-xs px-2 py-1 rounded-full bg-white/10 ring-1 ring-white/10 text-white/90"
                       >
-                        {p.peca_nome}
+                        {`${p.marca?.marca_nome ?? "Sem marca"} ${
+                          p.modelo?.modelo_nome ?? ""
+                        }`.trim()}
                       </span>
                     ))}
                 </div>

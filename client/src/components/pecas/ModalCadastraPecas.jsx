@@ -4,6 +4,7 @@ import { postPeca } from "../../services/api/pecasServices.js";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { tratarErro } from "../default/funcoes.js";
+import SelecaoMarcaModelo from "../inventario/SelecaoMarcaModelo.jsx";
 
 function formatarRealDinamico(valor) {
   valor = valor.replace(/\D/g, "");
@@ -23,7 +24,8 @@ export default function ModalCadastraPecas({
   const navigate = useNavigate();
 
   const [tipo, setTipo] = useState("");
-  const [nome, setNome] = useState("");
+  const [marcaId, setMarcaId] = useState(null);
+  const [modeloId, setModeloId] = useState(null);
   const [preco, setPreco] = useState("");
   const [numSerie, setNumSerie] = useState("");
   const [dataAquisicao, setDataAquisicao] = useState("");
@@ -31,9 +33,14 @@ export default function ModalCadastraPecas({
   const [valido, setValido] = useState(false);
 
   useEffect(() => {
-    if (tipo && nome && preco) setValido(true);
+    if (tipo && preco && numSerie) setValido(true);
     else setValido(false);
-  }, [tipo, nome, preco]);
+  }, [tipo, preco, numSerie]);
+
+  function aplicarMarcaModelo(patch) {
+    if ("marcaId" in patch) setMarcaId(patch.marcaId);
+    if ("modeloId" in patch) setModeloId(patch.modeloId);
+  }
 
   useEffect(() => {
     function onKeyDown(e) {
@@ -66,10 +73,11 @@ export default function ModalCadastraPecas({
       await postPeca(
         localStorage.getItem("empresa_id"),
         tipo,
-        nome,
         precoFormatado,
         dataAquisicao,
-        numSerie
+        numSerie,
+        marcaId,
+        modeloId
       );
       setConfirmacao({
         show: true,
@@ -81,7 +89,8 @@ export default function ModalCadastraPecas({
         onSim: () => {
           setConfirmacao({ show: false, texto: "", onSim: null });
           setTipo("");
-          setNome("");
+          setMarcaId(null);
+          setModeloId(null);
           setPreco("");
           setDataAquisicao("");
           setNumSerie("");
@@ -119,7 +128,11 @@ export default function ModalCadastraPecas({
           <div>
             <label className="block text-sm text-white/70 mb-1">Tipo</label>
             <select
-              onChange={(e) => setTipo(e.target.value)}
+              onChange={(e) => {
+                setTipo(e.target.value);
+                setMarcaId(null);
+                setModeloId(null);
+              }}
               value={tipo}
               className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
@@ -138,20 +151,14 @@ export default function ModalCadastraPecas({
             </select>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-sm text-white/70">Nome</label>
-              <span className="text-xs text-white/50">{nome.length}/150</span>
-            </div>
-            <input
-              onChange={(e) => setNome(e.target.value)}
-              type="text"
-              maxLength={150}
-              value={nome}
-              placeholder="Digite o nome da peça"
-              className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <SelecaoMarcaModelo
+            dominio="peca"
+            tipo={tipo}
+            marcaId={marcaId}
+            modeloId={modeloId}
+            onChange={aplicarMarcaModelo}
+            setNotificacao={setNotificacao}
+          />
 
           <div>
             <div className="flex items-center justify-between mb-1">

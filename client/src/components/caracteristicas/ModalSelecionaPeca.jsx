@@ -50,7 +50,11 @@ export default function ModalSelecionaPeca({
   }
 
   const pecasFiltradas = pecas.filter((p) =>
-    p.peca_nome.toLowerCase().includes(busca.toLowerCase())
+    `${p.marca?.marca_nome ?? ""} ${p.modelo?.modelo_nome ?? ""} ${
+      p.peca_num_serie ?? ""
+    }`
+      .toLowerCase()
+      .includes(busca.toLowerCase())
   );
 
   return (
@@ -78,7 +82,7 @@ export default function ModalSelecionaPeca({
           <input
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            placeholder="Buscar peça pelo nome..."
+            placeholder="Buscar por marca, modelo ou série..."
             className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <div className="text-xs text-white/60 whitespace-nowrap">
@@ -119,7 +123,9 @@ export default function ModalSelecionaPeca({
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm font-medium text-white/90">
-                      {p.peca_nome}
+                      {`${p.marca?.marca_nome ?? "Sem marca"} ${
+                        p.modelo?.modelo_nome ?? ""
+                      }`.trim()}
                     </span>
                     <span className="text-xs text-white/60">
                       {tipoLabels[p.peca_tipo]}
