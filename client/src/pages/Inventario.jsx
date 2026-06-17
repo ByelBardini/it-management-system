@@ -6,11 +6,13 @@ import Loading from "../components/default/Loading";
 import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import CampoFiltros from "../components/inventario/CampoFiltros.jsx";
+import InventarioAgrupado from "../components/inventario/InventarioAgrupado.jsx";
 import Paginacao from "../components/default/Paginacao.jsx";
-import { Plus, FunnelPlus, FunnelX } from "lucide-react";
+import { Plus, FunnelPlus, FunnelX, ListTree, List } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getItens, getItensInativos } from "../services/api/itemServices";
+import { agruparInventario } from "../components/inventario/agrupamento.js";
 import {
   dividirEmPartes,
   tratarErro,
@@ -43,6 +45,7 @@ export default function Inventario() {
   });
 
   const [inativos, setInativos] = useState(false);
+  const [agrupado, setAgrupado] = useState(true);
   const [filtrando, setFiltrando] = useState(false);
   const [itensFiltrados, setItensFiltrados] = useState([]);
   const [itensOrdenados, setItensOrdenados] = useState([]);
@@ -57,15 +60,11 @@ export default function Inventario() {
         const itens = await getItens(id_empresa);
         setItens(itens);
         setItensFiltrados(itens);
-        setLoading(false);
-        console.log(itens);
-      } else {
+        setLoading(false);      } else {
         const itens = await getItensInativos(id_empresa);
         setItens(itens);
         setItensFiltrados(itens);
-        setLoading(false);
-        console.log(itens);
-      }
+        setLoading(false);      }
     } catch (err) {
       tratarErro(setNotificacao, err, navigate);
       setLoading(false);
@@ -80,9 +79,14 @@ export default function Inventario() {
   useEffect(() => {
     const ordenados = dividirEmPartes(itensFiltrados, itensPorPagina);
     setItensOrdenados(ordenados);
-    console.log(ordenados);
     setSessao(0);
   }, [itensFiltrados]);
+
+  const visaoAgrupada = !inativos && agrupado;
+  const grupos = useMemo(
+    () => (visaoAgrupada ? agruparInventario(itensFiltrados) : []),
+    [visaoAgrupada, itensFiltrados]
+  );
 
   return (
     <div className="p-4">
@@ -158,6 +162,17 @@ export default function Inventario() {
           )}
 
           <div className="flex gap-2">
+            {!inativos && (
+              <button
+                onClick={() => setAgrupado((v) => !v)}
+                className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
+              >
+                {agrupado ? <List size={18} /> : <ListTree size={18} />}
+                <span className="text-sm font-medium">
+                  {agrupado ? "Lista" : "Agrupar"}
+                </span>
+              </button>
+            )}
             <button
               onClick={() => setFiltrando(!filtrando)}
               className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
@@ -175,11 +190,15 @@ export default function Inventario() {
           </div>
         </div>
         <div className="overflow-x-auto">
-          <TabelaItens
-            itens={itensOrdenados[sessao] || []}
-            setCardItem={setCardItem}
-            inativos={inativos}
-          />
+          {visaoAgrupada ? (
+            <InventarioAgrupado grupos={grupos} setCardItem={setCardItem} />
+          ) : (
+            <TabelaItens
+              itens={itensOrdenados[sessao] || []}
+              setCardItem={setCardItem}
+              inativos={inativos}
+            />
+          )}
         </div>
       </div>
       <div className="flex items-center justify-between mt-4">
@@ -198,7 +217,7 @@ export default function Inventario() {
           </button>
         </div>
       </div>
-      {itensOrdenados.length > 1 && (
+      {!visaoAgrupada && itensOrdenados.length > 1 && (
         <Paginacao
           sessao={sessao}
           setSessao={setSessao}

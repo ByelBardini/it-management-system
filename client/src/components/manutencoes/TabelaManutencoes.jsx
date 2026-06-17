@@ -22,7 +22,7 @@ export default function TabelaManutencoes({
         <thead>
           <tr className="text-sm text-white/70 border-b border-white/10">
             <th className="px-6 py-3">Etiqueta</th>
-            <th className="px-6 py-3">Nome</th>
+            <th className="px-6 py-3">Marca / Modelo</th>
             <th className="px-6 py-3">Tipo</th>
             <th className="px-6 py-3">Setor</th>
             <th className="px-6 py-3">Última Manutençção</th>
@@ -44,7 +44,11 @@ export default function TabelaManutencoes({
                 <td className="px-6 py-3 font-medium text-white">
                   {item.item_etiqueta}
                 </td>
-                <td className="px-6 py-3">{item.item_nome}</td>
+                <td className="px-6 py-3">
+                  {`${item.marca?.marca_nome ?? "Sem marca"} ${
+                    item.modelo?.modelo_nome ?? ""
+                  }`.trim()}
+                </td>
                 <td className="px-6 py-3">
                   {tipos[item.item_tipo] ?? item.item_tipo}
                 </td>

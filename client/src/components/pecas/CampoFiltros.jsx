@@ -24,7 +24,11 @@ export default function CampoFiltros({
 
     if (pesquisa != "") {
       filtrados = filtrados.filter((peca) =>
-        peca.peca_nome.toLowerCase().includes(pesquisa)
+        `${peca.marca?.marca_nome ?? ""} ${peca.modelo?.modelo_nome ?? ""} ${
+          peca.peca_num_serie ?? ""
+        }`
+          .toLowerCase()
+          .includes(pesquisa)
       );
     }
 

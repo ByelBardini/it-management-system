@@ -2,7 +2,12 @@ import tipos from "./tiposItens.js";
 import { SearchX } from "lucide-react";
 import { formatToDate } from "brazilian-values";
 
-export default function TabelaItens({ itens, setCardItem, inativos }) {
+export default function TabelaItens({
+  itens,
+  setCardItem,
+  inativos,
+  mostrarSerie,
+}) {
   function abreCard(id) {
     localStorage.setItem("item_id", id);
     setCardItem(true);
@@ -15,7 +20,10 @@ export default function TabelaItens({ itens, setCardItem, inativos }) {
           <tr className="text-left text-sm text-white/70">
             <th className="px-6 py-3 font-medium">Etiqueta</th>
             <th className="px-6 py-3 font-medium">Tipo</th>
-            <th className="px-6 py-3 font-medium">Nome</th>
+            <th className="px-6 py-3 font-medium">Marca / Modelo</th>
+            {mostrarSerie && (
+              <th className="px-6 py-3 font-medium">Nº de série</th>
+            )}
             <th className="px-6 py-3 font-medium">
               {inativos ? "Data de Inativação" : "Setor"}
             </th>
@@ -39,7 +47,16 @@ export default function TabelaItens({ itens, setCardItem, inativos }) {
                 <td className="px-6 py-3 text-white">
                   {tipos[item.item_tipo] ?? item.item_tipo}
                 </td>
-                <td className="px-6 py-3 text-white">{item.item_nome}</td>
+                <td className="px-6 py-3 text-white">
+                  {`${item.marca?.marca_nome ?? "Sem marca"} ${
+                    item.modelo?.modelo_nome ?? ""
+                  }`.trim()}
+                </td>
+                {mostrarSerie && (
+                  <td className="px-6 py-3 text-white/70">
+                    {item.item_num_serie || "N/A"}
+                  </td>
+                )}
                 <td className="px-6 py-3 text-white/70">
                   {inativos
                     ? formatToDate(

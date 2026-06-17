@@ -37,7 +37,7 @@ export default function TabelaPecas({
         <thead>
           <tr className="text-left text-sm text-white/70">
             <th className="px-6 py-3 font-medium">Tipo</th>
-            <th className="px-6 py-3 font-medium">Nome</th>
+            <th className="px-6 py-3 font-medium">Marca / Modelo</th>
             <th className="px-6 py-3 font-medium">Preço</th>
             <th className="px-6 py-3 font-medium">
               {inativos ? "Data de Inativação" : "Item Vinculado"}
@@ -63,7 +63,11 @@ export default function TabelaPecas({
               <td className="px-6 py-3 text-white">
                 {tipos[peca.peca_tipo] ?? peca.peca_tipo}
               </td>
-              <td className="px-6 py-3 text-white/80">{peca.peca_nome}</td>
+              <td className="px-6 py-3 text-white/80">
+                {`${peca.marca?.marca_nome ?? "Sem marca"} ${
+                  peca.modelo?.modelo_nome ?? ""
+                }`.trim()}
+              </td>
               <td className="px-6 py-3 text-white">
                 {formatToBRL(peca.peca_preco)}
               </td>
@@ -74,7 +78,7 @@ export default function TabelaPecas({
                     )
                   : peca.item == null
                   ? "N/A"
-                  : peca.item.item_nome}
+                  : peca.item?.item_etiqueta}
               </td>
 
               {!inativos && (

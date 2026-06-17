@@ -5,6 +5,8 @@ import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import TabelaPecas from "../components/pecas/TabelaPecas";
 import ModalCadastraPecas from "../components/pecas/ModalCadastraPecas";
 import CampoFiltros from "../components/pecas/CampoFiltros.jsx";
+import PecasAgrupado from "../components/pecas/PecasAgrupado.jsx";
+import { agruparPecas } from "../components/pecas/agrupamentoPecas.js";
 import Paginacao from "../components/default/Paginacao.jsx";
 import {
   getPecasAtivas,
@@ -17,8 +19,8 @@ import {
   useItensPorPagina,
 } from "../components/default/funcoes.js";
 import { useNavigate } from "react-router-dom";
-import { Plus, FunnelPlus, FunnelX } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Plus, FunnelPlus, FunnelX, ListTree, List } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function Pecas() {
   const navigate = useNavigate();
@@ -47,6 +49,7 @@ export default function Pecas() {
 
   const [inativos, setInativos] = useState(false);
   const [filtrando, setFiltrando] = useState(false);
+  const [agrupado, setAgrupado] = useState(true);
 
   async function buscarPecas() {
     setLoading(true);
@@ -101,9 +104,14 @@ export default function Pecas() {
   useEffect(() => {
     const ordenados = dividirEmPartes(pecasFiltradas, itensPorPagina);
     setPecasOrdenadas(ordenados);
-    console.log(ordenados);
     setSessao(0);
   }, [pecasFiltradas]);
+
+  const visaoAgrupada = !inativos && agrupado;
+  const grupos = useMemo(
+    () => (visaoAgrupada ? agruparPecas(pecasFiltradas) : []),
+    [visaoAgrupada, pecasFiltradas]
+  );
 
   return (
     <div className="p-4">
@@ -173,6 +181,17 @@ export default function Pecas() {
           )}
 
           <div className="flex gap-2">
+            {!inativos && (
+              <button
+                onClick={() => setAgrupado((v) => !v)}
+                className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
+              >
+                {agrupado ? <List size={18} /> : <ListTree size={18} />}
+                <span className="text-sm font-medium">
+                  {agrupado ? "Lista" : "Agrupar"}
+                </span>
+              </button>
+            )}
             <button
               onClick={() => setFiltrando(!filtrando)}
               className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
@@ -189,13 +208,24 @@ export default function Pecas() {
             </button>
           </div>
         </div>
-        <TabelaPecas
-          pecas={pecasOrdenadas[sessao]}
-          setConfirmacao={setConfirmacao}
-          setNotificacao={setNotificacao}
-          inativos={inativos}
-          inativar={inativar}
-        />
+        <div className="overflow-x-auto">
+          {visaoAgrupada ? (
+            <PecasAgrupado
+              grupos={grupos}
+              setConfirmacao={setConfirmacao}
+              setNotificacao={setNotificacao}
+              inativar={inativar}
+            />
+          ) : (
+            <TabelaPecas
+              pecas={pecasOrdenadas[sessao]}
+              setConfirmacao={setConfirmacao}
+              setNotificacao={setNotificacao}
+              inativos={inativos}
+              inativar={inativar}
+            />
+          )}
+        </div>
       </div>
       <div className="flex items-center justify-between mt-4">
         <div className="w-full flex justify-end">
@@ -213,7 +243,7 @@ export default function Pecas() {
           </button>
         </div>
       </div>
-      {pecasOrdenadas.length > 1 && (
+      {!visaoAgrupada && pecasOrdenadas.length > 1 && (
         <Paginacao
           sessao={sessao}
           setSessao={setSessao}

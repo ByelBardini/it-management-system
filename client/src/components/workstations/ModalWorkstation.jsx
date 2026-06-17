@@ -177,7 +177,9 @@ export default function ModalWorkstation({
                   Nome
                 </p>
                 <p className="text-sm font-medium text-white">
-                  {item.item_nome}
+                  {`${item.marca?.marca_nome ?? "Sem marca"} ${
+                    item.modelo?.modelo_nome ?? ""
+                  }`.trim()}
                 </p>
               </div>
 

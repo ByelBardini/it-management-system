@@ -39,10 +39,12 @@ export default function Filtros({
     }
 
     if (pesquisa != "") {
-      filtrados = filtrados.filter(
-        (item) =>
-          item.item_nome.toLowerCase().includes(pesquisa) ||
-          item.item_etiqueta.toLowerCase().includes(pesquisa)
+      filtrados = filtrados.filter((item) =>
+        `${item.marca?.marca_nome ?? ""} ${item.modelo?.modelo_nome ?? ""} ${
+          item.item_etiqueta ?? ""
+        } ${item.item_num_serie ?? ""}`
+          .toLowerCase()
+          .includes(pesquisa)
       );
     }
 
