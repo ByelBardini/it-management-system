@@ -97,6 +97,23 @@ app.use((err, req, res, next) => {
     });
   }
 
+  // Erros do body-parser (express.json) — devolve mensagem acionável em vez de 500.
+  if (err?.type === "entity.too.large") {
+    return res.status(413).json({
+      status: 413,
+      code: "ERR_PAYLOAD_TOO_LARGE",
+      message:
+        "Arquivo grande demais para importar de uma vez. Divida em partes menores.",
+    });
+  }
+  if (err?.type === "entity.parse.failed") {
+    return res.status(400).json({
+      status: 400,
+      code: "ERR_BAD_JSON",
+      message: "Corpo da requisição inválido",
+    });
+  }
+
   console.error(err);
 
   res.status(500).json({

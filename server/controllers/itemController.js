@@ -11,8 +11,16 @@ import {
   Peca,
   Marca,
   Modelo,
+  Subtipo,
 } from "../models/index.js";
 import { ApiError } from "../middlewares/ApiError.js";
+import {
+  TIPOS_ITEM_COM_SUBTIPO,
+  errosLoteItens,
+  parseEmUso,
+  resolverMarcaModelo,
+  novoCacheResolucao,
+} from "./helpers/importacao.js";
 
 export async function getItens(req, res) {
   const { id } = req.params;
@@ -560,6 +568,120 @@ export async function putItem(req, res) {
   }
 
   return res.status(200).json({ message: "Item atualizado com sucesso" });
+}
+
+export async function importarItens(req, res) {
+  const item_empresa_id = req.body.item_empresa_id;
+  const itens = req.body.itens;
+
+  if (!item_empresa_id) {
+    throw ApiError.badRequest("ID da empresa é obrigatório");
+  }
+  if (!Array.isArray(itens) || itens.length === 0) {
+    throw ApiError.badRequest("Nenhum item para importar");
+  }
+
+  const erros = errosLoteItens(itens);
+
+  // Só consulta o banco se o formato está ok; pré-checa número de série já existente
+  // (o índice UNIQUE de item_num_serie é GLOBAL) para devolver erro por linha em vez
+  // de estourar UniqueConstraintError dentro da transação (500 + rollback total).
+  if (erros.length === 0) {
+    const seriais = itens
+      .map((l) => String(l.num_serie ?? "").trim())
+      .filter(Boolean);
+    if (seriais.length) {
+      const existentes = await Item.findAll({
+        attributes: ["item_num_serie"],
+        where: { item_num_serie: seriais },
+      });
+      const setExistentes = new Set(
+        existentes.map((e) => String(e.item_num_serie).toLowerCase())
+      );
+      itens.forEach((linha, i) => {
+        const serial = String(linha.num_serie ?? "").trim().toLowerCase();
+        if (serial && setExistentes.has(serial)) {
+          erros.push({
+            linha: i + 1,
+            motivo: "número de série já cadastrado no inventário",
+          });
+        }
+      });
+    }
+  }
+
+  if (erros.length) {
+    erros.sort((a, b) => a.linha - b.linha);
+    throw ApiError.badRequest(
+      `${erros.length} linha(s) com erro na importação`,
+      erros
+    );
+  }
+
+  const cache = novoCacheResolucao();
+  let criados = 0;
+  await sequelize.transaction(async (t) => {
+    for (const linha of itens) {
+      const tipo = String(linha.tipo).trim();
+      const subtipo = TIPOS_ITEM_COM_SUBTIPO.includes(tipo)
+        ? String(linha.subtipo || "").trim()
+        : "";
+
+      const { marca_id, modelo_id } = await resolverMarcaModelo(
+        {
+          dominio: "item",
+          tipo,
+          subtipo,
+          marcaNome: linha.marca,
+          modeloNome: linha.modelo,
+        },
+        t,
+        req.usuario.id,
+        cache
+      );
+
+      const item = await Item.create(
+        {
+          item_empresa_id,
+          item_marca_id: marca_id,
+          item_modelo_id: modelo_id,
+          item_tipo: tipo,
+          item_etiqueta: String(linha.etiqueta).trim(),
+          item_num_serie: String(linha.num_serie).trim(),
+          item_preco: Number(linha.preco),
+          item_data_aquisicao: linha.data_aquisicao,
+          item_em_uso: parseEmUso(linha.em_uso),
+          item_ultima_manutencao: linha.ultima_manutencao,
+          item_intervalo_manutencao: Number(linha.intervalo_manutencao),
+        },
+        { transaction: t, usuarioId: req.usuario.id }
+      );
+
+      if (subtipo) {
+        // Registra o subtipo no cadastro central para aparecer no dropdown depois.
+        await Subtipo.findOrCreate({
+          where: { subtipo_tipo: tipo, subtipo_nome: subtipo },
+          defaults: { subtipo_tipo: tipo, subtipo_nome: subtipo },
+          transaction: t,
+          usuarioId: req.usuario.id,
+        });
+        await Caracteristica.create(
+          {
+            caracteristica_item_id: item.item_id,
+            caracteristica_nome: "tipo",
+            caracteristica_valor: subtipo,
+          },
+          { transaction: t, usuarioId: req.usuario.id }
+        );
+      }
+
+      criados++;
+    }
+  });
+
+  return res
+    .status(201)
+    .json({ message: "Itens importados com sucesso", criados });
 }
 
 export async function inativaItem(req, res) {
