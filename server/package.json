@@ -21,7 +21,8 @@
     "db:migrate": "node db/migrate.js",
     "db:seed": "node db/seed.js",
     "db:seed:deploy": "node db/seed.js --se-vazio",
-    "dev:db": "node db/migrate.js && node db/seed.js",
+    "dev:seed": "node db/seed-dev.js",
+    "dev:db": "node db/migrate.js && node db/seed.js && node db/seed-dev.js",
     "db:reset": "node db/migrate.js --reset"
   },
   "dependencies": {
