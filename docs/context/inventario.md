@@ -5,8 +5,8 @@ Leia junto com [backend-core.md](backend-core.md) e [frontend-core.md](frontend-
 > **Cadastro de marca/modelo** é central (tabelas `marcas`/`modelos`/`subtipos`), **escopado por (domínio, tipo, subtipo)**. Item e peça referenciam por id (`item_marca_id`/`item_modelo_id`, `peca_marca_id`/`peca_modelo_id`); o "nome" (`item_nome`/`peca_nome`) **não existe mais** — identidade = marca + modelo, número de série diferencia unidades. O subtipo existe só nos 7 tipos de item de `tiposComSubtipo.js` e é guardado na característica `tipo` do item; demais tipos e peças usam subtipo vazio. Endpoints/serviços de marca/modelo/subtipo: [marcas-modelos.md](marcas-modelos.md).
 
 ## Arquivos
-- Backend: `controllers/itemController.js`, `pecasController.js`; `routes/itemRoutes.js`, `pecasRoutes.js`, `downloadRoutes.js`; `models/itens.js`, `caracteristicas.js`, `anexos.js`, `pecas.js`; `middlewares/anexosUpload.js`. Marca/modelo/subtipo: `controllers/marcaController.js`, `modeloController.js`, `subtipoController.js`; `models/marcas.js`, `modelos.js`, `subtipos.js`.
-- Frontend: `pages/Inventario.jsx`, `CadastroItem.jsx`, `Pecas.jsx`; `components/inventario/*`, `components/caracteristicas/*` (+ `cadastro/<Tipo>.jsx` por categoria), `components/pecas/*`, `components/anexos/*`, `components/itens/DadosGerais.jsx`; `components/inventario/SelecaoMarcaModelo.jsx` (combobox marca+modelo) e `SelecaoSubtipo.jsx` + `tiposComSubtipo.js` (subtipo); `services/api/itemServices.js`, `pecasServices.js`, `marcaServices.js`, `modeloServices.js`, `subtipoServices.js`.
+- Backend: `controllers/itemController.js`, `pecasController.js`; `controllers/helpers/importacao.js` (validação por linha + `resolverMarcaModelo` da importação em massa); `routes/itemRoutes.js`, `pecasRoutes.js`, `downloadRoutes.js`; `models/itens.js`, `caracteristicas.js`, `anexos.js`, `pecas.js`; `middlewares/anexosUpload.js`. Marca/modelo/subtipo: `controllers/marcaController.js`, `modeloController.js`, `subtipoController.js`; `models/marcas.js`, `modelos.js`, `subtipos.js`.
+- Frontend: `pages/Inventario.jsx`, `CadastroItem.jsx`, `Pecas.jsx`; `components/inventario/*`, `components/caracteristicas/*` (+ `cadastro/<Tipo>.jsx` por categoria), `components/pecas/*`, `components/anexos/*`, `components/itens/DadosGerais.jsx`; `components/inventario/SelecaoMarcaModelo.jsx` (combobox marca+modelo) e `SelecaoSubtipo.jsx` + `tiposComSubtipo.js` (subtipo); `components/inventario/ModalImportar.jsx` (modal de importação CSV reutilizável por `dominio`) + `importacaoCsv.js` (parse/modelo/validação puros); `services/api/itemServices.js`, `pecasServices.js`, `marcaServices.js`, `modeloServices.js`, `subtipoServices.js`.
 
 ## Endpoints (todos `adm`)
 | Método | Path | Ação |
@@ -16,10 +16,12 @@ Leia junto com [backend-core.md](backend-core.md) e [frontend-core.md](frontend-
 | GET | `/item/full/:id` | item completo: `item_marca_id`/`item_modelo_id` + `marca`/`modelo`, peças (cada uma com `.marca`/`.modelo`), características, anexos |
 | GET | `/item/workstation/:id` | itens vinculados a um workstation (+ `marca`/`modelo`) |
 | POST | `/item/` | cria (multipart) em transação; aceita `item_marca_id`/`item_modelo_id` |
+| POST | `/item/importar` | importação em massa (JSON `{ item_empresa_id, itens:[...] }`) de itens **não-desktop**; valida linha a linha (lança 400 com `details:[{linha,motivo}]`) e cria tudo numa transação, resolvendo marca/modelo **pelo nome** (cria no cadastro central); grava o subtipo na característica `tipo` |
 | PUT | `/item/:id` | edita marca/modelo/setor/workstation/em_uso; rebalanceia peças (desktop); reconcilia anexos |
 | PUT | `/item/inativa/:id` | soft delete |
 | PUT | `/item/workstation/remover/:id` | desvincula do workstation |
 | POST/GET/PUT | `/pecas/*` | CRUD de peças (criar, listar ativas/inativas, inativar). `postPeca` aceita `marca_id`/`modelo_id` (sem nome). Ativas trazem `item`{item_id,item_etiqueta} + `marca`/`modelo`; inativas trazem `marca`/`modelo` |
+| POST | `/pecas/importar` | importação em massa (JSON `{ id_empresa, pecas:[...] }`); valida linha a linha e cria numa transação, resolvendo marca/modelo **pelo nome**; peças nascem `peca_ativa=1`, `peca_em_uso=0`, **sem vínculo** (`peca_item_id=null`) |
 | GET | (`downloadRoutes`) | servir/baixar anexo, com path saneado dentro de `/uploads` |
 
 ## Modelos
@@ -46,8 +48,14 @@ Leia junto com [backend-core.md](backend-core.md) e [frontend-core.md](frontend-
 - **Peças agrupadas** (`components/pecas/PecasAgrupado.jsx` + `agrupamentoPecas.js`): espelha o inventário, reusando `agruparGenerico` (mesma árvore Tipo → Marca → Modelo → peças, lendo `peca.marca`/`peca.modelo`). Componentes irmãos: `TipoDetalhePeca.jsx`, `ModalModeloPeca.jsx`, `iconesTiposPecas.js`. `Pecas.jsx` tem toggle **Lista/Agrupar**.
 - `CadastroItem.jsx`: monta `FormData` (DadosGerais + características/peças + anexos) e envia multipart; `caracteristicas`/`pecas` via `JSON.stringify`; envia `item_marca_id`/`item_modelo_id`.
 - `Pecas.jsx`: CRUD de peças com filtros e paginação + visão agrupada (toggle).
+- **Importação em massa (CSV):** botão **Importar** em `Inventario.jsx` e `Pecas.jsx` abre o `ModalImportar` (reutilizável, prop `dominio="item"|"peca"`). O modal **baixa o modelo CSV** (gerado por `gerarModeloCsv`, via `Blob`), lê o arquivo escolhido com `parseCsv`, **pré-valida** linha a linha (`validarLinhasItem`/`validarLinhasPeca`, mostrando "Linha N: motivo") e só habilita o envio sem erros; mapeia com `linhasParaPayload*` (preço normalizado p/ ponto decimal) e chama `importarItens`/`importarPecas`. As funções de `importacaoCsv.js` são **puras e testadas**; o `api.js` descarta `details` do erro, por isso o feedback por linha vem da **pré-validação no front**.
 
 ## Gotchas
 - O `anexosUpload` valida o balanço entre tipos/nomes/arquivos; desbalanço → 400.
 - Filtros são aplicados **no front** (em memória), não no backend.
 - `item_intervalo_manutencao` em meses alimenta o domínio de [manutencoes.md](manutencoes.md).
+- **Importação é atômica:** se uma única linha for inválida, o lote inteiro é recusado (nada é gravado). `desktop` **não** é importável (depende de peças/preço calculado).
+- **Validação de importação (front + back, espelhadas):** datas exigem `AAAA-MM-DD` real; preço é número finito ≥0 com ponto decimal (o front normaliza `1.234,56`/`1,234.56`→`1234.56` antes de enviar); `intervalo` é inteiro; tamanhos respeitam as colunas (`etiqueta`≤10, `item_num_serie`≤255, `peca_num_serie`≤150, marca/modelo/subtipo≤100); `modelo` sem `marca` é erro. **`item_num_serie` tem UNIQUE global** — `importarItens` pré-checa duplicidade **dentro da planilha** e **no banco** e devolve erro por linha (400), evitando estourar dentro da transação. Peças não têm unicidade de série.
+- **Resolução de marca/modelo no lote** usa um **cache por importação** (`novoCacheResolucao`) para não repetir `findOne`/`create` por linha. Importar item com subtipo também registra o subtipo no cadastro central (`Subtipo.findOrCreate`).
+- **Autorização:** `POST /pecas/importar` é **adm** (diferente de `postPeca`, que é só autenticado), igual a `POST /item/importar`. Payload acima do limite do `express.json` (1mb) retorna **413** com mensagem acionável (tratado no handler de erro de `app.js`).
+- A lista de **tipos com subtipo** é **duplicada**: backend em `controllers/helpers/importacao.js` (`TIPOS_ITEM_COM_SUBTIPO`) e front em `tiposComSubtipo.js`/`importacaoCsv.js`; as **regras de validação** também são espelhadas (`validarLinhaItem`/`validarLinhaPeca` no back, `motivosLinha*` no front) — manter em sincronia ao alterar.
