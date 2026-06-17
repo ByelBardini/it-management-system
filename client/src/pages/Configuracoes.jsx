@@ -4,6 +4,7 @@ import AdicionarPlataforma from "../components/plataforma/AdicionarPlataforma.js
 import Notificacao from "../components/default/Notificacao.jsx";
 import Loading from "../components/default/Loading.jsx";
 import ModalConfirmacao from "../components/default/ModalConfirmacao.jsx";
+import CartaoMarcas from "../components/marca/CartaoMarcas.jsx";
 import { Plus, Building2, SearchX, Trash2, Layers } from "lucide-react";
 import { useState } from "react";
 import { getSetores, deleteSetor } from "../services/api/setorServices.js";
@@ -275,6 +276,11 @@ export default function Configuracoes() {
           )}
         </div>
       </div>
+
+      <CartaoMarcas
+        setNotificacao={setNotificacao}
+        setCarregando={setCarregando}
+      />
     </div>
   );
 }
