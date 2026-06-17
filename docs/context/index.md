@@ -11,7 +11,7 @@ Estes documentos são a **fonte de verdade leve** para os agentes (`/plan`, `/ex
 
 ## Núcleos transversais (leia sempre que tocar a camada)
 - [backend-core.md](backend-core.md) — Express 5, `ApiError`, autenticação/autorização (cookie httpOnly), hooks de auditoria, Sequelize, transações, cripto, helmet/CORS/rate-limit, testes.
-- [frontend-core.md](frontend-core.md) — React/JSX (SPA web, sem Tauri), Tailwind v4 "dark glass", `services/api` (cookie via `withCredentials`), `Notificacao`/`ModalConfirmacao`/`Loading`/`Paginacao`, `funcoes.js`, `tratarErro`, localStorage, testes.
+- [frontend-core.md](frontend-core.md) — React/JSX (SPA web, sem Tauri), Tailwind v4 "dark minimal" (plano, sem blur/sombra/glow), `services/api` (cookie via `withCredentials`), `Notificacao`/`ModalConfirmacao`/`Loading`/`Paginacao`, `funcoes.js`, `tratarErro`, localStorage, testes.
 - [banco-migrations.md](banco-migrations.md) — runner de migração (`server/db/`), `schema_migrations`, comandos `db:migrate`/`db:seed`/`db:seed:deploy`/`dev:db`/`db:reset`, baseline `0001_init.sql`, seed idempotente (guardado no deploy) e passo de deploy.
 
 ## Deploy

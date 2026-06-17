@@ -6,7 +6,7 @@ Convenções transversais do frontend. **Leia sempre que tocar `client/`.**
 - React 19, Vite 7, **JSX puro (sem TypeScript)**, Tailwind v4 (`@import "tailwindcss"`), React Router 7, lucide-react, framer-motion, axios, brazilian-values. **SPA web** servida por nginx em produção (sem Tauri); `Dockerfile` + `nginx.conf.template` (proxy `/api`, fallback SPA, headers). `vite base: "/"`.
 - `client/src/`: `pages/*.jsx` (rotas), `components/<dominio>/*.jsx`, `components/default/` (compartilhados), `services/api.js` + `services/api/<recurso>Services.js`, `services/auth/`.
 - Imports **relativos** (sem alias `@/`).
-- `AppLayout.jsx` define o fundo (dark navy `bg-[#0A1633]` + glows blur) e a transição de página (framer-motion). `Header.jsx` no topo.
+- `AppLayout.jsx` define o fundo (dark navy `bg-[#0A1633]` **sólido**, sem glow/grade/blobs) e a transição de página (framer-motion). `Header.jsx` no topo (sólido + `border-b border-white/10`). Páginas standalone (`Login`, `Empresas`, `Usuarios`, `CadastroItem`) usam o mesmo navy sólido na raiz, também sem decoração de fundo.
 
 ## Componentes compartilhados — REUSE, não recrie (`components/default/`)
 | Necessidade | Componente / helper |
@@ -20,11 +20,15 @@ Convenções transversais do frontend. **Leia sempre que tocar `client/`.**
 
 `funcoes.js` também tem: `getDiffDias`, `formatarIntervalo`, `formatarIntervaloTabela` (manutenções/senhas).
 
-## Identidade visual (dark glass)
-- Card/painel: `rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-lg` (+ `backdrop-blur-md` sobreposto).
+## Identidade visual (dark minimal)
+> Tema enxuto: **sem** `backdrop-blur`, **sem** `shadow-*`, **sem** glow/grade/blobs no fundo, **sem** anéis/preenchimentos aninhados nem "caixinha" colorida em volta de ícone. Uma superfície plana por nível; cor só onde carrega significado (status e ação).
+- Card/painel: `rounded-xl bg-white/[0.03] ring-1 ring-white/10` (um único `ring` por superfície; sem `shadow`/`backdrop-blur`).
+- Modal: overlay `bg-black/60` ou `bg-black/70` (sem blur); painel **opaco** `bg-[#0E1A38] ring-1 ring-white/10` (opaco compensa a ausência de blur).
+- Painel aninhado (card dentro de card): sem fill/ring próprios — usar espaçamento e `divide-y divide-white/10` em listas.
+- Ícone "de chip": só o ícone, com `text-{cor}-400` (status) ou `text-white/40` (neutro) — **sem** caixa `bg-{cor}-500/15 ring-1 ring-{cor}-400/20`. Contagem: número simples (`text-white font-semibold`), sem pílula em caixa.
 - Cabeçalho de seção: `flex items-center justify-between px-6 py-4 border-b border-white/10`.
-- Texto secundário: `text-white/70` / `text-white/80`. Botão neutro: `bg-white/5 ring-1 ring-white/10 hover:bg-white/10`.
-- Cores semânticas: **emerald** ok/ativo, **amber** atenção/prazo próximo, **rose/red** erro/atrasado/inativo, **blue/indigo/sky** informativo. Sempre `cursor-pointer` no clicável.
+- Texto secundário: `text-white/70` / `text-white/80`. Botão neutro: `bg-white/5 ring-1 ring-white/10 hover:bg-white/10`. Inputs/selects mantêm `bg-white/5`/`bg-white/10` (funcionais).
+- Cores semânticas: **emerald** ok/ativo, **amber** atenção/prazo próximo, **rose/red** erro/atrasado/inativo, **blue/indigo/sky** informativo. Botões de ação seguem sólidos (`bg-sky-600`, `bg-indigo-600`, `bg-emerald-600`, `bg-red-600`). Sempre `cursor-pointer` no clicável.
 
 ## Dados e estado
 - `useState` + `useEffect`. **Sem** TanStack Query, Redux, React Hook Form ou Zod.
