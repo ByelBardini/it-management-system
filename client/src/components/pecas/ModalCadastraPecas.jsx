@@ -112,7 +112,7 @@ export default function ModalCadastraPecas({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-xl bg-white/5 backdrop-blur-2xl rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6 animate-fade-in"
+        className="w-full max-w-xl bg-[#0E1A38] rounded-xl ring-1 ring-white/10 p-6 space-y-6 animate-fade-in"
       >
         <div className="flex justify-between items-center border-b border-white/20 pb-3">
           <h2 className="text-lg font-semibold text-white">Cadastrar Peça</h2>

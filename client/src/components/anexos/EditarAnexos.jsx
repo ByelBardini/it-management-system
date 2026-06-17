@@ -46,7 +46,7 @@ export default function EditarAnexos({ setAbrirAnexos, anexos, setAnexos }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-3xl max-h-[85vh] overflow-y-auto bg-white/5 backdrop-blur-2xl rounded-2xl ring-1 ring-white/10 p-5 space-y-6"
+        className="w-full max-w-3xl max-h-[85vh] overflow-y-auto bg-[#0E1A38] rounded-xl ring-1 ring-white/10 p-5 space-y-6"
       >
         <div className="flex items-center justify-between">
           <h3 className="text-white font-medium">Gerenciar Anexos</h3>
@@ -63,11 +63,11 @@ export default function EditarAnexos({ setAbrirAnexos, anexos, setAnexos }) {
             Já existentes
           </h4>
           {anexosExistentes.length > 0 ? (
-            <div className="space-y-2">
+            <div className="divide-y divide-white/10">
               {anexosExistentes.map((anexo) => (
                 <div
                   key={anexo.anexo_id}
-                  className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2 ring-1 ring-white/10"
+                  className="flex items-center justify-between px-3 py-2"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <FileText className="h-4 w-4 text-white/70" />
@@ -147,11 +147,11 @@ export default function EditarAnexos({ setAbrirAnexos, anexos, setAnexos }) {
             <h4 className="text-sm font-medium text-white/70 mb-2">
               Novos anexos
             </h4>
-            <div className="space-y-2">
+            <div className="divide-y divide-white/10">
               {anexosNovos.map((anexo) => (
                 <div
                   key={anexo.tempId}
-                  className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2 ring-1 ring-white/10"
+                  className="flex items-center justify-between px-3 py-2"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <FileText className="h-4 w-4 text-white/70" />

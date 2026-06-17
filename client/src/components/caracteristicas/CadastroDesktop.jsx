@@ -82,7 +82,7 @@ export default function CadastroDesktop({
         return (
           <div
             key={linha.tipo}
-            className="rounded-lg border border-white/10 bg-white/5"
+            className="rounded-lg border border-white/10 bg-white/[0.03]"
           >
             <div className="flex items-center justify-between p-2">
               <div className="flex items-center gap-2">

@@ -160,7 +160,7 @@ export default function SelecaoMarcaModelo({
   const inputCls =
     "w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60 disabled:opacity-50 disabled:cursor-not-allowed";
   const dropdownCls =
-    "absolute z-20 mt-1 w-full max-h-48 overflow-auto rounded-lg bg-neutral-900 ring-1 ring-white/10 shadow-xl";
+    "absolute z-20 mt-1 w-full max-h-48 overflow-auto rounded-lg bg-neutral-900 ring-1 ring-white/10";
 
   return (
     <div className="md:col-span-2 grid grid-cols-1 gap-4 md:grid-cols-2">

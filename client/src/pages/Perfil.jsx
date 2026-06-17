@@ -56,10 +56,10 @@ export default function Perfil() {
         />
       )}
       {loading && <Loading />}
-      <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-lg backdrop-blur-2xl overflow-hidden">
+      <div className="rounded-xl bg-white/[0.03] ring-1 ring-white/10 overflow-hidden">
         <div className="flex items-center gap-6 p-6">
           <div className="flex-shrink-0">
-            <div className="h-24 w-24 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-2xl ring-2 ring-sky-500">
+            <div className="h-24 w-24 rounded-full bg-white/10 flex items-center justify-center text-white font-bold text-2xl ring-2 ring-sky-500">
               {usuario.fotoCaminho ? (
                 <img
                   className="h-full w-full object-cover rounded-full"
@@ -102,7 +102,7 @@ export default function Perfil() {
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 border-t border-white/10 px-6 py-4 bg-white/5">
+        <div className="flex justify-end gap-3 border-t border-white/10 px-6 py-4">
           <button
             onClick={() => setEditarPerfil(true)}
             className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-sm transition"

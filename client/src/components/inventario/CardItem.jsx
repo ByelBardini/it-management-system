@@ -71,9 +71,9 @@ export default function CardItem({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-4xl max-h-[90vh] bg-white/5 rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6 relative backdrop-blur-3xl overflow-y-auto"
+        className="w-full max-w-4xl max-h-[90vh] bg-[#0E1A38] rounded-xl ring-1 ring-white/10 p-6 space-y-6 relative overflow-y-auto"
       >
-        <div className="flex justify-between items-center top-0 bg-white/5 backdrop-blur-3xl pb-3 z-10 rounded-2xl p-2">
+        <div className="flex justify-between items-center top-0 pb-3 z-10 rounded-xl p-2">
           <h2 className="text-lg font-semibold text-white">Detalhes do Item</h2>
           <div className="flex gap-3">
             {!inativos ? (
@@ -104,31 +104,31 @@ export default function CardItem({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm text-white/60">Marca</label>
-            <div className="rounded-lg bg-white/10 p-2 text-white">
+            <div className="rounded-lg bg-white/[0.05] p-2 text-white">
               {item.marca?.marca_nome ?? "-"}
             </div>
           </div>
           <div>
             <label className="block text-sm text-white/60">Modelo</label>
-            <div className="rounded-lg bg-white/10 p-2 text-white">
+            <div className="rounded-lg bg-white/[0.05] p-2 text-white">
               {item.modelo?.modelo_nome ?? "-"}
             </div>
           </div>
           <div>
             <label className="block text-sm text-white/60">Tipo</label>
-            <div className="rounded-lg bg-white/10 p-2 text-white">
+            <div className="rounded-lg bg-white/[0.05] p-2 text-white">
               {item.item_tipo}
             </div>
           </div>
           <div>
             <label className="block text-sm text-white/60">Setor</label>
-            <div className="rounded-lg bg-white/10 p-2 text-white">
+            <div className="rounded-lg bg-white/[0.05] p-2 text-white">
               {item.setor == null ? "N/A" : item.setor.setor_nome}
             </div>
           </div>
           <div>
             <label className="block text-sm text-white/60">Workstation</label>
-            <div className="rounded-lg bg-white/10 p-2 text-white">
+            <div className="rounded-lg bg-white/[0.05] p-2 text-white">
               {item.workstation == null
                 ? "N/A"
                 : item.workstation.workstation_nome}
@@ -136,19 +136,19 @@ export default function CardItem({
           </div>
           <div>
             <label className="block text-sm text-white/60">Etiqueta</label>
-            <div className="rounded-lg bg-white/10 p-2 text-white">
+            <div className="rounded-lg bg-white/[0.05] p-2 text-white">
               {item.item_etiqueta}
             </div>
           </div>
           <div>
             <label className="block text-sm text-white/60">Nº Série</label>
-            <div className="rounded-lg bg-white/10 p-2 text-white">
+            <div className="rounded-lg bg-white/[0.05] p-2 text-white">
               {item.item_num_serie}
             </div>
           </div>
           <div>
             <label className="block text-sm text-white/60">Preço</label>
-            <div className="rounded-lg bg-white/10 p-2 text-white">
+            <div className="rounded-lg bg-white/[0.05] p-2 text-white">
               {formatToBRL(item.item_preco)}
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function CardItem({
             <label className="block text-sm text-white/60">
               Data Aquisição
             </label>
-            <div className="rounded-lg bg-white/10 p-2 text-white">
+            <div className="rounded-lg bg-white/[0.05] p-2 text-white">
               {formatToDate(new Date(item.item_data_aquisicao + "T03:00:00Z"))}
             </div>
           </div>
@@ -171,7 +171,7 @@ export default function CardItem({
                   item.pecas.map((p) => (
                     <div
                       key={p.peca_id}
-                      className="rounded-lg bg-white/10 p-3 text-white"
+                      className="rounded-lg bg-white/[0.05] p-3 text-white"
                     >
                       <div className="text-xs text-white/60">
                         {tiposPecas[p.peca_tipo] ?? p.peca_tipo}
@@ -208,7 +208,7 @@ export default function CardItem({
                         <label className="block text-sm text-white/60">
                           {tipos[caracteristica.caracteristica_nome]}
                         </label>
-                        <div className="rounded-lg bg-white/10 p-2 text-white">
+                        <div className="rounded-lg bg-white/[0.05] p-2 text-white">
                           {caracteristica.caracteristica_valor}
                         </div>
                       </div>
@@ -218,7 +218,7 @@ export default function CardItem({
           )}
           <div>
             <label className="block text-sm text-white/60">Observações</label>
-            <div className="rounded-lg bg-white/10 p-3 text-white h-32 overflow-auto whitespace-pre-wrap">
+            <div className="rounded-lg bg-white/[0.05] p-3 text-white h-32 overflow-auto whitespace-pre-wrap">
               {item.caracteristicas != null &&
               item.caracteristicas.find(
                 (caracteristica) =>
@@ -241,7 +241,7 @@ export default function CardItem({
                 item.anexos.map((anexo) => (
                   <div
                     key={anexo.anexo_id}
-                    className="flex items-center justify-between bg-white/5 rounded-lg p-2"
+                    className="flex items-center justify-between bg-white/[0.03] rounded-lg p-2"
                   >
                     <div>
                       <p className="text-sm text-white">{anexo.anexo_nome}</p>
@@ -258,7 +258,7 @@ export default function CardItem({
                   </div>
                 ))}
               {item.anexos.length == 0 && (
-                <div className="flex flex-col items-center justify-center gap-2 py-10 rounded-lg bg-white/5 border border-dashed border-white/20">
+                <div className="flex flex-col items-center justify-center gap-2 py-10 rounded-lg bg-white/[0.03] border border-dashed border-white/20">
                   <Inbox className="w-10 h-10 text-white" />
                   <p className="text-sm text-white/60">
                     Nenhum anexo disponível

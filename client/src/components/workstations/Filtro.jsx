@@ -63,7 +63,7 @@ export default function Filtro({ workstations, setWorkstationsFiltradas }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-48 rounded-lg bg-zinc-800 shadow-lg ring-1 ring-black/20">
+        <div className="absolute right-0 mt-2 w-48 rounded-lg bg-zinc-800 ring-1 ring-black/20">
           <ul className="py-1 text-sm text-white/80">
             {setores.map((setor) => {
               const marcado = selecionados.some(

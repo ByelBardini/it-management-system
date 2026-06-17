@@ -86,7 +86,7 @@ export default function ExibirManutencao({
           id={item.item_id}
         />
       )}
-      <div className="w-full max-w-lg bg-white/5 backdrop-blur-2xl rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6">
+      <div className="w-full max-w-lg bg-[#0E1A38] rounded-xl ring-1 ring-white/10 p-6 space-y-6">
         <div className="flex justify-between items-center border-b border-white/10 pb-3">
           <h2 className="text-lg font-semibold text-white">
             Detalhes da Manutenção

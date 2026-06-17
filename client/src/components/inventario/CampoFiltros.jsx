@@ -155,13 +155,13 @@ export default function Filtros({
 
         <button
           onClick={ativaFiltro}
-          className="cursor-pointer px-3 py-1.5 rounded-lg bg-sky-600/60 hover:bg-sky-500/60 text-white text-sm font-medium shadow"
+          className="cursor-pointer px-3 py-1.5 rounded-lg bg-sky-600/60 hover:bg-sky-500/60 text-white text-sm font-medium"
         >
           Aplicar filtro
         </button>
         <button
           onClick={limpaFiltro}
-          className="cursor-pointer px-3 py-1.5 rounded-lg bg-rose-600/60 hover:bg-rose-500/60 text-white text-sm font-medium shadow"
+          className="cursor-pointer px-3 py-1.5 rounded-lg bg-rose-600/60 hover:bg-rose-500/60 text-white text-sm font-medium"
         >
           Remover filtro
         </button>

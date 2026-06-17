@@ -33,9 +33,9 @@ export default function ModalModelo({
     setCardItem(mostrar);
   }
 
-  // Portal para o body: o card do Inventário tem backdrop-blur + overflow-hidden,
-  // o que vira containing block de elementos fixed e recortaria o modal. Render no
-  // body escapa desse recorte (mesmo motivo de CardItem/ModalConfirmacao no topo).
+  // Portal para o body: o card do Inventário tem overflow-hidden, que recortaria
+  // o modal posicionado dentro dele. Render no body escapa desse recorte (mesmo
+  // motivo de CardItem/ModalConfirmacao no topo).
   return createPortal(
     <div
       onClick={onFechar}
@@ -43,7 +43,7 @@ export default function ModalModelo({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-4xl max-h-[85vh] rounded-2xl bg-white/5 backdrop-blur-3xl ring-1 ring-white/10 shadow-lg overflow-hidden flex flex-col"
+        className="w-full max-w-4xl max-h-[85vh] rounded-xl bg-[#0E1A38] ring-1 ring-white/10 overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <div className="min-w-0">

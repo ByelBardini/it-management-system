@@ -11,7 +11,7 @@ export default function Notificacao({
   const eSucesso = tipo === "sucesso";
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-2xl">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70">
       <motion.div
         className="w-[92%] max-w-md"
         initial={{ opacity: 0, y: -8, scale: 0.98 }}
@@ -22,8 +22,8 @@ export default function Notificacao({
         <div
           role="dialog"
           aria-modal="true"
-          className={`rounded-2xl shadow-lg ring-1 ring-white/10 p-6
-            bg-white/5 text-white`}
+          className={`rounded-xl ring-1 ring-white/10 p-6
+            bg-white/[0.03] text-white`}
         >
           <div className="flex items-start gap-4">
             <div

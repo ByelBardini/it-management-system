@@ -92,7 +92,7 @@ export default function EditarFuncionario({
 
   return (
     <div className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center">
-      <div className="w-full max-w-md bg-white/5 backdrop-blur-2xl rounded-2xl shadow-2xl ring-1 ring-white/10 p-6">
+      <div className="w-full max-w-md bg-[#0E1A38] rounded-xl ring-1 ring-white/10 p-6">
         <div className="flex justify-between items-center border-b border-white/10 pb-3">
           <h2 className="text-lg font-semibold text-white">
             Editar Funcionário
@@ -107,7 +107,7 @@ export default function EditarFuncionario({
 
         <div className="space-y-6 mt-5">
           <div className="flex flex-col items-center gap-3">
-            <div className="h-24 w-24 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-2xl ring-1 ring-sky-500 overflow-hidden">
+            <div className="h-24 w-24 rounded-full bg-white/10 flex items-center justify-center text-white font-bold text-2xl ring-1 ring-sky-500 overflow-hidden">
               {fotoPreview ? (
                 <img
                   src={fotoPreview}

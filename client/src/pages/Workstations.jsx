@@ -130,7 +130,7 @@ export default function Workstations() {
         />
       )}
       {carregando && <Loading />}
-      <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
+      <div className="rounded-xl bg-white/[0.03] ring-1 ring-white/10 overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Workstations</h2>
 
@@ -158,7 +158,7 @@ export default function Workstations() {
                   workstation.workstation_senha_anydesk
                 )
               }
-              className="w-full rounded-xl bg-white/5 ring-1 ring-white/10 shadow-md p-4 hover:bg-white/10 transition"
+              className="w-full rounded-xl bg-white/[0.03] ring-1 ring-white/10 p-4 hover:bg-white/10 transition"
             >
               <h3 className="text-sm font-semibold text-white">
                 {workstation.workstation_nome}
@@ -171,9 +171,7 @@ export default function Workstations() {
         </div>
         {workstationsFiltradas.length == 0 && (
           <div className="w-full py-12 flex flex-col items-center justify-center text-center">
-            <div className="h-12 w-12 flex items-center justify-center rounded-full bg-white/10 text-white/60 mb-4">
-              <SearchX className="h-6 w-6" />
-            </div>
+            <SearchX className="h-6 w-6 text-white/40 mb-4" />
             <h3 className="text-lg font-semibold text-white">
               Nenhuma workstation encontrada
             </h3>

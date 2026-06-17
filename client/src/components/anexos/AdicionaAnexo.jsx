@@ -44,7 +44,7 @@ export default function AdicionaAnexo({ anexos = [], setAnexos }) {
         Adicione fotos, manuais, documentos de garantia, etc
       </div>
 
-      <div className="grid grid-cols-1 gap-3 rounded-xl bg-white/5 p-4 ring-1 ring-white/10 md:grid-cols-[190px_1fr_1fr_auto]">
+      <div className="grid grid-cols-1 gap-3 rounded-xl bg-white/[0.03] p-4 ring-1 ring-white/10 md:grid-cols-[190px_1fr_1fr_auto]">
         <div>
           <label className="mb-1 block text-sm text-white/70">Tipo</label>
           <select
@@ -115,7 +115,7 @@ export default function AdicionaAnexo({ anexos = [], setAnexos }) {
           {anexos.map((anexo) => (
             <div
               key={anexo.id}
-              className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2 ring-1 ring-white/10"
+              className="flex items-center justify-between rounded-lg bg-white/[0.03] px-3 py-2 ring-1 ring-white/10"
             >
               <div className="flex min-w-0 items-center gap-3">
                 <FileText className="h-4 w-4 text-white/70" />

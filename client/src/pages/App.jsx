@@ -118,14 +118,12 @@ export default function App() {
         />
       )}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <section className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 shadow-xl flex flex-col">
+        <section className="rounded-xl bg-white/[0.03] ring-1 ring-white/10 p-5 flex flex-col">
           <header className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-medium text-white/80">
               Equipamentos cadastrados
             </h2>
-            <div className="h-9 w-9 grid place-items-center rounded-lg bg-blue-500/15 text-blue-400 ring-1 ring-blue-400/20">
-              <Monitor className="h-5 w-5" />
-            </div>
+            <Monitor className="h-5 w-5 text-blue-400" />
           </header>
 
           <div className="text-4xl font-bold tracking-tight text-white">
@@ -133,7 +131,7 @@ export default function App() {
           </div>
 
           <div className="mt-4 flex-1 min-h-0">
-            <ul className="max-h-72 overflow-y-auto pr-1 divide-y divide-white/5 rounded-xl ring-1 ring-white/10 bg-white/5">
+            <ul className="max-h-72 overflow-y-auto pr-1 divide-y divide-white/10">
               {equipamentosPorTipo.map((item) => (
                 <li
                   key={item.item_tipo}
@@ -142,7 +140,7 @@ export default function App() {
                   <span className="text-sm text-white/80">
                     {item.item_tipo}
                   </span>
-                  <span className="inline-flex items-center justify-center min-w-[2rem] h-7 px-2 rounded-lg bg-white/10 ring-1 ring-white/15 text-sm font-semibold text-white">
+                  <span className="text-sm font-semibold text-white">
                     {item.quantidade}
                   </span>
                 </li>
@@ -151,31 +149,25 @@ export default function App() {
           </div>
         </section>
 
-        <section className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 shadow-xl flex flex-col">
+        <section className="rounded-xl bg-white/[0.03] ring-1 ring-white/10 p-5 flex flex-col">
           <header className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-medium text-white/80">
               Status das Manutenções
             </h2>
           </header>
           <div className="grid gap-4">
-            <div className="flex flex-col items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
-              <div className="h-8 w-8 grid place-items-center rounded-lg bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-400/20 mb-2">
-                <Wrench className="h-4 w-4" />
-              </div>
+            <div className="flex flex-col items-center justify-center p-4">
+              <Wrench className="h-5 w-5 text-emerald-400 mb-2" />
               <h3 className="text-sm text-white/70">Em dia</h3>
               <div className="text-2xl font-bold text-white">{manutDia}</div>
             </div>
-            <div className="flex flex-col items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
-              <div className="h-8 w-8 grid place-items-center rounded-lg bg-amber-500/15 text-amber-400 ring-1 ring-amber-400/20 mb-2">
-                <Clock className="h-4 w-4" />
-              </div>
+            <div className="flex flex-col items-center justify-center p-4">
+              <Clock className="h-5 w-5 text-amber-400 mb-2" />
               <h3 className="text-sm text-white/70">Faltando 30 dias</h3>
               <div className="text-2xl font-bold text-white">{manut30}</div>
             </div>
-            <div className="flex flex-col items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
-              <div className="h-8 w-8 grid place-items-center rounded-lg bg-rose-500/15 text-rose-400 ring-1 ring-rose-400/20 mb-2">
-                <AlertTriangle className="h-4 w-4" />
-              </div>
+            <div className="flex flex-col items-center justify-center p-4">
+              <AlertTriangle className="h-5 w-5 text-rose-400 mb-2" />
               <h3 className="text-sm text-white/70">Atrasada</h3>
               <div className="text-2xl font-bold text-white">
                 {manutAtrasada}
@@ -186,7 +178,7 @@ export default function App() {
 
       </div>
 
-      <section className="mb-4 rounded-2xl bg-white/5 ring-1 ring-white/10 p-6 shadow-xl">
+      <section className="mb-4 rounded-xl bg-white/[0.03] ring-1 ring-white/10 p-6">
         <header className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-medium text-white/80">
             Situação dos Itens
@@ -194,27 +186,21 @@ export default function App() {
         </header>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
           <div className="flex flex-col items-center justify-center gap-2">
-            <div className="h-10 w-10 grid place-items-center rounded-lg bg-sky-500/15 text-sky-400 ring-1 ring-sky-400/20">
-              <Computer className="h-5 w-5" />
-            </div>
+            <Computer className="h-5 w-5 text-sky-400" />
             <h3 className="text-sm text-white/70">Atribuídos à Workstation</h3>
             <div className="text-2xl font-bold text-white">
               {temWorkstation}
             </div>
           </div>
           <div className="flex flex-col items-center justify-center gap-2">
-            <div className="h-10 w-10 grid place-items-center rounded-lg bg-amber-500/15 text-amber-400 ring-1 ring-amber-400/20">
-              <Server className="h-5 w-5" />
-            </div>
+            <Server className="h-5 w-5 text-amber-400" />
             <h3 className="text-sm text-white/70">Em uso sem Workstation</h3>
             <div className="text-2xl font-bold text-white">
               {semWorkstation}
             </div>
           </div>
           <div className="flex flex-col items-center justify-center gap-2">
-            <div className="h-10 w-10 grid place-items-center rounded-lg bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-400/20">
-              <Package className="h-5 w-5" />
-            </div>
+            <Package className="h-5 w-5 text-emerald-400" />
             <h3 className="text-sm text-white/70">Em estoque</h3>
             <div className="text-2xl font-bold text-white">{emEstoque}</div>
           </div>

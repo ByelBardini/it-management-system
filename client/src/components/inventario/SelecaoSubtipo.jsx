@@ -96,7 +96,7 @@ export default function SelecaoSubtipo({
         className={inputCls}
       />
       {aberto && (
-        <ul className="absolute z-20 mt-1 w-full max-h-48 overflow-auto rounded-lg bg-neutral-900 ring-1 ring-white/10 shadow-xl">
+        <ul className="absolute z-20 mt-1 w-full max-h-48 overflow-auto rounded-lg bg-neutral-900 ring-1 ring-white/10">
           {filtrados.map((s) => (
             <li key={s.subtipo_id}>
               <button

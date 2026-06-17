@@ -92,18 +92,6 @@ export default function Usuarios() {
           buscaUsuarios={buscaUsuarios}
         />
       )}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_30%,rgba(59,130,246,0.22),transparent)]" />
-        <div
-          className="absolute inset-0 opacity-40
-          [background-image:linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)]
-          [background-size:36px_36px]"
-        />
-        <div className="absolute -top-24 -left-24 h-80 w-80 rounded-full bg-blue-600/20 blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />
-      </div>
-
       <div className="w-full max-w-6xl mx-auto px-6 py-10">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-semibold text-white">
@@ -130,7 +118,7 @@ export default function Usuarios() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl overflow-hidden">
+        <div className="rounded-xl bg-white/[0.03] ring-1 ring-white/10 overflow-hidden">
           <TabelaUsuario
             usuarios={usuarios}
             setExibeUsuario={setExibeUsuario}

@@ -1,13 +1,12 @@
 export default function Loading() {
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-2xl" />
-      <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_40%,rgba(29,78,216,0.25),transparent)]" />
+      <div className="absolute inset-0 bg-[#0A1633]/90" />
 
       <div
         role="status"
         aria-live="polite"
-        className="relative mx-auto w-[90%] max-w-sm rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-lg p-8 text-center space-y-4"
+        className="relative mx-auto w-[90%] max-w-sm rounded-xl bg-white/[0.03] ring-1 ring-white/10 p-8 text-center space-y-4"
       >
         <div className="mx-auto grid place-items-center">
           <div className="relative h-16 w-16">

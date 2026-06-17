@@ -96,7 +96,7 @@ export default function Filtro({
               minWidth: buttonRef.current.getBoundingClientRect().width,
               zIndex: 9999,
             }}
-            className="rounded-lg bg-zinc-800 shadow-lg ring-1 ring-black/20 max-h-80 overflow-y-auto overflow-x-hidden"
+            className="rounded-lg bg-zinc-800 ring-1 ring-black/20 max-h-80 overflow-y-auto overflow-x-hidden"
           >
             <ul className="py-1 text-sm text-white/80 whitespace-nowrap">
               {categoria === "Tipo"

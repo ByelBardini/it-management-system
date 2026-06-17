@@ -71,8 +71,8 @@ export default function AdicionarModelo({
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+      <div className="w-full max-w-md rounded-xl bg-white/[0.03] ring-1 ring-white/10">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">
             Adicionar Modelo — {marcaNome}

@@ -116,7 +116,7 @@ export default function ExibeUsuario({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-2xl bg-white/5 backdrop-blur-2xl rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6"
+        className="w-full max-w-2xl bg-[#0E1A38] rounded-xl ring-1 ring-white/10 p-6 space-y-6"
       >
         <div className="flex justify-between items-center border-b border-white/20 pb-3">
           <h2 className="text-lg font-semibold text-white">
@@ -141,7 +141,7 @@ export default function ExibeUsuario({
               loading="lazy"
             />
           ) : (
-            <div className="h-24 w-24 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-500 ring-2 ring-white/20">
+            <div className="h-24 w-24 rounded-full flex items-center justify-center bg-white/10 ring-2 ring-white/20">
               <UserRound className="h-12 w-12 text-white/80" />
             </div>
           )}

@@ -34,7 +34,7 @@ export default function ModalModeloPeca({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-4xl max-h-[85vh] rounded-2xl bg-white/5 backdrop-blur-3xl ring-1 ring-white/10 shadow-lg overflow-hidden flex flex-col"
+        className="w-full max-w-4xl max-h-[85vh] rounded-xl bg-[#0E1A38] ring-1 ring-white/10 overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <div className="min-w-0">

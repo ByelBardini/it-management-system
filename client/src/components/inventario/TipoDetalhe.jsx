@@ -30,9 +30,7 @@ export default function TipoDetalhe({ grupo, onVoltar, setCardItem }) {
           <ChevronLeft size={16} />
           Voltar
         </button>
-        <span className="h-9 w-9 rounded-xl bg-sky-500/15 text-sky-300 flex items-center justify-center">
-          <Icone size={18} />
-        </span>
+        <Icone size={18} className="text-sky-300" />
         <h3 className="text-white font-semibold">{grupo.tipoLabel}</h3>
         <span className="px-2 py-0.5 rounded-full bg-sky-600/20 text-sky-300 text-xs font-medium">
           {grupo.total}

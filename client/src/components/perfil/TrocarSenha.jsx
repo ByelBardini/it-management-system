@@ -87,7 +87,7 @@ export default function AtualizarSenha({
 
   return (
     <div className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center">
-      <div className="w-full max-w-lg bg-white/5 backdrop-blur-2xl rounded-2xl shadow-2xl ring-1 ring-white/10 p-6">
+      <div className="w-full max-w-lg bg-[#0E1A38] rounded-xl ring-1 ring-white/10 p-6">
         <div className="flex justify-between items-center border-b border-white/10 pb-4">
           <h2 className="text-xl font-semibold text-white">Alterar Senha</h2>
           <button

@@ -122,7 +122,7 @@ export default function Configuracoes() {
         />
       )}
       {carregando && <Loading />}
-      <div className="h-auto rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
+      <div className="h-auto rounded-xl bg-white/[0.03] ring-1 ring-white/10 overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white flex items-center gap-2">
             <Building2 size={20} /> Setores da Empresa

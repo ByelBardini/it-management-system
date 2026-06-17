@@ -30,7 +30,7 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 z-20 w-full">
-      <div className="w-full bg-white/5 backdrop-blur-2xl ring-1 ring-white/10 shadow-lg">
+      <div className="w-full bg-[#0A1633] border-b border-white/10">
         <div className="flex h-16 items-center gap-3 px-4 sm:px-6">
           <NavButton to="/app" className="flex items-center gap-2">
             <span className="h-8 w-8">
@@ -63,7 +63,7 @@ export default function Header() {
               to="/perfil"
               className="hidden sm:flex items-center gap-2 rounded-lg bg-white/5 px-2 py-1.5 ring-1 ring-white/10"
             >
-              <div className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-xs font-bold">
+              <div className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-xs font-bold">
                 {fotoCaminho ? (
                   <img
                     className="h-10 w-10 object-cover rounded-2xl"

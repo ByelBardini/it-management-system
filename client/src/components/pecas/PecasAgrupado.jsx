@@ -51,11 +51,9 @@ export default function PecasAgrupado({
           <button
             key={g.tipo}
             onClick={() => setTipoSelecionado(g.tipo)}
-            className="group flex items-center gap-3 rounded-2xl bg-white/5 ring-1 ring-white/10 p-4 cursor-pointer text-left hover:bg-white/10 hover:ring-white/20 transition"
+            className="group flex items-center gap-3 rounded-xl bg-white/[0.03] ring-1 ring-white/10 p-4 cursor-pointer text-left hover:bg-white/10 hover:ring-white/20 transition"
           >
-            <span className="h-11 w-11 shrink-0 rounded-xl bg-sky-500/15 text-sky-300 flex items-center justify-center">
-              <Icone size={22} />
-            </span>
+            <Icone size={22} className="shrink-0 text-sky-400" />
             <span className="min-w-0 flex-1">
               <span className="block truncate text-white font-semibold">
                 {g.tipoLabel}

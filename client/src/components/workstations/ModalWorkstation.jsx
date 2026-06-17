@@ -136,7 +136,7 @@ export default function ModalWorkstation({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-4xl max-h-[85vh] overflow-y-auto bg-white/5 backdrop-blur-2xl rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6"
+        className="w-full max-w-4xl max-h-[85vh] overflow-y-auto bg-[#0E1A38] rounded-xl ring-1 ring-white/10 p-6 space-y-6"
       >
         <div className="flex justify-between items-center border-b border-white/20 pb-3">
           <h2 className="text-lg font-semibold text-white">
@@ -150,11 +150,11 @@ export default function ModalWorkstation({
           </button>
         </div>
 
-        <div className="space-y-3">
+        <div className="divide-y divide-white/10">
           {itens.map((item) => (
             <div
               key={item.item_id}
-              className="grid grid-cols-4 items-center gap-6 rounded-lg bg-white/5 px-4 py-3 ring-1 ring-white/10"
+              className="grid grid-cols-4 items-center gap-6 px-4 py-3"
             >
               <div>
                 <p className="text-[11px] uppercase tracking-wide text-white/50">
@@ -207,7 +207,7 @@ export default function ModalWorkstation({
             </div>
           ))}
           {itens.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-12 rounded-xl bg-white/5 ring-1 ring-white/10 text-center">
+            <div className="flex flex-col items-center justify-center py-12 text-center">
               <p className="text-lg font-medium text-white/80">
                 Nenhum item vinculado!
               </p>
@@ -221,7 +221,7 @@ export default function ModalWorkstation({
           {anydesk != "" && senha != "" && (
             <button
               onClick={() => setExibirAnydesk(!exibirAnydesk)}
-              className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-400 hover:bg-red-500 text-white text-sm font-medium shadow-sm transition"
+              className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-400 hover:bg-red-500 text-white text-sm font-medium transition"
             >
               <LaptopMinimal size={16} />
               <span>Anydesk</span>
@@ -229,7 +229,7 @@ export default function ModalWorkstation({
           )}
 
           {exibirAnydesk && (
-            <div className="flex flex-col items-center text-center px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/80 backdrop-blur-sm shadow-inner transition animate-fade-in">
+            <div className="flex flex-col items-center text-center px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/80 shadow-inner transition animate-fade-in">
               <span className="text-sm font-semibold tracking-wide">
                 {anydesk}
               </span>
@@ -253,7 +253,7 @@ export default function ModalWorkstation({
                   onSim: () => excluirWorkstation(),
                 })
               }
-              className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-medium shadow-sm transition"
+              className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-medium transition"
             >
               <Trash2 size={16} />
               <span>Excluir Workstation</span>

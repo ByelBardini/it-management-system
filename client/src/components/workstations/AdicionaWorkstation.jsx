@@ -107,7 +107,7 @@ export default function AdicionaWorkstation({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md bg-white/5 backdrop-blur-2xl rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6"
+        className="w-full max-w-md bg-[#0E1A38] rounded-xl ring-1 ring-white/10 p-6 space-y-6"
       >
         <div className="flex justify-between items-center border-b border-white/10 pb-3">
           <h2 className="text-lg font-semibold text-white">Nova Workstation</h2>
@@ -150,7 +150,7 @@ export default function AdicionaWorkstation({
                          focus:outline-none focus:ring-2 focus:ring-sky-500"
             />
 
-            <div className="max-h-40 overflow-auto rounded-xl ring-1 ring-white/10 bg-white/5">
+            <div className="max-h-40 overflow-auto rounded-xl ring-1 ring-white/10 bg-white/[0.03]">
               <ul className="divide-y divide-white/10">
                 {setoresFiltrados.length > 0 ? (
                   setoresFiltrados.map((setor) => (

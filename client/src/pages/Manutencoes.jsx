@@ -119,7 +119,7 @@ export default function Manutencoes() {
         />
       )}
       {loading && <Loading />}
-      <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
+      <div className="rounded-xl bg-white/[0.03] ring-1 ring-white/10 overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Manutenções</h2>
           {filtrando ? (
@@ -131,7 +131,7 @@ export default function Manutencoes() {
           ) : (
             <p className="text-sm text-white/70 flex items-center gap-2">
               Manutenções atrasadas:
-              <span className="px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-300 text-xs font-semibold border border-rose-400/20">
+              <span className="text-rose-300 font-semibold">
                 {atrasadas}
               </span>
             </p>

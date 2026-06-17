@@ -304,7 +304,7 @@ export default function EditarItem({
     <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-[60]">
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-4xl max-h-[90vh] bg-white/5 rounded-2xl shadow-lg ring-1 ring-white/10 p-6 space-y-6 relative backdrop-blur-3xl overflow-y-auto"
+        className="w-full max-w-4xl max-h-[90vh] bg-[#0E1A38] rounded-xl ring-1 ring-white/10 p-6 space-y-6 relative overflow-y-auto"
       >
         <div className="flex items-center justify-between gap-2">
           <button
@@ -395,7 +395,7 @@ export default function EditarItem({
         {isDesktop ? (
           <div>
             <h3 className="text-md font-medium text-white mb-3">Peças</h3>
-            <div className="w-full p-2 rounded-lg ring-1 ring-white/10 bg-white/5 space-y-2">
+            <div className="w-full p-2 rounded-lg ring-1 ring-white/10 bg-white/[0.03] divide-y divide-white/10">
               {[
                 { tipo: "processador", multi: false },
                 { tipo: "placa-video", multi: false },
@@ -409,10 +409,7 @@ export default function EditarItem({
               ].map((linha) => {
                 const ids = pecasSelecionadas[linha.tipo] || [];
                 return (
-                  <div
-                    key={linha.tipo}
-                    className="rounded-lg border border-white/10 bg-white/5"
-                  >
+                  <div key={linha.tipo}>
                     <div className="flex items-center justify-between p-2">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-white/80">

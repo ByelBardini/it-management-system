@@ -296,17 +296,6 @@ export default function CadastroItem() {
         />
       )}
 
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_30%,rgba(59,130,246,0.22),transparent)]" />
-        <div
-          className="absolute inset-0 opacity-40
-          [background-image:linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)]
-          [background-size:36px_36px]"
-        />
-        <div className="absolute -top-24 -left-24 h-80 w-80 rounded-full bg-blue-600/20 blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />
-      </div>
       <div className="w-full max-w-5xl mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-semibold text-white">Cadastro de Item</h1>
@@ -321,7 +310,7 @@ export default function CadastroItem() {
         </div>
 
         <main className="mt-6 space-y-6">
-          <section className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
+          <section className="rounded-xl bg-white/[0.03] p-6 ring-1 ring-white/10">
             <div className="mb-4 flex items-center gap-2">
               <h2 className="text-base font-medium text-white">Dados Gerais</h2>
               <span className="rounded bg-red-500/20 px-2 py-0.5 text-xs text-red-400">
@@ -336,7 +325,7 @@ export default function CadastroItem() {
             />
           </section>
 
-          <section className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
+          <section className="rounded-xl bg-white/[0.03] p-6 ring-1 ring-white/10">
             <div className="mb-4 flex items-center gap-2">
               <h2 className="text-base font-medium text-white">
                 {`${form.tipo == "desktop" ? "Peças" : "Características"}`}
@@ -367,7 +356,7 @@ export default function CadastroItem() {
             )}
           </section>
 
-          <section className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
+          <section className="rounded-xl bg-white/[0.03] p-6 ring-1 ring-white/10">
             <h2 className="mb-4 text-base font-medium text-white">Anexos</h2>
 
             <AdicionaAnexo anexos={anexos} setAnexos={setAnexos} />

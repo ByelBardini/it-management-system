@@ -126,10 +126,8 @@ export default function Login() {
         className="absolute inset-0 w-full h-full object-cover"
       />
 
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0A1633]/90 via-[#0A1633]/60 to-[#0A1633]/20"></div>
-
-      <div className="relative z-10 flex items-center justify-start h-full px-20 shadow-xl">
-        <div className="bg-[#14295c]/80 backdrop-blur-md text-white rounded-xl w-[400px] p-10 shadow-lg">
+      <div className="relative z-10 flex items-center justify-start h-full px-20">
+        <div className="bg-[#14295c] text-white rounded-xl w-[400px] p-10 ring-1 ring-white/10">
           <div className="flex justify-center mb-6">
             <img src={logo} alt="Logo da empresa" className="h-25" />
           </div>
