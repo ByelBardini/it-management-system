@@ -9,8 +9,10 @@ SQL aplicado na mão de `migration/version-XX.sql` (removido).
 server/db/
   migrate.js          runner forward-only + tabela de controle
   seed.js             carga inicial idempotente (exporta semear())
+  seed-dev.js         seed de DEV: centenas de dados variados (exporta semearDev())
   pendentes.js        função pura: migrations ainda não aplicadas (testada)
   migrations/0001_init.sql   baseline consolidado das 11 tabelas
+  migrations/0002_marcas_modelos.sql   cadastro central marcas/modelos/subtipos + FKs em itens/pecas
   README.md           uso rápido dos comandos
 server/test/unit/db/pendentes.spec.js   teste da função pura
 ```
@@ -21,7 +23,8 @@ server/test/unit/db/pendentes.spec.js   teste da função pura
 | `npm run db:migrate` | Aplica pendentes em ordem. Forward-only, idempotente, **não-destrutivo**. Roda em dev **e** no deploy. |
 | `npm run db:seed` | Admin + empresa (+ plataformas/setor). Idempotente (`findOrCreate`). |
 | `npm run db:seed:deploy` | `db:seed` **guardado** (`--se-vazio`): só semeia se o banco não tiver usuários nem empresas. Roda no deploy (start do container). |
-| `npm run dev:db` | `db:migrate` + `db:seed`. |
+| `npm run dev:seed` | **DEV-ONLY**: semeia centenas de dados variados (itens de todos os tipos com características, peças, desktops montados, setores, workstations, plataformas e senhas) numa **única empresa/usuário** (reusa o admin/empresa do `db:seed`). Cria o cadastro central de subtipos/marcas/modelos (marcas escopadas por domínio+tipo+subtipo) e vincula itens/peças por id (`item_marca_id`/`item_modelo_id`, `peca_marca_id`/`peca_modelo_id`) via `findOrCreate` — sem `item_nome`/`peca_nome`. Roda **uma vez** (guarda por contagem de itens; pula se já populado). Senhas só se `SECRET_KEY_PASSWORD` tiver 32 chars. |
+| `npm run dev:db` | `db:migrate` + `db:seed` + `dev:seed` (ambiente de dev cheio). |
 | `npm run db:reset` | **DEV-ONLY, DESTRUTIVO**: dropa tudo, re-aplica e semeia. Nunca no deploy. |
 
 ## Como funciona
@@ -42,6 +45,26 @@ banco não tem **usuários nem empresas** — roda no **1º deploy** e é ignora
 (não recria defaults apagados nem ressuscita admin/senha padrão). O `semearSeVazio()` checa
 `Usuario.count()` + `Empresa.count()` e delega a `semear()`. Para múltiplas réplicas, mover
 o `migrate + seed` para um *release command* do Coolify evita corrida.
+
+## Migração 0002 — cadastro central de marcas/modelos/subtipos
+Primeira migration rastreada após o baseline. Forward-only e **destrutiva** (dropa
+`item_nome`/`peca_nome`); rode num banco resetado em dev (`npm run db:reset`). Foi
+**revisada no lugar** para incluir o escopo por tipo/subtipo — não há `0003`.
+- Cria **`marcas`** (`marca_id` PK, `marca_nome` VARCHAR(100), `marca_dominio`
+  ENUM('item','peca'), `marca_tipo` VARCHAR(40), `marca_subtipo` VARCHAR(100) **DEFAULT
+  `''`**; UNIQUE(`marca_nome`,`marca_dominio`,`marca_tipo`,`marca_subtipo`)), **`subtipos`**
+  (`subtipo_id` PK, `subtipo_tipo` VARCHAR(40), `subtipo_nome` VARCHAR(100);
+  UNIQUE(`subtipo_tipo`,`subtipo_nome`) — **sem FK**) e **`modelos`** (`modelo_id` PK,
+  `modelo_marca_id` FK→`marcas` **ON DELETE CASCADE**, `modelo_nome` VARCHAR(100);
+  UNIQUE(`modelo_marca_id`,`modelo_nome`)).
+- `itens`: **+**`item_marca_id` **+**`item_modelo_id` (FK→`marcas`/`modelos`, **ON DELETE
+  SET NULL**), **DROP** `item_nome`. `pecas`: **+**`peca_marca_id` **+**`peca_modelo_id`
+  (idem), **DROP** `peca_nome`.
+- Models novos `models/marcas.js` (campos `marca_tipo`/`marca_subtipo`), `models/modelos.js`,
+  `models/subtipos.js` (registrado em `models/index.js` **sem associação**); associações
+  (Marca 1-N Modelo; Item/Peca `belongsTo` Marca/Modelo as `marca`/`modelo`). `seed-dev`
+  semeia subtipos e marcas escopadas. Endpoints e regras:
+  [inventario.md](inventario.md) / [marcas-modelos.md](marcas-modelos.md).
 
 ## Decisões de schema (baseline vs. SQL antigo)
 - `pecas.peca_empresa_id` → empresas **CASCADE** (corrige o `NO ACTION` antigo; alinha ao

@@ -37,7 +37,7 @@ await registro.save({ usuarioId: req.usuario.id });
 ```
 
 ## Sequelize
-- Models em `models/<recurso>.js`: `Model.init`, `tableName` explícito, `timestamps: false`, colunas **snake_case com prefixo da entidade** (`item_nome`). Classe **PascalCase singular** (`Item`).
+- Models em `models/<recurso>.js`: `Model.init`, `tableName` explícito, `timestamps: false`, colunas **snake_case com prefixo da entidade** (`item_etiqueta`). Classe **PascalCase singular** (`Item`).
 - Associações e hooks centralizados em `models/index.js` (com `as` usado nos includes; `onDelete: CASCADE`/`SET NULL`).
 - Boolean = **TINYINT 1/0**. Soft-delete por flag (`item_ativo`, `peca_ativa`) onde o domínio usa; `.destroy()` onde já é usado (setor, senha).
 - Includes: declare `as`, `attributes` explícitos, `separate: true` para coleções ordenadas.

@@ -22,6 +22,7 @@ Estes documentos são a **fonte de verdade leve** para os agentes (`/plan`, `/ex
 |---|---|---|---|
 | Autenticação, usuários, perfil | [auth-usuarios.md](auth-usuarios.md) | `authController`, `usuarioController`, `perfilController`, `autenticaToken` | `Login`, `Usuarios`, `Perfil` |
 | Inventário (itens, características, anexos, peças) | [inventario.md](inventario.md) | `itemController`, `pecasController`, `anexosUpload`, `downloadRoutes` | `Inventario`, `CadastroItem`, `Pecas` |
+| Marcas e modelos (cadastro central) | [marcas-modelos.md](marcas-modelos.md) | `marcaController`, `modeloController` | `SelecaoMarcaModelo`, `CartaoMarcas`, `Configuracoes` |
 | Senhas e plataformas | [senhas.md](senhas.md) | `senhaController`, `plataformaController` | `Senhas`, `components/senhas`, `components/plataforma` |
 | Manutenções e dashboard | [manutencoes.md](manutencoes.md) | `manutencaoController`, `dashboardController` | `Manutencoes`, `App` (dashboard) |
 | Empresas, setores, workstations | [empresas-setores-workstations.md](empresas-setores-workstations.md) | `empresaController`, `setorController`, `workstationController` | `Empresas`, `Workstations`, `Configuracoes` |

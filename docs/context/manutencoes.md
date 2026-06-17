@@ -9,7 +9,7 @@ Leia junto com [backend-core.md](backend-core.md) e [frontend-core.md](frontend-
 ## Endpoints (todos `adm`)
 | Método | Path | Ação |
 |---|---|---|
-| GET | `/manutencao/:id` | itens em uso da empresa com intervalo > 0 (etiqueta, nome, tipo, última manutenção, intervalo, setor) |
+| GET | `/manutencao/:id` | itens em uso da empresa com intervalo > 0 (etiqueta, tipo, última manutenção, intervalo, `setor`, `marca`/`modelo` via FK — não traz mais `item_nome`) |
 | PUT | `/manutencao/:id` | altera `item_intervalo_manutencao` (meses) |
 | PUT | `/manutencao/realizar/:id` | seta `item_ultima_manutencao = now()` (registra a manutenção feita) |
 | GET | `/dashboard/:id` | agrega indicadores da empresa |

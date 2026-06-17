@@ -35,7 +35,7 @@ Leia junto com [backend-core.md](backend-core.md) e [frontend-core.md](frontend-
 ## Frontend
 - `Empresas.jsx`: seleção de empresa, "Sair" (limpa localStorage) e atalho "Usuários" (adm).
 - `Workstations.jsx`: lista da empresa ativa; abre `ModalWorkstation` (itens da workstation + credencial AnyDesk com toggle mostrar/esconder + excluir).
-- `Configuracoes.jsx`: CRUD de **setores** (empresa ativa) + CRUD de **plataformas** (global, ver [senhas.md](senhas.md)); modais de criação e `ModalConfirmacao` antes de excluir.
+- `Configuracoes.jsx`: CRUD de **setores** (empresa ativa) + CRUD de **plataformas** (global, ver [senhas.md](senhas.md)) + gerência de **marcas/modelos** (`CartaoMarcas`, cadastro central global com toggle Itens/Peças — ver [marcas-modelos.md](marcas-modelos.md)); modais de criação e `ModalConfirmacao` antes de excluir.
 
 ## Gotchas
 - **AnyDesk em texto plano:** `workstation_senha_anydesk` é armazenada sem cifrar — diferente das senhas de plataforma. Sinalizar ao agente `seguranca-infrahub` em mudanças nessa área.

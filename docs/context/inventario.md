@@ -2,34 +2,38 @@
 
 Leia junto com [backend-core.md](backend-core.md) e [frontend-core.md](frontend-core.md).
 
+> **Cadastro de marca/modelo** é central (tabelas `marcas`/`modelos`/`subtipos`), **escopado por (domínio, tipo, subtipo)**. Item e peça referenciam por id (`item_marca_id`/`item_modelo_id`, `peca_marca_id`/`peca_modelo_id`); o "nome" (`item_nome`/`peca_nome`) **não existe mais** — identidade = marca + modelo, número de série diferencia unidades. O subtipo existe só nos 7 tipos de item de `tiposComSubtipo.js` e é guardado na característica `tipo` do item; demais tipos e peças usam subtipo vazio. Endpoints/serviços de marca/modelo/subtipo: [marcas-modelos.md](marcas-modelos.md).
+
 ## Arquivos
-- Backend: `controllers/itemController.js`, `pecasController.js`; `routes/itemRoutes.js`, `pecasRoutes.js`, `downloadRoutes.js`; `models/itens.js`, `caracteristicas.js`, `anexos.js`, `pecas.js`; `middlewares/anexosUpload.js`.
-- Frontend: `pages/Inventario.jsx`, `CadastroItem.jsx`, `Pecas.jsx`; `components/inventario/*`, `components/caracteristicas/*` (+ `cadastro/<Tipo>.jsx` por categoria), `components/pecas/*`, `components/anexos/*`, `components/itens/DadosGerais.jsx`; `services/api/itemServices.js`, `pecasServices.js`.
+- Backend: `controllers/itemController.js`, `pecasController.js`; `routes/itemRoutes.js`, `pecasRoutes.js`, `downloadRoutes.js`; `models/itens.js`, `caracteristicas.js`, `anexos.js`, `pecas.js`; `middlewares/anexosUpload.js`. Marca/modelo/subtipo: `controllers/marcaController.js`, `modeloController.js`, `subtipoController.js`; `models/marcas.js`, `modelos.js`, `subtipos.js`.
+- Frontend: `pages/Inventario.jsx`, `CadastroItem.jsx`, `Pecas.jsx`; `components/inventario/*`, `components/caracteristicas/*` (+ `cadastro/<Tipo>.jsx` por categoria), `components/pecas/*`, `components/anexos/*`, `components/itens/DadosGerais.jsx`; `components/inventario/SelecaoMarcaModelo.jsx` (combobox marca+modelo) e `SelecaoSubtipo.jsx` + `tiposComSubtipo.js` (subtipo); `services/api/itemServices.js`, `pecasServices.js`, `marcaServices.js`, `modeloServices.js`, `subtipoServices.js`.
 
 ## Endpoints (todos `adm`)
 | Método | Path | Ação |
 |---|---|---|
-| GET | `/item/:id` | itens ativos da empresa (etiqueta, nome, tipo, em_uso, setor, workstation) |
-| GET | `/item/inativos/:id` | itens com `item_ativo=0` + características |
-| GET | `/item/full/:id` | item completo (características, peças, anexos) |
-| GET | `/item/workstation/:id` | itens vinculados a um workstation |
-| POST | `/item/` | cria (multipart) em transação |
-| PUT | `/item/:id` | edita nome/setor/workstation/em_uso; rebalanceia peças (desktop); reconcilia anexos |
+| GET | `/item/:id` | itens ativos da empresa (etiqueta, **num_serie**, tipo, em_uso) + `setor`, `workstation` e **`marca`{marca_id,marca_nome}**/**`modelo`{modelo_id,modelo_nome}** via include FK (não traz mais `item_nome` nem características) — alimenta a visão agrupada |
+| GET | `/item/inativos/:id` | itens com `item_ativo=0` + `marca`/`modelo` + características |
+| GET | `/item/full/:id` | item completo: `item_marca_id`/`item_modelo_id` + `marca`/`modelo`, peças (cada uma com `.marca`/`.modelo`), características, anexos |
+| GET | `/item/workstation/:id` | itens vinculados a um workstation (+ `marca`/`modelo`) |
+| POST | `/item/` | cria (multipart) em transação; aceita `item_marca_id`/`item_modelo_id` |
+| PUT | `/item/:id` | edita marca/modelo/setor/workstation/em_uso; rebalanceia peças (desktop); reconcilia anexos |
 | PUT | `/item/inativa/:id` | soft delete |
 | PUT | `/item/workstation/remover/:id` | desvincula do workstation |
-| POST/GET/PUT | `/pecas/*` | CRUD de peças (criar, listar ativas/inativas, inativar) |
+| POST/GET/PUT | `/pecas/*` | CRUD de peças (criar, listar ativas/inativas, inativar). `postPeca` aceita `marca_id`/`modelo_id` (sem nome). Ativas trazem `item`{item_id,item_etiqueta} + `marca`/`modelo`; inativas trazem `marca`/`modelo` |
 | GET | (`downloadRoutes`) | servir/baixar anexo, com path saneado dentro de `/uploads` |
 
 ## Modelos
-- **`itens`**: `item_id`, `item_empresa_id`, `item_setor_id` (null), `item_workstation_id` (null), `item_ativo` TINYINT(1), `item_data_inativacao` (null), `item_tipo` **ENUM** (desktop, notebook, movel, cadeira, monitor, ferramenta, ap, ar-condicionado, switch, periferico, no-break, impressora, gerador, celular, cabo, outros), `item_etiqueta` (VARCHAR 10), `item_num_serie`, `item_nome`, `item_preco` DOUBLE, `item_em_uso` TINYINT(1), `item_data_aquisicao`, `item_ultima_manutencao`, `item_intervalo_manutencao` (meses).
-- **`caracteristicas`**: `caracteristica_id`, `caracteristica_item_id`, `caracteristica_nome`, `caracteristica_valor` (TEXT). Pares nome/valor específicos por categoria.
+- **`itens`**: `item_id`, `item_empresa_id`, `item_setor_id` (null), `item_workstation_id` (null), `item_ativo` TINYINT(1), `item_data_inativacao` (null), `item_tipo` **ENUM** (desktop, notebook, movel, cadeira, monitor, ferramenta, ap, ar-condicionado, switch, periferico, no-break, impressora, gerador, celular, cabo, outros), `item_etiqueta` (VARCHAR 10), `item_num_serie`, `item_marca_id` (FK→`marcas`, null), `item_modelo_id` (FK→`modelos`, null), `item_preco` DOUBLE, `item_em_uso` TINYINT(1), `item_data_aquisicao`, `item_ultima_manutencao`, `item_intervalo_manutencao` (meses). **`item_nome` foi removido.**
+- **`caracteristicas`**: `caracteristica_id`, `caracteristica_item_id`, `caracteristica_nome`, `caracteristica_valor` (TEXT). Pares nome/valor específicos por categoria (marca/modelo **não** entram mais aqui — viram FK). Nos 7 tipos com subtipo, a característica de nome `tipo` guarda o **subtipo** escolhido (é assim que o subtipo é persistido — não há coluna própria).
 - **`anexos`**: `anexo_id`, `anexo_item_id`, `anexo_tipo`, `anexo_nome`, `anexo_caminho` (relativo a `/uploads/anexos/`).
-- **`pecas`**: `peca_id`, `peca_empresa_id`, `peca_item_id` (null), `peca_ativa` TINYINT(1), `peca_data_inativacao` (null), `peca_tipo` **ENUM** (processador, placa-video, placa-mae, ram, armazenamento, fonte, placa-rede, gabinete, outros), `peca_nome`, `peca_preco` DOUBLE, `peca_em_uso` TINYINT, `peca_data_aquisicao`.
+- **`pecas`**: `peca_id`, `peca_empresa_id`, `peca_item_id` (null), `peca_ativa` TINYINT(1), `peca_data_inativacao` (null), `peca_tipo` **ENUM** (processador, placa-video, placa-mae, ram, armazenamento, fonte, placa-rede, gabinete, outros), `peca_marca_id` (FK→`marcas`, null), `peca_modelo_id` (FK→`modelos`, null), `peca_num_serie`, `peca_preco` DOUBLE, `peca_em_uso` TINYINT, `peca_data_aquisicao`. **`peca_nome` foi removido.**
+- **Associações** (`models/index.js`): `Item`/`Peca` `belongsTo` `Marca`/`Modelo` as `marca`/`modelo` (FK `*_marca_id`/`*_modelo_id`, `ON DELETE SET NULL`). Ver [marcas-modelos.md](marcas-modelos.md).
 
 ## Regras de negócio
 - **Criação multipart (`postItem`)** em **transação**: cria o item; se **não-desktop** grava características; se **desktop** vincula peças e calcula `item_preco` = Σ `peca_preco`; grava anexos. Campos compostos (`caracteristicas`, `pecas`) chegam como **string JSON** → `JSON.parse` em try/catch.
 - **Desktop vs não-desktop:** desktop tem `item_num_serie = "N/A"`, **exige peças** (erro se vazio), sem características; não-desktop tem características por categoria (componentes em `caracteristicas/cadastro/<Tipo>.jsx`).
 - **Peças selecionáveis:** apenas `peca_ativa=1` e `peca_item_id IS NULL`. Vincular seta `peca_em_uso=1`; peça em uso não pode ser inativada. Editar desktop reconcilia (desvincula/vincula) e **recalcula o preço**.
+- **Marca/modelo (item e peça):** capturados via cadastro central por id (sem texto livre persistido). `postItem`/`putItem` aceitam `item_marca_id`/`item_modelo_id` (na edição, string `"null"`/`""` limpa); `postPeca` aceita `marca_id`/`modelo_id`. Nenhum dos dois é obrigatório.
 - **Edição não-desktop:** atualiza características; `observacoes` é upsert (atualiza se existe, senão cria).
 - **Anexos removidos** são **movidos** para `/uploads/anexos/excluidos/` (preserva o arquivo) e o registro é `destroy` (com `usuarioId`).
 - **Inativação:** `item_ativo=0`, `item_em_uso=0`, limpa setor/workstation, marca `item_data_inativacao`.
@@ -37,8 +41,11 @@ Leia junto com [backend-core.md](backend-core.md) e [frontend-core.md](frontend-
 
 ## Frontend
 - `Inventario.jsx`: listagem ativos/inativos, filtros em memória (`CampoFiltros`), paginação (`dividirEmPartes` + `Paginacao`), abre `CardItem`/`EditarItem`.
-- `CadastroItem.jsx`: monta `FormData` (DadosGerais + características/peças + anexos) e envia multipart; `caracteristicas`/`pecas` via `JSON.stringify`.
-- `Pecas.jsx`: CRUD de peças com filtros e paginação.
+- **Captura de marca/modelo (cascata Tipo → Subtipo → Marca → Modelo):** `components/inventario/SelecaoMarcaModelo.jsx` é um combobox reaproveitável "selecionar ou adicionar" (props `dominio` = `item`|`peca`, `tipo`, `subtipo`); o modelo só habilita após a marca, e a **marca trava** até o subtipo ser escolhido nos 7 tipos de `tiposComSubtipo.js`; marca/modelo novos são criados na hora (`postMarca(nome, dominio, tipo, subtipo)`/`postModelo`) e já selecionados; tem atalho **Gerenciar** → `/config`. Usado no cadastro (`components/itens/DadosGerais.jsx`, `dominio="item"`, junto do `SelecaoSubtipo.jsx`), na edição (`components/inventario/EditarItem.jsx`, `dominio="item"`, que lê/grava o subtipo da característica `tipo`) e no cadastro de peça (`components/pecas/ModalCadastraPecas.jsx`, `dominio="peca"`, **sem** subtipo). O campo "nome" saiu de todas as telas e o campo "Tipo" saiu dos 7 formulários `caracteristicas/cadastro/*` (virou o `SelecaoSubtipo`); esses formulários **não** capturam mais marca/modelo.
+- **Visão agrupada** (`InventarioAgrupado.jsx` + `agrupamento.js`): nos itens **ativos**, navegação em 3 níveis a partir do agrupamento **Tipo → Marca → Modelo → itens**. Padrão **agrupado**; botão **Lista/Agrupar** alterna para a tabela plana. Fluxo: (1) `InventarioAgrupado` mostra uma **grade de cards** (1 por tipo, com ícone de `iconesTipos.js` e contador); (2) clicar entra em `TipoDetalhe.jsx` (drill-down com **Voltar**), que lista as **marcas em linhas** e expande os **modelos**; (3) clicar no modelo abre `ModalModelo.jsx` com **todos os itens** daquele modelo (reusa `TabelaItens` com `mostrarSerie`; abrir um item fecha o modal antes do `CardItem`). Filtros rodam **antes** do agrupamento; sem paginação no modo agrupado. O agrupador `agruparGenerico` (parametrizado por adaptadores) lê **marca/modelo do FK** (`item.marca.marca_nome`/`item.modelo.modelo_nome`, objetos que podem ser null) — sem heurística de característica nem split de legado —, agrupando por chave normalizada (sem caixa/acento). Sem marca/modelo cai em **"Sem marca"/"Sem modelo"**. `TabelaItens` exibe a coluna **"Marca / Modelo"** a partir de `item.marca`/`item.modelo`.
+- **Peças agrupadas** (`components/pecas/PecasAgrupado.jsx` + `agrupamentoPecas.js`): espelha o inventário, reusando `agruparGenerico` (mesma árvore Tipo → Marca → Modelo → peças, lendo `peca.marca`/`peca.modelo`). Componentes irmãos: `TipoDetalhePeca.jsx`, `ModalModeloPeca.jsx`, `iconesTiposPecas.js`. `Pecas.jsx` tem toggle **Lista/Agrupar**.
+- `CadastroItem.jsx`: monta `FormData` (DadosGerais + características/peças + anexos) e envia multipart; `caracteristicas`/`pecas` via `JSON.stringify`; envia `item_marca_id`/`item_modelo_id`.
+- `Pecas.jsx`: CRUD de peças com filtros e paginação + visão agrupada (toggle).
 
 ## Gotchas
 - O `anexosUpload` valida o balanço entre tipos/nomes/arquivos; desbalanço → 400.
