@@ -28,6 +28,9 @@ export const MODEL_NAMES = [
   "Plataforma",
   "Log",
   "Peca",
+  "Marca",
+  "Modelo",
+  "Subtipo",
 ];
 
 // Métodos estáticos de model usados pelos controllers
