@@ -48,7 +48,6 @@ export default function Header() {
             <NavButton to="/pecas">Peças</NavButton>
             <NavButton to="/workstations">Workstations</NavButton>
             <NavButton to="/manutencao">Manutenções</NavButton>
-            <NavButton to="/senha">Senhas</NavButton>
           </nav>
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3">

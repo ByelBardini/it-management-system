@@ -3,7 +3,6 @@ import tipos from "../components/inventario/tiposItens.js";
 import Notificacao from "../components/default/Notificacao.jsx";
 import {
   Monitor,
-  Lock,
   Wrench,
   Clock,
   AlertTriangle,
@@ -21,10 +20,6 @@ export default function App() {
 
   const [equipamentosTotal, setEquipamentosTotal] = useState(0);
   const [equipamentosPorTipo, setEquipamentosPorTipo] = useState([]);
-
-  const [senhasTotal, setSenhasTotal] = useState(0);
-  const [senhasVencidas, setSenhasVencidas] = useState(0);
-  const [senhasAtualizadas, setSenhasAtualizadas] = useState(0);
 
   const [manutDia, setManutDia] = useState(0);
   const [manut30, setManut30] = useState(0);
@@ -52,32 +47,6 @@ export default function App() {
           item_tipo: tipos[equipamento.item_tipo],
           quantidade: equipamento.quantidade,
         }))
-      );
-
-      setSenhasTotal(dados.senhas.length);
-      setSenhasVencidas(
-        dados.senhas.filter((senha) => {
-          if (senha.senha_tempo_troca == 0) {
-            return false;
-          }
-          const diffDias = getDiffDias(
-            senha.senha_ultima_troca,
-            senha.senha_tempo_troca
-          );
-          return diffDias < 1;
-        }).length
-      );
-      setSenhasAtualizadas(
-        dados.senhas.filter((senha) => {
-          if (senha.senha_tempo_troca == 0) {
-            return true;
-          }
-          const diffDias = getDiffDias(
-            senha.senha_ultima_troca,
-            senha.senha_tempo_troca
-          );
-          return diffDias > 0;
-        }).length
       );
 
       setManutDia(
@@ -148,7 +117,7 @@ export default function App() {
           }
         />
       )}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <section className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 shadow-xl flex flex-col">
           <header className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-medium text-white/80">
@@ -215,42 +184,6 @@ export default function App() {
           </div>
         </section>
 
-        <section className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 shadow-xl flex flex-col">
-          <header className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-medium text-white/80">
-              Senhas cadastradas
-            </h2>
-            <div className="h-9 w-9 grid place-items-center rounded-lg bg-indigo-500/15 text-indigo-400 ring-1 ring-indigo-400/20">
-              <Lock />
-            </div>
-          </header>
-
-          <div className="text-4xl font-bold tracking-tight text-white text-center">
-            {senhasTotal}
-          </div>
-
-          <div className="flex-1 min-h-0 grid place-items-center">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-xl">
-              <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 h-36 flex flex-col items-center justify-center text-center">
-                <div className="inline-flex items-center gap-2 rounded-md bg-amber-500/15 px-3 py-1 ring-1 ring-amber-400/30 text-amber-300 text-sm font-medium">
-                  Precisam ser atualizadas
-                </div>
-                <div className="mt-3 text-3xl font-bold text-white">
-                  {senhasVencidas}
-                </div>
-              </div>
-
-              <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 h-36 flex flex-col items-center justify-center text-center">
-                <div className="inline-flex items-center gap-2 rounded-md bg-emerald-500/15 px-3 py-1 ring-1 ring-emerald-400/30 text-emerald-300 text-sm font-medium">
-                  Atualizadas
-                </div>
-                <div className="mt-3 text-3xl font-bold text-white">
-                  {senhasAtualizadas}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
       </div>
 
       <section className="mb-4 rounded-2xl bg-white/5 ring-1 ring-white/10 p-6 shadow-xl">
