@@ -42,9 +42,13 @@ Peca.init(
       ),
       allowNull: false,
     },
-    peca_nome: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
+    peca_marca_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    peca_modelo_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
     peca_num_serie: {
       type: DataTypes.STRING(150),

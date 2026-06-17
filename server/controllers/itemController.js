@@ -9,6 +9,8 @@ import {
   Setor,
   Workstation,
   Peca,
+  Marca,
+  Modelo,
 } from "../models/index.js";
 import { ApiError } from "../middlewares/ApiError.js";
 
@@ -22,7 +24,7 @@ export async function getItens(req, res) {
     attributes: [
       "item_id",
       "item_etiqueta",
-      "item_nome",
+      "item_num_serie",
       "item_em_uso",
       "item_tipo",
     ],
@@ -38,6 +40,16 @@ export async function getItens(req, res) {
         model: Workstation,
         as: "workstation",
         attributes: ["workstation_id", "workstation_nome"],
+      },
+      {
+        model: Marca,
+        as: "marca",
+        attributes: ["marca_id", "marca_nome"],
+      },
+      {
+        model: Modelo,
+        as: "modelo",
+        attributes: ["modelo_id", "modelo_nome"],
       },
     ],
   });
@@ -55,13 +67,23 @@ export async function getItensInativos(req, res) {
     attributes: [
       "item_id",
       "item_etiqueta",
-      "item_nome",
+      "item_num_serie",
       "item_data_inativacao",
       "item_tipo",
     ],
     where: { item_empresa_id: id, item_ativo: 0 },
     order: [["item_etiqueta", "ASC"]],
     include: [
+      {
+        model: Marca,
+        as: "marca",
+        attributes: ["marca_id", "marca_nome"],
+      },
+      {
+        model: Modelo,
+        as: "modelo",
+        attributes: ["modelo_id", "modelo_nome"],
+      },
       {
         model: Caracteristica,
         as: "caracteristicas",
@@ -88,10 +110,11 @@ export async function getItemFull(req, res) {
   const item = await Item.findByPk(id, {
     attributes: [
       "item_id",
-      "item_nome",
       "item_tipo",
       "item_etiqueta",
       "item_num_serie",
+      "item_marca_id",
+      "item_modelo_id",
       "item_preco",
       "item_data_aquisicao",
       "item_em_uso",
@@ -108,17 +131,33 @@ export async function getItemFull(req, res) {
         attributes: ["workstation_id", "workstation_nome"],
       },
       {
+        model: Marca,
+        as: "marca",
+        attributes: ["marca_id", "marca_nome"],
+      },
+      {
+        model: Modelo,
+        as: "modelo",
+        attributes: ["modelo_id", "modelo_nome"],
+      },
+      {
         model: Peca,
         as: "pecas",
-        attributes: [
-          "peca_id",
-          "peca_tipo",
-          "peca_nome",
-          "peca_preco",
-          "peca_em_uso",
-        ],
+        attributes: ["peca_id", "peca_tipo", "peca_preco", "peca_em_uso"],
         separate: true,
         order: [["peca_id", "ASC"]],
+        include: [
+          {
+            model: Marca,
+            as: "marca",
+            attributes: ["marca_id", "marca_nome"],
+          },
+          {
+            model: Modelo,
+            as: "modelo",
+            attributes: ["modelo_id", "modelo_nome"],
+          },
+        ],
       },
       {
         model: Caracteristica,
@@ -151,9 +190,21 @@ export async function getItensWorkstation(req, res) {
   }
 
   const itens = await Item.findAll({
-    attributes: ["item_id", "item_etiqueta", "item_tipo", "item_nome"],
+    attributes: ["item_id", "item_etiqueta", "item_tipo"],
     where: { item_workstation_id: id },
     order: [["item_etiqueta", "ASC"]],
+    include: [
+      {
+        model: Marca,
+        as: "marca",
+        attributes: ["marca_id", "marca_nome"],
+      },
+      {
+        model: Modelo,
+        as: "modelo",
+        attributes: ["modelo_id", "modelo_nome"],
+      },
+    ],
   });
 
   return res.status(200).json(itens);
@@ -178,7 +229,8 @@ export async function postItem(req, res) {
   const b = req.body;
 
   const item_empresa_id = b.item_empresa_id;
-  const item_nome = b.item_nome;
+  const item_marca_id = b.item_marca_id || null;
+  const item_modelo_id = b.item_modelo_id || null;
   const item_tipo = b.item_tipo;
   const item_etiqueta = b.item_etiqueta;
   const item_num_serie =
@@ -210,7 +262,6 @@ export async function postItem(req, res) {
 
   const faltando =
     !item_empresa_id ||
-    !item_nome ||
     !item_tipo ||
     !item_etiqueta ||
     !item_num_serie ||
@@ -246,7 +297,8 @@ export async function postItem(req, res) {
     const item = await Item.create(
       {
         item_empresa_id,
-        item_nome,
+        item_marca_id,
+        item_modelo_id,
         item_tipo,
         item_etiqueta,
         item_num_serie,
@@ -317,7 +369,8 @@ export async function putItem(req, res) {
   }
   const b = req.body;
 
-  const item_nome = b.item_nome;
+  const item_marca_id = b.item_marca_id;
+  const item_modelo_id = b.item_modelo_id;
   const item_setor_id = b.item_setor_id;
   const item_workstation_id = b.item_workstation_id;
   const item_em_uso = b.item_em_uso;
@@ -347,7 +400,14 @@ export async function putItem(req, res) {
     throw ApiError.notFound("Item não encontrado");
   }
 
-  item.item_nome = item_nome;
+  if (item_marca_id !== undefined) {
+    item.item_marca_id =
+      item_marca_id === "null" || item_marca_id === "" ? null : item_marca_id;
+  }
+  if (item_modelo_id !== undefined) {
+    item.item_modelo_id =
+      item_modelo_id === "null" || item_modelo_id === "" ? null : item_modelo_id;
+  }
   if (item_setor_id != "null") {
     item.item_setor_id = item_setor_id;
   } else {

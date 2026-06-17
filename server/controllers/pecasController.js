@@ -1,9 +1,10 @@
 import { ApiError } from "../middlewares/ApiError.js";
-import { Peca, Item } from "../models/index.js";
+import { Peca, Item, Marca, Modelo } from "../models/index.js";
 
 export async function postPeca(req, res) {
-  const { id_empresa, tipo, nome, preco, data_aquisicao, numSerie } = req.body;
-  if (!id_empresa || !tipo || !nome || !preco || !data_aquisicao || !numSerie) {
+  const { id_empresa, tipo, preco, data_aquisicao, numSerie, marca_id, modelo_id } =
+    req.body;
+  if (!id_empresa || !tipo || !preco || !data_aquisicao || !numSerie) {
     throw ApiError.badRequest("Todos os dados são necessários");
   }
   await Peca.create(
@@ -11,7 +12,8 @@ export async function postPeca(req, res) {
       peca_empresa_id: id_empresa,
       peca_ativa: 1,
       peca_tipo: tipo,
-      peca_nome: nome,
+      peca_marca_id: marca_id || null,
+      peca_modelo_id: modelo_id || null,
       peca_num_serie: numSerie,
       peca_preco: preco,
       peca_em_uso: 0,
@@ -30,12 +32,22 @@ export async function getPecasAtivas(req, res) {
   }
   const pecas = await Peca.findAll({
     where: { peca_empresa_id: id, peca_ativa: 1 },
-    order: [["peca_nome", "ASC"]],
+    order: [["peca_id", "ASC"]],
     include: [
       {
         model: Item,
         as: "item",
-        attributes: ["item_id", "item_nome"],
+        attributes: ["item_id", "item_etiqueta"],
+      },
+      {
+        model: Marca,
+        as: "marca",
+        attributes: ["marca_id", "marca_nome"],
+      },
+      {
+        model: Modelo,
+        as: "modelo",
+        attributes: ["modelo_id", "modelo_nome"],
       },
     ],
   });
@@ -49,7 +61,19 @@ export async function getPecasInativas(req, res) {
   }
   const pecas = await Peca.findAll({
     where: { peca_empresa_id: id, peca_ativa: 0 },
-    order: [["peca_nome", "ASC"]],
+    order: [["peca_id", "ASC"]],
+    include: [
+      {
+        model: Marca,
+        as: "marca",
+        attributes: ["marca_id", "marca_nome"],
+      },
+      {
+        model: Modelo,
+        as: "modelo",
+        attributes: ["modelo_id", "modelo_nome"],
+      },
+    ],
   });
   return res.status(200).json(pecas);
 }

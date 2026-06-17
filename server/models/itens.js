@@ -61,9 +61,13 @@ Item.init(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    item_nome: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
+    item_marca_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    item_modelo_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
     item_preco: {
       type: DataTypes.DOUBLE,

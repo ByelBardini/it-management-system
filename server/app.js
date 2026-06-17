@@ -16,6 +16,9 @@ import manutencoesRoutes from "./routes/manutencoesRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import perfilRoutes from "./routes/perfilRoutes.js";
 import pecasRoutes from "./routes/pecasRoutes.js";
+import marcaRoutes from "./routes/marcaRoutes.js";
+import modeloRoutes from "./routes/modeloRoutes.js";
+import subtipoRoutes from "./routes/subtipoRoutes.js";
 import { ApiError } from "./middlewares/ApiError.js";
 import { origemPermitida, origemConfiavel } from "./config/seguranca.js";
 
@@ -80,6 +83,9 @@ app.use("/manutencao", manutencoesRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/perfil", perfilRoutes);
 app.use("/pecas", pecasRoutes);
+app.use("/marca", marcaRoutes);
+app.use("/modelo", modeloRoutes);
+app.use("/subtipo", subtipoRoutes);
 
 app.use((err, req, res, next) => {
   if (err instanceof ApiError) {

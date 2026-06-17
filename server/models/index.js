@@ -9,6 +9,9 @@ import Workstation from "./workstations.js";
 import Plataforma from "./plataformas.js";
 import Log from "./logs.js";
 import Peca from "./pecas.js";
+import Marca from "./marcas.js";
+import Modelo from "./modelos.js";
+import Subtipo from "./subtipos.js";
 
 //Foreign keys de Peças e Empresas
 Empresa.hasMany(Peca, {
@@ -184,6 +187,48 @@ Senha.belongsTo(Empresa, {
   targetKey: "empresa_id",
   onDelete: "CASCADE",
   as: "empresas",
+});
+
+//Foreign keys de Marcas e Modelos (cadastro central)
+Marca.hasMany(Modelo, {
+  foreignKey: "modelo_marca_id",
+  sourceKey: "marca_id",
+  onDelete: "CASCADE",
+  as: "modelos",
+});
+Modelo.belongsTo(Marca, {
+  foreignKey: "modelo_marca_id",
+  targetKey: "marca_id",
+  onDelete: "CASCADE",
+  as: "marca",
+});
+
+//Foreign keys de Itens e Marcas/Modelos
+Item.belongsTo(Marca, {
+  foreignKey: "item_marca_id",
+  targetKey: "marca_id",
+  onDelete: "SET NULL",
+  as: "marca",
+});
+Item.belongsTo(Modelo, {
+  foreignKey: "item_modelo_id",
+  targetKey: "modelo_id",
+  onDelete: "SET NULL",
+  as: "modelo",
+});
+
+//Foreign keys de Peças e Marcas/Modelos
+Peca.belongsTo(Marca, {
+  foreignKey: "peca_marca_id",
+  targetKey: "marca_id",
+  onDelete: "SET NULL",
+  as: "marca",
+});
+Peca.belongsTo(Modelo, {
+  foreignKey: "peca_modelo_id",
+  targetKey: "modelo_id",
+  onDelete: "SET NULL",
+  as: "modelo",
 });
 
 //Logging de itens
@@ -383,4 +428,7 @@ export {
   Plataforma,
   Log,
   Peca,
+  Marca,
+  Modelo,
+  Subtipo,
 };

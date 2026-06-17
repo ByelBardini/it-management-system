@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import { Item, Setor } from "../models/index.js";
+import { Item, Setor, Marca, Modelo } from "../models/index.js";
 import { ApiError } from "../middlewares/ApiError.js";
 
 export async function getManutencoes(req, res) {
@@ -17,7 +17,6 @@ export async function getManutencoes(req, res) {
     attributes: [
       "item_id",
       "item_etiqueta",
-      "item_nome",
       "item_tipo",
       "item_ultima_manutencao",
       "item_intervalo_manutencao",
@@ -28,6 +27,16 @@ export async function getManutencoes(req, res) {
         model: Setor,
         as: "setor",
         attributes: ["setor_id", "setor_nome"],
+      },
+      {
+        model: Marca,
+        as: "marca",
+        attributes: ["marca_id", "marca_nome"],
+      },
+      {
+        model: Modelo,
+        as: "modelo",
+        attributes: ["modelo_id", "modelo_nome"],
       },
     ],
   });
