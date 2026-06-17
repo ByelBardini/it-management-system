@@ -7,8 +7,9 @@ import Notificacao from "../components/default/Notificacao";
 import ModalConfirmacao from "../components/default/ModalConfirmacao";
 import CampoFiltros from "../components/inventario/CampoFiltros.jsx";
 import InventarioAgrupado from "../components/inventario/InventarioAgrupado.jsx";
+import ModalImportar from "../components/inventario/ModalImportar.jsx";
 import Paginacao from "../components/default/Paginacao.jsx";
-import { Plus, FunnelPlus, FunnelX, ListTree, List } from "lucide-react";
+import { Plus, Upload, FunnelPlus, FunnelX, ListTree, List } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { getItens, getItensInativos } from "../services/api/itemServices";
@@ -47,6 +48,7 @@ export default function Inventario() {
   const [inativos, setInativos] = useState(false);
   const [agrupado, setAgrupado] = useState(true);
   const [filtrando, setFiltrando] = useState(false);
+  const [importar, setImportar] = useState(false);
   const [itensFiltrados, setItensFiltrados] = useState([]);
   const [itensOrdenados, setItensOrdenados] = useState([]);
 
@@ -132,6 +134,15 @@ export default function Inventario() {
           setConfirmacao={setConfirmacao}
         />
       )}
+      {importar && (
+        <ModalImportar
+          dominio="item"
+          onClose={() => setImportar(false)}
+          onConcluido={() => setEditado(true)}
+          setNotificacao={setNotificacao}
+          setLoading={setLoading}
+        />
+      )}
       <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Inventário</h2>
@@ -178,6 +189,14 @@ export default function Inventario() {
               className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
             >
               {filtrando ? <FunnelX size={18} /> : <FunnelPlus size={18} />}
+            </button>
+
+            <button
+              onClick={() => setImportar(true)}
+              className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
+            >
+              <Upload size={18} />
+              <span className="text-sm font-medium">Importar</span>
             </button>
 
             <NavLink

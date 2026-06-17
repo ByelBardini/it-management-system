@@ -85,3 +85,16 @@ export async function inativaItem(id) {
     throw err;
   }
 }
+
+export async function importarItens(id_empresa, itens) {
+  try {
+    const response = await api.post("/item/importar", {
+      item_empresa_id: id_empresa,
+      itens,
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Erro em importarItens:", err);
+    throw err;
+  }
+}

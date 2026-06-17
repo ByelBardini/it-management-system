@@ -55,3 +55,16 @@ export async function inativarPeca(id) {
     throw err;
   }
 }
+
+export async function importarPecas(id_empresa, pecas) {
+  try {
+    const response = await api.post("/pecas/importar", {
+      id_empresa,
+      pecas,
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Erro em importarPecas:", err);
+    throw err;
+  }
+}

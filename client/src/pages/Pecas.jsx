@@ -6,6 +6,7 @@ import TabelaPecas from "../components/pecas/TabelaPecas";
 import ModalCadastraPecas from "../components/pecas/ModalCadastraPecas";
 import CampoFiltros from "../components/pecas/CampoFiltros.jsx";
 import PecasAgrupado from "../components/pecas/PecasAgrupado.jsx";
+import ModalImportar from "../components/inventario/ModalImportar.jsx";
 import { agruparPecas } from "../components/pecas/agrupamentoPecas.js";
 import Paginacao from "../components/default/Paginacao.jsx";
 import {
@@ -19,7 +20,7 @@ import {
   useItensPorPagina,
 } from "../components/default/funcoes.js";
 import { useNavigate } from "react-router-dom";
-import { Plus, FunnelPlus, FunnelX, ListTree, List } from "lucide-react";
+import { Plus, Upload, FunnelPlus, FunnelX, ListTree, List } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Pecas() {
@@ -50,6 +51,7 @@ export default function Pecas() {
   const [inativos, setInativos] = useState(false);
   const [filtrando, setFiltrando] = useState(false);
   const [agrupado, setAgrupado] = useState(true);
+  const [importar, setImportar] = useState(false);
 
   async function buscarPecas() {
     setLoading(true);
@@ -151,6 +153,15 @@ export default function Pecas() {
           setConfirmacao={setConfirmacao}
         />
       )}
+      {importar && (
+        <ModalImportar
+          dominio="peca"
+          onClose={() => setImportar(false)}
+          onConcluido={buscarPecas}
+          setNotificacao={setNotificacao}
+          setLoading={setLoading}
+        />
+      )}
       <div className="rounded-2xl bg-white/5 backdrop-blur-md ring-1 ring-white/10 shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-lg font-semibold text-white">Peças</h2>
@@ -197,6 +208,14 @@ export default function Pecas() {
               className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
             >
               {filtrando ? <FunnelX size={18} /> : <FunnelPlus size={18} />}
+            </button>
+
+            <button
+              onClick={() => setImportar(true)}
+              className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 transition"
+            >
+              <Upload size={18} />
+              <span className="text-sm font-medium">Importar</span>
             </button>
 
             <button
