@@ -24,8 +24,15 @@ Usuario.init(
       allowNull: false,
     },
     usuario_tipo: {
-      type: DataTypes.ENUM("adm", "usuario", "cadastrador"),
+      type: DataTypes.ENUM("adm", "usuario", "cadastrador", "coletor"),
       allowNull: false,
+    },
+    // Empresa à qual a conta está amarrada. Usada pelo papel "coletor": o token de
+    // coleta herda esta empresa, então o script nem precisa informá-la. Null para os
+    // demais papéis (que escolhem a empresa ativa na UI).
+    usuario_empresa_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
     usuario_caminho_foto: {
       type: DataTypes.STRING(255),

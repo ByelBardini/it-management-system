@@ -12,6 +12,7 @@ import Peca from "./pecas.js";
 import Marca from "./marcas.js";
 import Modelo from "./modelos.js";
 import Subtipo from "./subtipos.js";
+import ColetorToken from "./coletorToken.js";
 
 //Foreign keys de Peças e Empresas
 Empresa.hasMany(Peca, {
@@ -231,6 +232,46 @@ Peca.belongsTo(Modelo, {
   as: "modelo",
 });
 
+//Conta amarrada a uma empresa (papel coletor)
+Empresa.hasMany(Usuario, {
+  foreignKey: "usuario_empresa_id",
+  sourceKey: "empresa_id",
+  onDelete: "SET NULL",
+  as: "usuarios",
+});
+Usuario.belongsTo(Empresa, {
+  foreignKey: "usuario_empresa_id",
+  targetKey: "empresa_id",
+  onDelete: "SET NULL",
+  as: "empresaColeta",
+});
+
+//Foreign keys de Tokens de coleta
+Usuario.hasMany(ColetorToken, {
+  foreignKey: "token_usuario_id",
+  sourceKey: "usuario_id",
+  onDelete: "CASCADE",
+  as: "tokensColeta",
+});
+ColetorToken.belongsTo(Usuario, {
+  foreignKey: "token_usuario_id",
+  targetKey: "usuario_id",
+  onDelete: "CASCADE",
+  as: "usuario",
+});
+Empresa.hasMany(ColetorToken, {
+  foreignKey: "token_empresa_id",
+  sourceKey: "empresa_id",
+  onDelete: "CASCADE",
+  as: "tokensColeta",
+});
+ColetorToken.belongsTo(Empresa, {
+  foreignKey: "token_empresa_id",
+  targetKey: "empresa_id",
+  onDelete: "CASCADE",
+  as: "empresa",
+});
+
 //Logging de itens
 Item.afterCreate(async (item, options) => {
   const usuarioId = options?.usuarioId || null;
@@ -431,4 +472,5 @@ export {
   Marca,
   Modelo,
   Subtipo,
+  ColetorToken,
 };
