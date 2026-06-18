@@ -1,0 +1,119 @@
+# Coletor de desktop — InfraHub
+
+Script PowerShell que lê o hardware de uma máquina Windows e cadastra o **desktop**
+(item + peças) no inventário do InfraHub numa única chamada, via o endpoint
+`POST /item/coletar-desktop`.
+
+Em vez de criar cada peça à mão e depois montar o desktop, você roda o script na
+própria máquina-alvo: ele detecta marca/modelo do computador e as peças
+(processador, placa-mãe, memória, armazenamento, vídeo e rede), faz login na API e
+envia tudo de uma vez. Número de série e preço de peça que o hardware não informa
+caem nos defaults do backend (`"N/A"` e `0`).
+
+## Pré-requisitos
+
+- **Windows** com **PowerShell 5.1+** (já incluso no Windows 10/11) ou PowerShell 7.
+- Leitura de WMI/CIM (rodar como um usuário normal costuma bastar).
+- Uma conta **adm** no InfraHub e a URL base da API acessível pela máquina.
+
+## Parâmetros
+
+| Parâmetro | Obrigatório | Descrição |
+|---|---|---|
+| `-ApiBase` | sim | URL base da API, **sem barra final**. Ex.: `http://localhost:3032` ou `https://infrahub.suaempresa.com/api` |
+| `-Login` | sim | Login de um usuário adm |
+| `-Senha` | não | Senha do adm. Se omitida, é pedida de forma segura no console |
+| `-EmpresaId` | sim | Id da empresa dona do desktop |
+| `-Etiqueta` | sim | Etiqueta do desktop (máx. 10 caracteres) |
+| `-SetorId` | não | Id do setor a vincular |
+| `-WorkstationId` | não | Id do workstation a vincular |
+| `-Marca` | não | Sobrescreve a marca do desktop detectada no hardware |
+| `-Modelo` | não | Sobrescreve o modelo do desktop detectado no hardware |
+| `-EmUso` | não | Marca o item como em uso (default `$true`; use `-EmUso:$false` para desligar) |
+| `-DryRun` | não | Coleta e imprime o JSON que **seria** enviado, sem autenticar nem enviar |
+
+## Como rodar
+
+A política de execução padrão do Windows costuma bloquear scripts. A forma mais
+simples, sem alterar a máquina, é passar `-ExecutionPolicy Bypass` só para esta
+execução:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\coletar-desktop.ps1 `
+  -ApiBase http://localhost:3032 `
+  -Login admin -Senha admin123 `
+  -EmpresaId 1 -Etiqueta DSK-014
+```
+
+Conferindo o que seria enviado, **sem** cadastrar nada (recomendado na primeira vez):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\coletar-desktop.ps1 `
+  -ApiBase http://localhost:3032 -Login admin -EmpresaId 1 -Etiqueta DSK-014 -DryRun
+```
+
+Vinculando setor/workstation e sobrescrevendo a marca do desktop:
+
+```powershell
+.\coletar-desktop.ps1 -ApiBase https://infrahub.suaempresa.com/api `
+  -Login admin -EmpresaId 1 -Etiqueta DSK-014 `
+  -SetorId 3 -WorkstationId 9 -Marca Dell -Modelo "OptiPlex 7090"
+```
+
+Se `-Senha` for omitida, o script pede a senha de forma segura (não fica no
+histórico do shell).
+
+## O que é coletado
+
+| Tipo de peça | Origem (CIM/WMI) | Marca | Modelo | Nº de série |
+|---|---|---|---|---|
+| `processador` | `Win32_Processor` | `Manufacturer` | `Name` | `ProcessorId` |
+| `placa-mae` | `Win32_BaseBoard` | `Manufacturer` | `Product` | `SerialNumber` |
+| `ram` (1 por pente) | `Win32_PhysicalMemory` | `Manufacturer` | `PartNumber` | `SerialNumber` |
+| `armazenamento` | `Win32_DiskDrive` (ignora USB) | `Manufacturer` | `Model` | `SerialNumber` |
+| `placa-video` | `Win32_VideoController` | `AdapterCompatibility` | `Name` | — |
+| `placa-rede` | `Win32_NetworkAdapter` (só físicos) | `Manufacturer` | `Name` | `MACAddress` |
+
+A **marca/modelo do desktop** vêm de `Win32_ComputerSystem` (`Manufacturer`/`Model`),
+sobreponíveis por `-Marca`/`-Modelo`. Valores-placeholder de BIOS comuns (ex.:
+"To Be Filled By O.E.M.", "System manufacturer", "Default string") são tratados como
+vazios — o backend então grava a marca/modelo como nulo em vez de criar um cadastro lixo.
+
+## Segurança
+
+- O login grava o token JWT num **cookie httpOnly** (não trafega no corpo da
+  resposta). O script captura esse cookie com `-SessionVariable` e o reenvia no POST
+  com `-WebSession` — o token nunca é manipulado em texto puro pelo script.
+- Use **HTTPS** em produção (o cookie de sessão é `Secure`). Sob HTTP só em rede
+  local confiável (ex.: `localhost`).
+- O endpoint é **adm**. Trate o login como credencial sensível: prefira informar a
+  senha no prompt (omitindo `-Senha`) a deixá-la em scripts/agendamentos.
+
+## Empacotar em `.exe` (opcional)
+
+Para distribuir sem depender de `.ps1`, dá para gerar um executável com o módulo
+[`ps2exe`](https://github.com/MScholtes/PS2EXE):
+
+```powershell
+Install-Module ps2exe -Scope CurrentUser   # uma vez
+Invoke-PS2EXE .\coletar-desktop.ps1 .\coletar-desktop.exe
+```
+
+O `.exe` aceita os mesmos parâmetros:
+
+```powershell
+.\coletar-desktop.exe -ApiBase http://localhost:3032 -Login admin -EmpresaId 1 -Etiqueta DSK-014
+```
+
+> O empacotamento é só conveniência de distribuição; a lógica (e a validação de
+> verdade) continua no backend, em `POST /item/coletar-desktop`.
+
+## Solução de problemas
+
+- **`Falha no login: ...`** — confira `-ApiBase` (sem barra final), login/senha e se a
+  conta é adm.
+- **`... etiqueta deve ter no máximo 10 caracteres`** — encurte `-Etiqueta`.
+- **Erro de TLS/SSL em HTTPS** — o script já força TLS 1.2; se ainda falhar, atualize
+  o PowerShell ou o .NET da máquina.
+- **Nenhuma peça coletada** — rode num prompt com permissão de WMI; máquinas virtuais
+  muito enxutas podem não expor todos os componentes.
