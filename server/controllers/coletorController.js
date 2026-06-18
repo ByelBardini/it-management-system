@@ -5,19 +5,15 @@ import { Usuario, ColetorToken } from "../models/index.js";
 import { ApiError } from "../middlewares/ApiError.js";
 import { gerarToken, montarBat } from "./helpers/coletorToken.js";
 
-// Caminho do template do script. Em dev o backend roda de server/ e o coletor está
-// em ../ferramentas; em produção, defina COLETOR_SCRIPT_PATH (ou inclua o arquivo na
-// imagem). Ver docs/deploy/coolify.md.
+// Caminho do template do script. Fica em server/assets/coletor/ DE PROPÓSITO: o
+// build do backend usa server/ como contexto (COPY . .), então o script precisa
+// estar dentro dessa pasta para entrar na imagem. cwd é server/ em dev e /app em
+// prod — em ambos resolve para assets/coletor/. Pode sobrescrever com
+// COLETOR_SCRIPT_PATH. Ver docs/deploy/coolify.md.
 function caminhoScript() {
   return (
     process.env.COLETOR_SCRIPT_PATH ||
-    path.join(
-      process.cwd(),
-      "..",
-      "ferramentas",
-      "coletor-desktop",
-      "coletar-desktop.ps1"
-    )
+    path.join(process.cwd(), "assets", "coletor", "coletar-desktop.ps1")
   );
 }
 
