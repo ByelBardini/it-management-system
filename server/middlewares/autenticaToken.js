@@ -39,6 +39,22 @@ export function autorizarRole(role) {
   };
 }
 
+export function autorizarQualquerRole(roles) {
+  // Libera se o tipo do usuário está na lista informada OU é "adm" (que sempre passa).
+  // Mesmo formato síncrono de autorizarRole: lança ApiError em vez de devolver 4xx.
+  return (req, _res, next) => {
+    if (!req.usuario) {
+      throw ApiError.unauthorized("Usuário não autenticado");
+    }
+
+    if (req.usuario.tipo !== "adm" && !roles.includes(req.usuario.tipo)) {
+      throw ApiError.forbidden("Ação não permitida para o seu tipo de usuário");
+    }
+
+    next();
+  };
+}
+
 export function autorizarUser() {
   return (req, _res, next) => {
     if (!req.usuario) {

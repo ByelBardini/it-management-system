@@ -24,7 +24,7 @@ Usuario.init(
       allowNull: false,
     },
     usuario_tipo: {
-      type: DataTypes.ENUM("adm", "usuario"),
+      type: DataTypes.ENUM("adm", "usuario", "cadastrador"),
       allowNull: false,
     },
     usuario_caminho_foto: {

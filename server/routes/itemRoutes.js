@@ -12,21 +12,26 @@ import {
   importarItens,
   coletarDesktop,
 } from "../controllers/itemController.js";
-import { autenticar, autorizarRole } from "../middlewares/autenticaToken.js";
+import {
+  autenticar,
+  autorizarRole,
+  autorizarQualquerRole,
+} from "../middlewares/autenticaToken.js";
 
 const router = Router();
 
+// Autorização por verbo (não global): só a CRIAÇÃO de item é liberada ao cadastrador
+// (app mobile). Leituras, edição, inativação, importação e coleta de desktop seguem adm.
 router.use(autenticar);
-router.use(autorizarRole("adm"));
-router.get("/:id", getItens);
-router.get("/inativos/:id", getItensInativos);
-router.get("/workstation/:id", getItensWorkstation);
-router.get("/full/:id", getItemFull);
-router.post("/importar", importarItens);
-router.post("/coletar-desktop", coletarDesktop);
-router.post("/", anexosUpload, postItem);
-router.put("/:id", anexosUpload, putItem);
-router.put("/inativa/:id", inativaItem);
-router.put("/workstation/remover/:id", removerWorkstation);
+router.get("/:id", autorizarRole("adm"), getItens);
+router.get("/inativos/:id", autorizarRole("adm"), getItensInativos);
+router.get("/workstation/:id", autorizarRole("adm"), getItensWorkstation);
+router.get("/full/:id", autorizarRole("adm"), getItemFull);
+router.post("/importar", autorizarRole("adm"), importarItens);
+router.post("/coletar-desktop", autorizarRole("adm"), coletarDesktop);
+router.post("/", autorizarQualquerRole(["cadastrador"]), anexosUpload, postItem);
+router.put("/:id", autorizarRole("adm"), anexosUpload, putItem);
+router.put("/inativa/:id", autorizarRole("adm"), inativaItem);
+router.put("/workstation/remover/:id", autorizarRole("adm"), removerWorkstation);
 
 export default router;

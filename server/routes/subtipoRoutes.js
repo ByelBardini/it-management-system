@@ -1,12 +1,16 @@
 import express from "express";
 import { getSubtipos, postSubtipo } from "../controllers/subtipoController.js";
-import { autenticar, autorizarRole } from "../middlewares/autenticaToken.js";
+import {
+  autenticar,
+  autorizarQualquerRole,
+} from "../middlewares/autenticaToken.js";
 
 const router = express.Router();
 
+// Leitura da lista de subtipos (cascata) e criação de subtipo: liberadas ao
+// cadastrador (app mobile). adm sempre passa.
 router.use(autenticar);
-router.use(autorizarRole("adm"));
-router.get("/", getSubtipos);
-router.post("/", postSubtipo);
+router.get("/", autorizarQualquerRole(["cadastrador"]), getSubtipos);
+router.post("/", autorizarQualquerRole(["cadastrador"]), postSubtipo);
 
 export default router;
