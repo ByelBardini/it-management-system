@@ -1,7 +1,8 @@
 import tipos from "./tiposPecas.js";
+import { formatarEspecificacoesPeca } from "./especificacoes.js";
 import { SearchX, Trash2 } from "lucide-react";
 import { formatToDate, formatToBRL } from "brazilian-values";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 export default function TabelaPecas({
   pecas = [],
@@ -50,9 +51,11 @@ export default function TabelaPecas({
         </thead>
 
         <tbody className="divide-y divide-white/5">
-          {pecas.map((peca) => (
+          {pecas.map((peca) => {
+            const specs = formatarEspecificacoesPeca(peca.peca_especificacoes);
+            return (
+            <Fragment key={peca.peca_id}>
             <tr
-              key={peca.peca_id}
               onClick={() => handleSelecionar(peca.peca_id)}
               className={`transition-all duration-200 ${
                 selecionado === peca.peca_id
@@ -137,7 +140,24 @@ export default function TabelaPecas({
                 </td>
               )}
             </tr>
-          ))}
+
+            {selecionado === peca.peca_id && specs.length > 0 && (
+              <tr className="bg-white/[0.03]">
+                <td colSpan={inativos ? 4 : 6} className="px-6 py-2">
+                  <dl className="flex flex-wrap gap-x-6 gap-y-1">
+                    {specs.map((s) => (
+                      <div key={s.rotulo} className="flex gap-1 text-xs">
+                        <dt className="text-white/50">{s.rotulo}:</dt>
+                        <dd className="text-white/80">{s.valor}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </td>
+              </tr>
+            )}
+            </Fragment>
+            );
+          })}
         </tbody>
       </table>
 

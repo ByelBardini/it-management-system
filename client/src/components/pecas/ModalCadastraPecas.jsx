@@ -5,6 +5,11 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { tratarErro } from "../default/funcoes.js";
 import SelecaoMarcaModelo from "../inventario/SelecaoMarcaModelo.jsx";
+import {
+  CAMPOS_ESPECIFICACAO,
+  ROTULOS,
+  construirEspecificacoes,
+} from "./especificacoes.js";
 
 function formatarRealDinamico(valor) {
   valor = valor.replace(/\D/g, "");
@@ -29,8 +34,11 @@ export default function ModalCadastraPecas({
   const [preco, setPreco] = useState("");
   const [numSerie, setNumSerie] = useState("");
   const [dataAquisicao, setDataAquisicao] = useState("");
+  const [especs, setEspecs] = useState({});
 
   const [valido, setValido] = useState(false);
+
+  const camposEspec = CAMPOS_ESPECIFICACAO[tipo] || [];
 
   useEffect(() => {
     if (tipo && preco && numSerie) setValido(true);
@@ -70,6 +78,7 @@ export default function ModalCadastraPecas({
     setLoading(true);
     try {
       const precoFormatado = parseInt(preco.replace(/\D/g, ""), 10) / 100;
+      const especificacoes = construirEspecificacoes(tipo, especs);
       await postPeca(
         localStorage.getItem("empresa_id"),
         tipo,
@@ -77,7 +86,8 @@ export default function ModalCadastraPecas({
         dataAquisicao,
         numSerie,
         marcaId,
-        modeloId
+        modeloId,
+        Object.keys(especificacoes).length ? especificacoes : null
       );
       setConfirmacao({
         show: true,
@@ -94,6 +104,7 @@ export default function ModalCadastraPecas({
           setPreco("");
           setDataAquisicao("");
           setNumSerie("");
+          setEspecs({});
         },
         tipo: "sucesso",
       });
@@ -132,6 +143,7 @@ export default function ModalCadastraPecas({
                 setTipo(e.target.value);
                 setMarcaId(null);
                 setModeloId(null);
+                setEspecs({});
               }}
               value={tipo}
               className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -159,6 +171,57 @@ export default function ModalCadastraPecas({
             onChange={aplicarMarcaModelo}
             setNotificacao={setNotificacao}
           />
+
+          {camposEspec.length > 0 && (
+            <div>
+              <label className="block text-sm text-white/70 mb-1">
+                Especificações
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {camposEspec.map((campo) => (
+                  <div key={campo.chave}>
+                    <label className="block text-xs text-white/50 mb-1">
+                      {ROTULOS[campo.chave] ?? campo.chave}
+                    </label>
+                    {campo.opcoes ? (
+                      <select
+                        value={especs[campo.chave] ?? ""}
+                        onChange={(e) =>
+                          setEspecs((prev) => ({
+                            ...prev,
+                            [campo.chave]: e.target.value,
+                          }))
+                        }
+                        className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="" className="bg-zinc-900">
+                          —
+                        </option>
+                        {campo.opcoes.map((op) => (
+                          <option key={op} value={op} className="bg-zinc-900">
+                            {op}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        value={especs[campo.chave] ?? ""}
+                        onChange={(e) =>
+                          setEspecs((prev) => ({
+                            ...prev,
+                            [campo.chave]: e.target.value,
+                          }))
+                        }
+                        placeholder={campo.placeholder ?? ""}
+                        className="w-full rounded-lg bg-white/10 border border-white/10 px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div>
             <div className="flex items-center justify-between mb-1">

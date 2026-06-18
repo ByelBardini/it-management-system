@@ -7,7 +7,8 @@ export async function postPeca(
   data_aquisicao,
   numSerie,
   marca_id,
-  modelo_id
+  modelo_id,
+  especificacoes = null
 ) {
   try {
     const response = await api.post("/pecas", {
@@ -18,6 +19,7 @@ export async function postPeca(
       numSerie,
       marca_id,
       modelo_id,
+      especificacoes,
     });
     return response.data;
   } catch (err) {

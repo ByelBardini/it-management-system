@@ -1,11 +1,60 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import tipos from "./tiposCarac.js";
 import tiposPecas from "../pecas/tiposPecas.js";
+import { formatarEspecificacoesPeca } from "../pecas/especificacoes.js";
 import { useState } from "react";
-import { Download, X, Inbox } from "lucide-react";
+import { Download, X, Inbox, ChevronDown } from "lucide-react";
 import { getItemFull } from "../../services/api/itemServices.js";
 import { useEffect } from "react";
 import { formatToBRL, formatToDate } from "brazilian-values";
+
+// Card de uma peça do desktop, com disclosure das especificações técnicas
+// (peca_especificacoes). Estado de aberto/fechado é local a cada peça.
+function PecaCardDesktop({ peca }) {
+  const [aberto, setAberto] = useState(false);
+  const specs = formatarEspecificacoesPeca(peca.peca_especificacoes);
+
+  return (
+    <div className="rounded-lg bg-white/[0.05] p-3 text-white">
+      <div className="text-xs text-white/60">
+        {tiposPecas[peca.peca_tipo] ?? peca.peca_tipo}
+      </div>
+      <div className="text-sm font-medium">
+        {`${peca.marca?.marca_nome ?? "Sem marca"} ${
+          peca.modelo?.modelo_nome ?? ""
+        }`.trim()}
+      </div>
+      <div className="text-xs text-white/60">{formatToBRL(peca.peca_preco)}</div>
+
+      {specs.length > 0 && (
+        <>
+          <button
+            type="button"
+            onClick={() => setAberto((v) => !v)}
+            className="mt-2 flex cursor-pointer items-center gap-1 text-xs text-sky-400 hover:text-sky-300 transition"
+            aria-expanded={aberto}
+          >
+            <ChevronDown
+              size={14}
+              className={`transition-transform ${aberto ? "rotate-180" : ""}`}
+            />
+            {aberto ? "Ocultar especificações" : "Ver especificações"}
+          </button>
+          {aberto && (
+            <dl className="mt-2 space-y-0.5">
+              {specs.map((s) => (
+                <div key={s.rotulo} className="flex justify-between gap-2 text-xs">
+                  <dt className="text-white/50">{s.rotulo}</dt>
+                  <dd className="text-white/80 text-right">{s.valor}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
 
 export default function CardItem({
   setCardItem,
@@ -169,22 +218,7 @@ export default function CardItem({
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
                 {Array.isArray(item.pecas) && item.pecas.length > 0 ? (
                   item.pecas.map((p) => (
-                    <div
-                      key={p.peca_id}
-                      className="rounded-lg bg-white/[0.05] p-3 text-white"
-                    >
-                      <div className="text-xs text-white/60">
-                        {tiposPecas[p.peca_tipo] ?? p.peca_tipo}
-                      </div>
-                      <div className="text-sm font-medium">
-                        {`${p.marca?.marca_nome ?? "Sem marca"} ${
-                          p.modelo?.modelo_nome ?? ""
-                        }`.trim()}
-                      </div>
-                      <div className="text-xs text-white/60">
-                        {formatToBRL(p.peca_preco)}
-                      </div>
-                    </div>
+                    <PecaCardDesktop key={p.peca_id} peca={p} />
                   ))
                 ) : (
                   <div className="text-white/60">Nenhuma peça vinculada</div>
