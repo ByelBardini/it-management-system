@@ -12,6 +12,7 @@ import Manutencoes from "./pages/Manutencoes.jsx";
 import Configuracoes from "./pages/Configuracoes.jsx";
 import Workstations from "./pages/Workstations.jsx";
 import CadastroItem from "./pages/CadastroItem.jsx";
+import CadastroMobile from "./pages/CadastroMobile.jsx";
 import Perfil from "./pages/Perfil.jsx";
 import Usuarios from "./pages/Usuarios.jsx";
 import Pecas from "./pages/Pecas.jsx";
@@ -79,6 +80,14 @@ const router = createBrowserRouter([
     element: (
       <PageTransition>
         <CadastroItem />
+      </PageTransition>
+    ),
+  },
+  {
+    path: "/cadastro-mobile",
+    element: (
+      <PageTransition>
+        <CadastroMobile />
       </PageTransition>
     ),
   },

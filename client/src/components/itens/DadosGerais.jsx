@@ -2,7 +2,66 @@ import SelecaoMarcaModelo from "../inventario/SelecaoMarcaModelo.jsx";
 import SelecaoSubtipo from "../inventario/SelecaoSubtipo.jsx";
 import { temSubtipo } from "../inventario/tiposComSubtipo.js";
 
-export default function DadosGerais({ value, onChange, setNotificacao }) {
+// Grupos do <select> de tipo, em dados (antes era JSX hardcoded). Permite filtrar
+// tipos via prop `tiposOcultos` (ex.: o app mobile esconde "desktop", montado por peças).
+const GRUPOS_TIPO = [
+  {
+    label: "Computadores",
+    opcoes: [
+      { value: "desktop", label: "Desktop" },
+      { value: "notebook", label: "Notebook" },
+      { value: "monitor", label: "Monitor" },
+    ],
+  },
+  { label: "Dispositivos móveis", opcoes: [{ value: "celular", label: "Celular" }] },
+  {
+    label: "Rede",
+    opcoes: [
+      { value: "ap", label: "AP" },
+      { value: "switch", label: "Switch" },
+    ],
+  },
+  {
+    label: "Periféricos & Impressão",
+    opcoes: [
+      { value: "periferico", label: "Periférico" },
+      { value: "impressora", label: "Impressora" },
+    ],
+  },
+  {
+    label: "Energia",
+    opcoes: [
+      { value: "no-break", label: "No-Break" },
+      { value: "gerador", label: "Gerador" },
+    ],
+  },
+  {
+    label: "Climatização",
+    opcoes: [{ value: "ar-condicionado", label: "Ar Condicionado" }],
+  },
+  {
+    label: "Mobiliário",
+    opcoes: [
+      { value: "cadeira", label: "Cadeira" },
+      { value: "movel", label: "Móvel" },
+    ],
+  },
+  { label: "Ferramentas", opcoes: [{ value: "ferramenta", label: "Ferramenta" }] },
+  {
+    label: "Outros",
+    opcoes: [
+      { value: "cabo", label: "Cabo" },
+      { value: "outros", label: "Outros" },
+    ],
+  },
+];
+
+export default function DadosGerais({
+  value,
+  onChange,
+  setNotificacao,
+  tiposOcultos = [],
+}) {
   function formatarRealDinamico(valor) {
     valor = valor.replace(/\D/g, "");
     if (!valor) return "R$ 0,00";
@@ -34,10 +93,13 @@ export default function DadosGerais({ value, onChange, setNotificacao }) {
 
       <div>
         <div className="flex items-center gap-1">
-          <label className="mb-1 block text-sm text-white/70">Tipo</label>{" "}
+          <label htmlFor="dg-tipo" className="mb-1 block text-sm text-white/70">
+            Tipo
+          </label>{" "}
           <span className="rounded text-xs text-red-400">*</span>
         </div>
         <select
+          id="dg-tipo"
           value={value.tipo}
           onChange={(e) =>
             onChange({
@@ -53,80 +115,25 @@ export default function DadosGerais({ value, onChange, setNotificacao }) {
             Selecione...
           </option>
 
-          <optgroup className="bg-zinc-700" label="Computadores">
-            <option value="desktop" className="bg-zinc-900">
-              Desktop
-            </option>
-            <option value="notebook" className="bg-zinc-900">
-              Notebook
-            </option>
-            <option value="monitor" className="bg-zinc-900">
-              Monitor
-            </option>
-          </optgroup>
-
-          <optgroup className="bg-zinc-700" label="Dispositivos móveis">
-            <option value="celular" className="bg-zinc-900">
-              Celular
-            </option>
-          </optgroup>
-
-          <optgroup className="bg-zinc-700" label="Rede">
-            <option value="ap" className="bg-zinc-900">
-              AP
-            </option>
-            <option value="switch" className="bg-zinc-900">
-              Switch
-            </option>
-          </optgroup>
-
-          <optgroup className="bg-zinc-700" label="Periféricos & Impressão">
-            <option value="periferico" className="bg-zinc-900">
-              Periférico
-            </option>
-            <option value="impressora" className="bg-zinc-900">
-              Impressora
-            </option>
-          </optgroup>
-
-          <optgroup className="bg-zinc-700" label="Energia">
-            <option value="no-break" className="bg-zinc-900">
-              No-Break
-            </option>
-            <option value="gerador" className="bg-zinc-900">
-              Gerador
-            </option>
-          </optgroup>
-
-          <optgroup className="bg-zinc-700" label="Climatização">
-            <option value="ar-condicionado" className="bg-zinc-900">
-              Ar Condicionado
-            </option>
-          </optgroup>
-
-          <optgroup className="bg-zinc-700" label="Mobiliário">
-            <option value="cadeira" className="bg-zinc-900">
-              Cadeira
-            </option>
-            <option value="movel" className="bg-zinc-900">
-              Móvel
-            </option>
-          </optgroup>
-
-          <optgroup className="bg-zinc-700" label="Ferramentas">
-            <option value="ferramenta" className="bg-zinc-900">
-              Ferramenta
-            </option>
-          </optgroup>
-
-          <optgroup className="bg-zinc-700" label="Outros">
-            <option value="cabo" className="bg-zinc-900">
-              Cabo
-            </option>
-            <option value="outros" className="bg-zinc-900">
-              Outros
-            </option>
-          </optgroup>
+          {GRUPOS_TIPO.map((grupo) => {
+            const opcoes = grupo.opcoes.filter(
+              (o) => !tiposOcultos.includes(o.value)
+            );
+            if (opcoes.length === 0) return null;
+            return (
+              <optgroup
+                key={grupo.label}
+                className="bg-zinc-700"
+                label={grupo.label}
+              >
+                {opcoes.map((o) => (
+                  <option key={o.value} value={o.value} className="bg-zinc-900">
+                    {o.label}
+                  </option>
+                ))}
+              </optgroup>
+            );
+          })}
         </select>
       </div>
 
@@ -227,12 +234,16 @@ export default function DadosGerais({ value, onChange, setNotificacao }) {
 
       <div>
         <div className="flex items-center gap-1">
-          <label className="mb-1 block text-sm text-white/70">
+          <label
+            htmlFor="dg-intervalo"
+            className="mb-1 block text-sm text-white/70"
+          >
             Intervalo de Manutenção
           </label>{" "}
           <span className="rounded text-xs text-red-400">*</span>
         </div>
         <select
+          id="dg-intervalo"
           value={value.intervalo}
           onChange={(e) => onChange({ intervalo: e.target.value })}
           className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500/60"
