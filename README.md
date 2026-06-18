@@ -111,6 +111,8 @@ it-management-system/
 │  ├─ Dockerfile         # imagem do backend (migrate + start)
 │  ├─ app.js             # app Express (helmet, CORS, cookie, rotas, erros)
 │  └─ server.js          # bootstrap (valida env + listen)
+├─ ferramentas/          # utilitários fora da stack web
+│  └─ coletor-desktop/   # script PowerShell que coleta o hardware e cadastra o desktop
 ├─ uploads/              # anexos e fotos de perfil (gerado em runtime / volume)
 ├─ docker-compose.yml    # stack local completa (mysql + back + front)
 ├─ docs/deploy/coolify.md# guia de deploy no Coolify
@@ -236,10 +238,12 @@ Base URL: `http://<host>:3032`
 ### Itens (`/item`) - adm
 
 - `GET /:id` itens por empresa
-- `GET /intivos/:id`
+- `GET /inativos/:id`
 - `GET /workstation/:id`
 - `GET /full/:id` detalhe completo
 - `POST /` **multipart** (anexos)
+- `POST /importar` importação em massa (JSON, itens não-desktop)
+- `POST /coletar-desktop` coleta automatizada de desktop (JSON: item + peças por nome, em transação)
 - `PUT /:id` **multipart** (editar + anexos)
 - `PUT /inativa/:id` inativar
 - `PUT /workstation/remover/:id` desvincular

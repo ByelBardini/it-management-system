@@ -49,7 +49,7 @@ o `migrate + seed` para um *release command* do Coolify evita corrida.
 ## Migração 0002 — cadastro central de marcas/modelos/subtipos
 Primeira migration rastreada após o baseline. Forward-only e **destrutiva** (dropa
 `item_nome`/`peca_nome`); rode num banco resetado em dev (`npm run db:reset`). Foi
-**revisada no lugar** para incluir o escopo por tipo/subtipo — não há `0003`.
+**revisada no lugar** para incluir o escopo por tipo/subtipo.
 - Cria **`marcas`** (`marca_id` PK, `marca_nome` VARCHAR(100), `marca_dominio`
   ENUM('item','peca'), `marca_tipo` VARCHAR(40), `marca_subtipo` VARCHAR(100) **DEFAULT
   `''`**; UNIQUE(`marca_nome`,`marca_dominio`,`marca_tipo`,`marca_subtipo`)), **`subtipos`**
@@ -65,6 +65,21 @@ Primeira migration rastreada após o baseline. Forward-only e **destrutiva** (dr
   (Marca 1-N Modelo; Item/Peca `belongsTo` Marca/Modelo as `marca`/`modelo`). `seed-dev`
   semeia subtipos e marcas escopadas. Endpoints e regras:
   [inventario.md](inventario.md) / [marcas-modelos.md](marcas-modelos.md).
+
+## Migração 0003 — série única ignora desktop
+`0003_serie_unica_ignora_desktop.sql`. Forward-only e **não-destrutiva**. Desarma a
+colisão de `item_num_serie="N/A"` dos desktops sob o UNIQUE global: troca o índice
+`item_num_serie_UNIQUE` por um UNIQUE sobre uma **coluna gerada STORED**
+`item_serie_uniq` = `NULL` para `item_tipo='desktop'` e `item_num_serie` para os
+demais. Assim vários desktops coexistem com `"N/A"` e a unicidade global dos não-desktop
+é preservada. A coluna é gerenciada pelo banco e **não** está nos models (o Sequelize
+só insere as colunas declaradas). Regra de negócio: [inventario.md](inventario.md).
+- **Runbook de deploy:** adicionar uma coluna gerada `STORED` força `ALGORITHM=COPY`
+  (reconstrói a tabela `itens` e trava escritas durante o passo de `migrate`). Desprezível
+  no porte atual; relevante só se a tabela crescer muito. Não é re-executável (não tem
+  `IF EXISTS`): se aplicar mas o processo morrer **antes** do `INSERT` em
+  `schema_migrations`, o re-run falha no `DROP INDEX` e barra o boot — garanta que o 1º
+  deploy com ela conclua sem interrupção (ou rode num *pre-deploy command* em multi-réplica).
 
 ## Decisões de schema (baseline vs. SQL antigo)
 - `pecas.peca_empresa_id` → empresas **CASCADE** (corrige o `NO ACTION` antigo; alinha ao
