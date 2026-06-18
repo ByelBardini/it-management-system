@@ -23,13 +23,48 @@ server {
         proxy_cookie_path / /;
     }
 
+    # PWA: o service worker e o registerSW NÃO podem ser cacheados — senão um redeploy
+    # deixa o app preso num shell velho. Match exato, antes do fallback SPA (senão o
+    # try_files engoliria /sw.js e devolveria o index.html).
+    location = /sw.js {
+        add_header Cache-Control "no-cache" always;
+        types { } default_type "application/javascript";
+        try_files $uri =404;
+    }
+    location = /registerSW.js {
+        add_header Cache-Control "no-cache" always;
+        types { } default_type "application/javascript";
+        try_files $uri =404;
+    }
+    location = /manifest.webmanifest {
+        add_header Cache-Control "no-cache" always;
+        types { } default_type "application/manifest+json";
+        try_files $uri =404;
+    }
+
+    # Digital Asset Links do TWA. Match EXATO: não afeta /.well-known/acme-challenge
+    # (Let's Encrypt) nem cai no fallback SPA. Servido como JSON.
+    location = /.well-known/assetlinks.json {
+        add_header Cache-Control "no-cache" always;
+        default_type application/json;
+        try_files $uri =404;
+    }
+
+    # Assets com hash no nome (Vite): imutáveis, cache longo.
+    location /assets/ {
+        add_header Cache-Control "public, max-age=31536000, immutable" always;
+        try_files $uri =404;
+    }
+
     # SPA: qualquer rota desconhecida cai no index.html (React Router cuida do resto),
-    # com os cabeçalhos de segurança do documento.
+    # com os cabeçalhos de segurança do documento. O index.html é o shell do app, então
+    # NÃO pode ser cacheado (no-cache) — assim o redeploy entrega o HTML novo na hora.
     location / {
         add_header X-Frame-Options "DENY" always;
         add_header X-Content-Type-Options "nosniff" always;
         add_header Referrer-Policy "strict-origin-when-cross-origin" always;
         add_header Content-Security-Policy "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; font-src 'self' data:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'" always;
+        add_header Cache-Control "no-cache" always;
         try_files $uri $uri/ /index.html;
     }
 }

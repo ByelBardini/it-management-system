@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="InfraHub">
+  <!-- Fundo full-bleed (sem cantos transparentes) para ficar seguro como ícone
+       maskable no Android. O sistema aplica a própria máscara. Tema "glass" escuro. -->
+  <rect width="512" height="512" fill="#0A1633" />
+  <!-- Glyph de camadas (inventário), centrado dentro da zona segura (~60%). -->
+  <g fill="none" stroke="#38bdf8" stroke-width="22" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M256 150 L360 202 L256 254 L152 202 Z" />
+    <path d="M152 256 L256 308 L360 256" />
+    <path d="M152 310 L256 362 L360 310" />
+  </g>
+</svg>

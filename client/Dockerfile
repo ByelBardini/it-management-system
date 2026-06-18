@@ -29,5 +29,9 @@ ENV NGINX_ENVSUBST_FILTER=BACKEND_URL
 # e escreve o resultado em /etc/nginx/conf.d/ antes de subir o servidor.
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
+# Digital Asset Links do TWA. Copiado do contexto de build (client/.well-known), NÃO
+# de /dist — o Vite não copia dot-dirs de public/ de forma confiável. O nginx serve
+# este arquivo via `location = /.well-known/assetlinks.json`.
+COPY .well-known/assetlinks.json /usr/share/nginx/html/.well-known/assetlinks.json
 
 EXPOSE 80

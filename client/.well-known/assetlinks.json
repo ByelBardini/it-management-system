@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "br.com.evolutivasistemas.infrahub.cadastro",
+      "sha256_cert_fingerprints": [
+        "SUBSTITUA_PELO_SHA256_DA_CHAVE_DE_ASSINATURA_DO_APK"
+      ]
+    }
+  }
+]
