@@ -41,7 +41,7 @@ router.get("/inativos/:id", autorizarRole("adm"), getItensInativos);
 router.get("/workstation/:id", autorizarRole("adm"), getItensWorkstation);
 router.get("/full/:id", autorizarRole("adm"), getItemFull);
 router.post("/importar", autorizarRole("adm"), importarItens);
-router.post("/coletar-desktop", autorizarRole("adm"), coletarDesktop);
+router.post("/coletar-desktop", autorizarQualquerRole(["adm", "coletor"]), coletarDesktop);
 router.post("/", autorizarQualquerRole(["cadastrador"]), anexosUpload, postItem);
 router.put("/:id", autorizarRole("adm"), anexosUpload, putItem);
 router.put("/inativa/:id", autorizarRole("adm"), inativaItem);
