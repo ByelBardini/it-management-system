@@ -65,14 +65,23 @@ histórico do shell).
 
 ## O que é coletado
 
-| Tipo de peça | Origem (CIM/WMI) | Marca | Modelo | Nº de série |
-|---|---|---|---|---|
-| `processador` | `Win32_Processor` | `Manufacturer` | `Name` | `ProcessorId` |
-| `placa-mae` | `Win32_BaseBoard` | `Manufacturer` | `Product` | `SerialNumber` |
-| `ram` (1 por pente) | `Win32_PhysicalMemory` | `Manufacturer` | `PartNumber` | `SerialNumber` |
-| `armazenamento` | `Win32_DiskDrive` (ignora USB) | `Manufacturer` | `Model` | `SerialNumber` |
-| `placa-video` | `Win32_VideoController` | `AdapterCompatibility` | `Name` | — |
-| `placa-rede` | `Win32_NetworkAdapter` (só físicos) | `Manufacturer` | `Name` | `MACAddress` |
+| Tipo de peça | Origem (CIM/WMI) | Marca | Modelo | Nº de série | Especificações |
+|---|---|---|---|---|---|
+| `processador` | `Win32_Processor` | `Manufacturer` | `Name` | `ProcessorId` | núcleos, threads, clock |
+| `placa-mae` | `Win32_BaseBoard` | `Manufacturer` | `Product` | `SerialNumber` | — |
+| `ram` (1 por pente) | `Win32_PhysicalMemory` | `Manufacturer` | `PartNumber` | `SerialNumber` | capacidade, velocidade, tipo (DDR3/4/5) |
+| `armazenamento` | `Get-PhysicalDisk` (fallback `Win32_DiskDrive`; ignora USB) | derivada do modelo | `FriendlyName`/`Model` | `SerialNumber` | capacidade, mídia (HDD/SSD), conexão (SATA/NVMe/USB) |
+| `placa-video` | `Win32_VideoController` | `AdapterCompatibility` | `Name` | — | memória (best-effort) |
+| `placa-rede` | `Win32_NetworkAdapter` (só físicos) | `Manufacturer` | `Name` | `MACAddress` | velocidade (com link ativo) |
+
+As **especificações** vão num objeto opcional `especificacoes` por peça (rótulo→valor) e
+são gravadas na coluna `peca_especificacoes` (JSON) do inventário; aparecem expandíveis no
+detalhe do desktop e na tabela de peças. Campos que o hardware não informa são omitidos.
+
+> **Armazenamento:** a marca é **derivada** do nome do disco (Samsung, WD, Seagate,
+> Kingston, Crucial…), pois o `Manufacturer` do Windows é um pseudo-fabricante. Quando a
+> marca não é reconhecida, o nome completo do disco é preservado em `especificacoes.descricao`
+> (em vez de ser descartado pela regra "modelo sem marca").
 
 A **marca/modelo do desktop** vêm de `Win32_ComputerSystem` (`Manufacturer`/`Model`),
 sobreponíveis por `-Marca`/`-Modelo`. Valores-placeholder de BIOS comuns (ex.:
