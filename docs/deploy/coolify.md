@@ -46,16 +46,18 @@ Docker). Use o nome/endereço interno que o Coolify mostra para cada recurso.
 | `SECRET_KEY_LOGIN` | `<aleatório forte>` | segredo do JWT |
 | `SECRET_KEY_PASSWORD` | `<exatamente 32 chars>` | AES-256-CBC; o app **não sobe** se o tamanho estiver errado |
 | `COLETOR_API_BASE` | `https://app.seudominio.com/api` | **URL pública** que os PCs da empresa acessam; embutida no `Coletar.bat` do ZIP do coletor. Sem ela, `GET /item/coletar-desktop/download` retorna 500 |
-| `COLETOR_SCRIPT_PATH` | _(opcional)_ | caminho do `coletar-desktop.ps1` na imagem, se não estiver no padrão `../ferramentas/coletor-desktop/` (ver nota abaixo) |
+| `COLETOR_SCRIPT_PATH` | _(opcional)_ | caminho do `coletar-desktop.ps1` na imagem, se não estiver no padrão `assets/coletor/` (relativo ao cwd do backend; ver nota abaixo) |
 
 > O backend **valida os segredos no boot** (`validarAmbiente`) — se faltar `SECRET_KEY_LOGIN`
 > ou o `SECRET_KEY_PASSWORD` não tiver 32 caracteres, o container falha de propósito.
 
 > **Coletor (autoatendimento):** o endpoint de download monta o ZIP a partir do template
-> `ferramentas/coletor-desktop/coletar-desktop.ps1`. Se a imagem do backend **não** incluir
-> essa pasta, copie o script para a imagem (ex.: `COPY ferramentas ...` no Dockerfile) ou
-> aponte `COLETOR_SCRIPT_PATH` para onde ele estiver. Após o deploy, crie a(s) conta(s)
-> `coletor` (vinculadas à empresa) pela tela de **Usuários**. Ver [auth-usuarios.md](../context/auth-usuarios.md).
+> `server/assets/coletor/coletar-desktop.ps1`. O script fica **dentro de `server/`** de
+> propósito: o build do backend usa essa pasta como contexto Docker (`COPY . .`), então o
+> arquivo entra na imagem automaticamente — não precisa de `COPY` extra nem de
+> `COLETOR_SCRIPT_PATH` no padrão. Use `COLETOR_SCRIPT_PATH` só se mover o script para outro
+> lugar. Após o deploy, crie a(s) conta(s) `coletor` (vinculadas à empresa) pela tela de
+> **Usuários**. Ver [auth-usuarios.md](../context/auth-usuarios.md).
 
 ### frontend (Application — Dockerfile, base dir `client/`)
 

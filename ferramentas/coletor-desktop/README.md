@@ -1,5 +1,12 @@
 # Coletor de desktop — InfraHub
 
+> **Onde está o script:** o `coletar-desktop.ps1` agora vive em
+> [`server/assets/coletor/coletar-desktop.ps1`](../../server/assets/coletor/coletar-desktop.ps1).
+> Foi movido para dentro de `server/` de propósito: o build do backend usa essa pasta
+> como contexto Docker, então o script precisa estar lá para entrar na imagem e o
+> endpoint de download funcionar em produção. Os exemplos abaixo usam o nome do arquivo;
+> ajuste o caminho conforme onde você o extrair.
+
 Script PowerShell que lê o hardware de uma máquina Windows e cadastra o **desktop**
 (item + peças) no inventário do InfraHub numa única chamada, via o endpoint
 `POST /item/coletar-desktop`.

@@ -100,8 +100,8 @@ CASCADE, `token_empresa_id` FK→empresas CASCADE, `token_hash` CHAR(64) UNIQUE,
 `token_expira_em` null, `token_criado_em`, `token_ultimo_uso`). Suporta o **autoatendimento
 da coleta de desktop** (papel `coletor` + token revogável embutido no ZIP) — ver
 [auth-usuarios.md](auth-usuarios.md). **Env nova:** `COLETOR_API_BASE` (URL pública que os PCs
-acessam) e, em prod, `COLETOR_SCRIPT_PATH` se o script do coletor não estiver no diretório
-padrão (`../ferramentas/coletor-desktop/`). **Ordem de deploy:** migração → deploy do backend
+acessam) e, em prod, `COLETOR_SCRIPT_PATH` só se o script do coletor não estiver no diretório
+padrão (`server/assets/coletor/`, já incluído na imagem). **Ordem de deploy:** migração → deploy do backend
 → criar conta(s) `coletor` (com empresa) na tela de Usuários → o funcionário baixa o ZIP.
 
 ## Decisões de schema (baseline vs. SQL antigo)
