@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import { ApiError } from "./ApiError.js";
 import { extrairToken } from "../config/seguranca.js";
+import { ColetorToken, Usuario } from "../models/index.js";
+import { hashToken } from "../controllers/helpers/coletorToken.js";
 
 export function autenticar(req, _res, next) {
   // Cookie httpOnly primeiro; header Authorization como fallback.
@@ -53,6 +55,43 @@ export function autorizarQualquerRole(roles) {
 
     next();
   };
+}
+
+// Autentica a coleta de desktop por TOKEN de API (cliente não-browser, sem cookie).
+// Valida o token contra o banco (revogável), confirma a conta ativa e injeta o
+// usuário + o empresa_id do token na requisição — assim a coleta fica escopada à
+// empresa da conta (o script não escolhe a empresa). Usado ANTES do gate de cookie.
+export async function autenticarColetorToken(req, _res, next) {
+  const token = extrairToken(req);
+  if (!token) {
+    throw ApiError.unauthorized("Token não fornecido");
+  }
+
+  const registro = await ColetorToken.findOne({
+    where: { token_hash: hashToken(token), token_ativo: 1 },
+  });
+  if (!registro) {
+    throw ApiError.unauthorized("Token inválido ou revogado");
+  }
+  if (registro.token_expira_em && new Date(registro.token_expira_em) < new Date()) {
+    throw ApiError.unauthorized("Token expirado");
+  }
+
+  const usuario = await Usuario.findByPk(registro.token_usuario_id);
+  if (!usuario || usuario.usuario_ativo == 0) {
+    throw ApiError.unauthorized("Conta de coleta inativa");
+  }
+
+  req.usuario = {
+    id: usuario.usuario_id,
+    tipo: usuario.usuario_tipo,
+    nome: usuario.usuario_nome,
+  };
+  // Escopa a coleta à empresa do token (ignora o que vier no corpo).
+  req.body = req.body || {};
+  req.body.item_empresa_id = registro.token_empresa_id;
+
+  next();
 }
 
 export function autorizarUser() {
