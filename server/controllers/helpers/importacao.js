@@ -56,6 +56,9 @@ export const LIMITES = {
   MARCA: 100,
   MODELO: 100,
   SUBTIPO: 100,
+  // Teto do JSON serializado de peca_especificacoes — defesa contra payload abusivo
+  // que estouraria dentro da transação. Cobre folgadamente as specs por tipo de peça.
+  PECA_ESPECIFICACOES: 2000,
 };
 
 const RE_NUMERO = /^\d+(\.\d+)?$/; // não-negativo, ponto decimal (formato já normalizado)
@@ -81,6 +84,20 @@ export function numeroValido(v) {
 
 export function inteiroValido(v) {
   return RE_INTEIRO.test(texto(v));
+}
+
+// Valida o objeto OPCIONAL de especificações técnicas de uma peça (peca_especificacoes):
+// rótulo→valor (capacidade, tipo DDR, conexão do disco, etc.). Ausente (undefined/null)
+// é válido. Quando presente, precisa ser objeto simples (não array) e caber no teto de
+// tamanho — defesa contra payload abusivo. Retorna lista de motivos (vazia = ok).
+// Compartilhado pela coleta de desktop e pelo cadastro manual de peça.
+export function validarEspecificacoes(especificacoes) {
+  if (especificacoes === undefined || especificacoes === null) return [];
+  if (typeof especificacoes !== "object" || Array.isArray(especificacoes))
+    return ["especificações inválidas (esperado um objeto)"];
+  if (JSON.stringify(especificacoes).length > LIMITES.PECA_ESPECIFICACOES)
+    return [`especificações excedem ${LIMITES.PECA_ESPECIFICACOES} caracteres`];
+  return [];
 }
 
 // Data no formato ISO AAAA-MM-DD e que existe de verdade (rejeita 2024-13-40 e dd/mm/aaaa).
@@ -221,6 +238,11 @@ export function validarPecaColetada(peca) {
     motivos.push("preço inválido (use ponto decimal, ex.: 499.90)");
   if (texto(peca.data_aquisicao) && !dataValida(peca.data_aquisicao))
     motivos.push("data de aquisição inválida (use AAAA-MM-DD)");
+
+  // especificacoes é OPCIONAL (validador compartilhado com o cadastro manual de peça).
+  for (const motivo of validarEspecificacoes(peca.especificacoes)) {
+    motivos.push(motivo);
+  }
 
   return motivos;
 }

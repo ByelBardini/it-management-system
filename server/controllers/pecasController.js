@@ -5,14 +5,36 @@ import {
   errosLotePecas,
   resolverMarcaModelo,
   novoCacheResolucao,
+  validarEspecificacoes,
 } from "./helpers/importacao.js";
 
 export async function postPeca(req, res) {
-  const { id_empresa, tipo, preco, data_aquisicao, numSerie, marca_id, modelo_id } =
-    req.body;
+  const {
+    id_empresa,
+    tipo,
+    preco,
+    data_aquisicao,
+    numSerie,
+    marca_id,
+    modelo_id,
+    especificacoes,
+  } = req.body;
   if (!id_empresa || !tipo || !preco || !data_aquisicao || !numSerie) {
     throw ApiError.badRequest("Todos os dados são necessários");
   }
+
+  const motivosEspec = validarEspecificacoes(especificacoes);
+  if (motivosEspec.length) throw ApiError.badRequest(motivosEspec[0]);
+
+  // Objeto simples e não-vazio é persistido; caso contrário grava null.
+  const especNormalizadas =
+    especificacoes &&
+    typeof especificacoes === "object" &&
+    !Array.isArray(especificacoes) &&
+    Object.keys(especificacoes).length > 0
+      ? especificacoes
+      : null;
+
   await Peca.create(
     {
       peca_empresa_id: id_empresa,
@@ -24,6 +46,7 @@ export async function postPeca(req, res) {
       peca_preco: preco,
       peca_em_uso: 0,
       peca_data_aquisicao: data_aquisicao,
+      peca_especificacoes: especNormalizadas,
     },
     { usuarioId: req.usuario.id }
   );

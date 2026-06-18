@@ -67,6 +67,13 @@ Peca.init(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    // Especificações técnicas por tipo de peça (capacidade, velocidade/DDR da RAM,
+    // mídia/conexão do armazenamento, núcleos/clock da CPU, etc.). Objeto de
+    // rótulo→valor preenchido pela coleta de hardware; null em peças sem coleta.
+    peca_especificacoes: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
   },
   {
     sequelize,

@@ -153,7 +153,13 @@ export async function getItemFull(req, res) {
       {
         model: Peca,
         as: "pecas",
-        attributes: ["peca_id", "peca_tipo", "peca_preco", "peca_em_uso"],
+        attributes: [
+          "peca_id",
+          "peca_tipo",
+          "peca_preco",
+          "peca_em_uso",
+          "peca_especificacoes",
+        ],
         separate: true,
         order: [["peca_id", "ASC"]],
         include: [
@@ -794,6 +800,13 @@ export async function coletarDesktop(req, res) {
           cache
         );
 
+      const especificacoes =
+        p.especificacoes &&
+        typeof p.especificacoes === "object" &&
+        !Array.isArray(p.especificacoes)
+          ? p.especificacoes
+          : null;
+
       await Peca.create(
         {
           peca_empresa_id: b.item_empresa_id,
@@ -806,6 +819,7 @@ export async function coletarDesktop(req, res) {
           peca_preco: Number(p.preco) || 0,
           peca_em_uso: 1,
           peca_data_aquisicao: texto(p.data_aquisicao) || null,
+          peca_especificacoes: especificacoes,
         },
         { transaction: t, usuarioId: req.usuario.id }
       );
