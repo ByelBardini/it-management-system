@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Coletor de desktop do InfraHub — lê o hardware desta máquina Windows e cadastra
   o desktop (item + peças) no inventário numa única chamada ao endpoint
@@ -100,20 +100,74 @@ function Limpar([string] $valor) {
   return $v
 }
 
-function New-Peca($tipo, $marca, $modelo, $numSerie) {
+function New-Peca($tipo, $marca, $modelo, $numSerie, $especificacoes) {
   $m  = Limpar $marca
   $mo = Limpar $modelo
   # O backend recusa "modelo sem marca"; se a marca sumiu (vazia ou placeholder),
   # descarta o modelo junto — a peça grava marca/modelo nulos em vez de derrubar
   # o lote inteiro com erro 400.
   if (-not $m) { $mo = '' }
-  return [ordered]@{
+  $obj = [ordered]@{
     tipo      = $tipo
     marca     = $m
     modelo    = $mo
     num_serie = Limpar $numSerie
     preco     = ''
   }
+  # especificacoes (capacidade, velocidade/DDR, mídia/conexão, etc.) é OPCIONAL: só
+  # entra no payload se houver ao menos um campo, mantendo retrocompatibilidade.
+  if ($especificacoes -and $especificacoes.Count -gt 0) {
+    $obj['especificacoes'] = $especificacoes
+  }
+  return $obj
+}
+
+# Converte bytes em texto legível (GB, ou TB para discos grandes). Vazio se não houver
+# tamanho. Usado em capacidade de RAM/armazenamento e memória de vídeo.
+function FormatarTamanho($bytes) {
+  $b = [double]($bytes)
+  if (-not $b -or $b -le 0) { return '' }
+  if ($b -ge 1TB) { return "{0} TB" -f [math]::Round($b / 1TB, 1) }
+  if ($b -ge 1GB) { return "{0} GB" -f [math]::Round($b / 1GB, 0) }
+  return "{0} MB" -f [math]::Round($b / 1MB, 0)
+}
+
+# Marcas conhecidas de armazenamento, procuradas (em ordem) no FriendlyName/Model do
+# disco — cuja coluna Manufacturer quase sempre é pseudo. Sem isso, o modelo do disco
+# seria descartado (regra "modelo sem marca"). Pares [trecho em minúsculas, marca].
+$MARCAS_DISCO = @(
+  @('western digital', 'Western Digital'),
+  @('wdc', 'Western Digital'),
+  @('wd_', 'Western Digital'),
+  @('samsung', 'Samsung'),
+  @('seagate', 'Seagate'),
+  @('kingston', 'Kingston'),
+  @('crucial', 'Crucial'),
+  @('sandisk', 'SanDisk'),
+  @('kioxia', 'Kioxia'),
+  @('toshiba', 'Toshiba'),
+  @('micron', 'Micron'),
+  @('intel', 'Intel'),
+  @('adata', 'ADATA'),
+  @('hgst', 'HGST'),
+  @('hitachi', 'Hitachi'),
+  @('corsair', 'Corsair'),
+  @('lexar', 'Lexar'),
+  @('pny', 'PNY')
+)
+
+function DerivarMarcaDisco([string] $texto) {
+  if ([string]::IsNullOrWhiteSpace($texto)) { return '' }
+  $t = $texto.ToLower()
+  foreach ($par in $MARCAS_DISCO) {
+    if ($t -like "*$($par[0])*") { return $par[1] }
+  }
+  return ''
+}
+
+# Tipo de memória pelo código SMBIOSMemoryType (mais confiável que MemoryType).
+$DDR_POR_CODIGO = @{
+  20 = 'DDR'; 21 = 'DDR2'; 24 = 'DDR3'; 26 = 'DDR4'; 34 = 'DDR5'
 }
 
 Write-Host "Coletando hardware desta máquina..." -ForegroundColor Cyan
@@ -124,9 +178,13 @@ $desktopModelo = if ($Modelo) { $Modelo } else { Limpar $cs.Model }
 
 $pecas = New-Object System.Collections.Generic.List[object]
 
-# Processador(es)
+# Processador(es) — núcleos, threads e clock
 foreach ($cpu in Get-CimInstance Win32_Processor) {
-  $pecas.Add( (New-Peca 'processador' $cpu.Manufacturer $cpu.Name $cpu.ProcessorId) )
+  $espec = [ordered]@{}
+  if ($cpu.NumberOfCores)              { $espec['nucleos'] = "$($cpu.NumberOfCores)" }
+  if ($cpu.NumberOfLogicalProcessors) { $espec['threads'] = "$($cpu.NumberOfLogicalProcessors)" }
+  if ($cpu.MaxClockSpeed)              { $espec['clock']   = "{0} MHz" -f $cpu.MaxClockSpeed }
+  $pecas.Add( (New-Peca 'processador' $cpu.Manufacturer $cpu.Name $cpu.ProcessorId $espec) )
 }
 
 # Placa-mãe
@@ -134,29 +192,80 @@ foreach ($mb in Get-CimInstance Win32_BaseBoard) {
   $pecas.Add( (New-Peca 'placa-mae' $mb.Manufacturer $mb.Product $mb.SerialNumber) )
 }
 
-# Memória (uma peça por pente)
+# Memória (uma peça por pente) — capacidade, velocidade e tipo (DDR)
 foreach ($mem in Get-CimInstance Win32_PhysicalMemory) {
-  $pecas.Add( (New-Peca 'ram' $mem.Manufacturer $mem.PartNumber $mem.SerialNumber) )
+  $espec = [ordered]@{}
+  $cap = FormatarTamanho $mem.Capacity
+  if ($cap) { $espec['capacidade'] = $cap }
+  # ConfiguredClockSpeed = velocidade efetiva; Speed = nominal (fallback).
+  $clk = if ($mem.ConfiguredClockSpeed) { $mem.ConfiguredClockSpeed } else { $mem.Speed }
+  if ($clk) { $espec['velocidade'] = "{0} MHz" -f $clk }
+  $tipoMem = $DDR_POR_CODIGO[[int]$mem.SMBIOSMemoryType]
+  if ($tipoMem) { $espec['tipo'] = $tipoMem }
+  $pecas.Add( (New-Peca 'ram' $mem.Manufacturer $mem.PartNumber $mem.SerialNumber $espec) )
 }
 
-# Armazenamento (ignora discos USB/removíveis)
-foreach ($disk in Get-CimInstance Win32_DiskDrive |
-    Where-Object { $_.InterfaceType -ne 'USB' -and $_.MediaType -notmatch 'Removable' }) {
-  # Win32_DiskDrive.Manufacturer quase sempre é um pseudo-fabricante do Windows
-  # (ex.: "(Standard disk drives)", inclusive localizado) — não vale como marca real.
-  $marcaDisco = if ($disk.Manufacturer -match 'disk drive|disco') { '' } else { $disk.Manufacturer }
-  $pecas.Add( (New-Peca 'armazenamento' $marcaDisco $disk.Model $disk.SerialNumber) )
+# Armazenamento — capacidade, mídia (HDD/SSD) e conexão (SATA/NVMe/USB).
+# Fonte preferida: Get-PhysicalDisk (módulo Storage, Win8/2012+), que lista discos
+# físicos reais (sem leitores de cartão/slots vazios do Win32_DiskDrive) e expõe
+# MediaType/BusType. Fallback para Win32_DiskDrive em PowerShell/SO antigos.
+$discos = $null
+try { $discos = @(Get-PhysicalDisk -ErrorAction Stop) } catch { $discos = $null }
+
+if ($discos) {
+  foreach ($d in $discos | Where-Object { "$($_.BusType)" -ne 'USB' }) {
+    $modelo = Limpar $d.FriendlyName
+    $marca  = DerivarMarcaDisco $modelo
+    $espec  = [ordered]@{}
+    $cap = FormatarTamanho $d.Size
+    if ($cap) { $espec['capacidade'] = $cap }
+    $midia = "$($d.MediaType)"
+    if ($midia -and $midia -ne 'Unspecified') { $espec['midia'] = $midia }
+    $conexao = "$($d.BusType)"
+    if ($conexao -and $conexao -ne 'Unspecified') { $espec['conexao'] = $conexao }
+    # Se a marca não foi derivada, o modelo seria descartado (regra "modelo sem
+    # marca"); preserva-o na descrição para não perder a identidade do disco.
+    if (-not $marca -and $modelo) { $espec['descricao'] = $modelo }
+    $pecas.Add( (New-Peca 'armazenamento' $marca $modelo $d.SerialNumber $espec) )
+  }
+} else {
+  foreach ($disk in Get-CimInstance Win32_DiskDrive |
+      Where-Object { $_.InterfaceType -ne 'USB' -and $_.MediaType -notmatch 'Removable' }) {
+    # Win32_DiskDrive.Manufacturer quase sempre é um pseudo-fabricante do Windows
+    # (ex.: "(Standard disk drives)", inclusive localizado) — não vale como marca real.
+    $modelo = Limpar $disk.Model
+    $marca  = DerivarMarcaDisco $modelo
+    $espec  = [ordered]@{}
+    $cap = FormatarTamanho $disk.Size
+    if ($cap) { $espec['capacidade'] = $cap }
+    if ($disk.InterfaceType) { $espec['conexao'] = "$($disk.InterfaceType)" }
+    if (-not $marca -and $modelo) { $espec['descricao'] = $modelo }
+    $pecas.Add( (New-Peca 'armazenamento' $marca $modelo $disk.SerialNumber $espec) )
+  }
 }
 
-# Placa de vídeo
+# Placa de vídeo — memória de vídeo (best-effort)
 foreach ($gpu in Get-CimInstance Win32_VideoController | Where-Object { $_.Name }) {
-  $pecas.Add( (New-Peca 'placa-video' $gpu.AdapterCompatibility $gpu.Name $null) )
+  $espec = [ordered]@{}
+  # AdapterRAM é uint32 e satura em ~4 GB para placas maiores — valor aproximado.
+  if ($gpu.AdapterRAM -and [double]$gpu.AdapterRAM -gt 0) {
+    $mem = FormatarTamanho $gpu.AdapterRAM
+    if ($mem) { $espec['memoria'] = $mem }
+  }
+  $pecas.Add( (New-Peca 'placa-video' $gpu.AdapterCompatibility $gpu.Name $null $espec) )
 }
 
-# Placa de rede (apenas adaptadores físicos, sem virtuais)
+# Placa de rede (apenas adaptadores físicos, sem virtuais) — velocidade do enlace
 foreach ($nic in Get-CimInstance Win32_NetworkAdapter |
     Where-Object { $_.PhysicalAdapter -and $_.PNPDeviceID -and $_.PNPDeviceID -notlike 'ROOT\*' }) {
-  $pecas.Add( (New-Peca 'placa-rede' $nic.Manufacturer $nic.Name $nic.MACAddress) )
+  $espec = [ordered]@{}
+  # Speed é em bits/s e só é confiável com o link ativo (0/nulo quando desconectado).
+  if ($nic.Speed -and [double]$nic.Speed -gt 0) {
+    $mbps = [math]::Round([double]$nic.Speed / 1000000, 0)
+    if ($mbps -ge 1000) { $espec['velocidade'] = "{0} Gbps" -f [math]::Round($mbps / 1000, 0) }
+    else                { $espec['velocidade'] = "{0} Mbps" -f $mbps }
+  }
+  $pecas.Add( (New-Peca 'placa-rede' $nic.Manufacturer $nic.Name $nic.MACAddress $espec) )
 }
 
 if ($pecas.Count -eq 0) {
@@ -174,12 +283,18 @@ $payload = [ordered]@{
 if ($PSBoundParameters.ContainsKey('SetorId'))       { $payload['setor_id'] = $SetorId }
 if ($PSBoundParameters.ContainsKey('WorkstationId')) { $payload['workstation_id'] = $WorkstationId }
 
-$json = $payload | ConvertTo-Json -Depth 6
+# Depth 8: payload -> pecas -> peca -> especificacoes -> valores.
+$json = $payload | ConvertTo-Json -Depth 8
 
 Write-Host ("Desktop: {0} {1}" -f $desktopMarca, $desktopModelo) -ForegroundColor Green
 Write-Host ("Peças coletadas: {0}" -f $pecas.Count) -ForegroundColor Green
 foreach ($p in $pecas) {
   Write-Host ("  - {0}: {1} {2}" -f $p.tipo, $p.marca, $p.modelo)
+  if ($p.Contains('especificacoes')) {
+    $resumo = ($p.especificacoes.GetEnumerator() |
+      ForEach-Object { "{0}: {1}" -f $_.Key, $_.Value }) -join ', '
+    Write-Host ("      {0}" -f $resumo) -ForegroundColor DarkGray
+  }
 }
 
 if ($DryRun) {
@@ -235,3 +350,5 @@ try {
 
 Write-Host "`nOK - $($resposta.message)" -ForegroundColor Green
 Write-Host ("  item_id: {0} | pecas criadas: {1}" -f $resposta.item_id, $resposta.pecas_criadas)
+
+
