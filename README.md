@@ -63,6 +63,7 @@ Sistema **web** para gestão de TI (inventário, manutenções, setores/workstat
 - **Manutenções**: Controle do intervalo entre manutenções, tendo a função de realizar a manutenção, com atualização dinâmica entre a última manutenção e o prazo entre elas.
 - **Dashboard Dinâmico**: Atualizado automaticamente com os dados cadastrados no sistema, exibindo os principais indicadores dos dados cadastrados.
 - **Perfil do Usuário**: Personalização leve, permitindo trocar seu nome, foto e senha, podendo ser realizado apenas pelo próprio usuário.
+- **App de cadastro mobile (PWA/TWA)**: Rota standalone `/cadastro-mobile`, instalável como app e empacotável em **APK fora de loja**, para cadastro rápido em campo (foto pela câmera, leitura de código de barras/QR, fila offline com reenvio automático). Usa o papel restrito **`cadastrador`** — sem poderes de admin no aparelho. Ver seção abaixo.
 
 ## Stack
 
@@ -208,6 +209,25 @@ Dockerfile). Passo a passo, variáveis por app, rede interna e volume de uploads
 - CORS por **allowlist** (`CORS_ORIGIN`), **rate-limit** no `/login`, **helmet** e `trust proxy`
 - Segredos validados no boot (`SECRET_KEY_PASSWORD` precisa ter 32 caracteres)
 
+## App de cadastro mobile (PWA/TWA)
+
+A rota **`/cadastro-mobile`** é um PWA instalável (`vite-plugin-pwa`, service worker, manifest)
+empacotável como **APK via TWA** (Bubblewrap/PWABuilder), para cadastrar itens em campo:
+
+- **Reuso total** da cascata Tipo→Subtipo→Marca→Modelo e dos campos do cadastro web (`desktop`
+  fica de fora — é montado por peças).
+- **Câmera**: tira foto do item (comprimida) e lê código de barras/QR (`BarcodeDetector` nativo).
+- **Offline-first**: sem rede, o cadastro entra numa **fila** (IndexedDB) e é reenviado
+  automaticamente quando a conexão volta (drena no boot, no evento `online` e após cada cadastro).
+- **Papel `cadastrador`**: só cria itens/marcas/modelos/subtipos e lê a cascata — **não** edita,
+  exclui nem importa. Evita embarcar credencial `adm` num APK distribuído fora de loja. A
+  autorização nas rotas passou a ser **por verbo** (não mais global). Criar o usuário é passo
+  manual/seed; a migração `0004` adiciona o valor `cadastrador` ao ENUM `usuario_tipo`.
+- **Mesma origem**: o app carrega a origem que serve `/api` (nginx faz proxy) — cookie
+  `SameSite=Strict` funciona e nada de credencial vai no APK. A origem pública exata **precisa**
+  estar em `CORS_ORIGIN`. Empacotamento, `assetlinks.json`, ícones e checklist em
+  [docs/deploy/coolify.md](docs/deploy/coolify.md).
+
 ## Resumo dos endpoints
 
 Base URL: `http://<host>:3032`
@@ -235,13 +255,17 @@ Base URL: `http://<host>:3032`
 - `POST /` criar
 - `DELETE /:id` remover
 
-### Itens (`/item`) - adm
+### Itens (`/item`) - adm (exceto `POST /`)
+
+> Autorização **por verbo**: `POST /` (criar) liberado a **`cadastrador`** + adm (app mobile);
+> os demais verbos seguem **adm**. As rotas da cascata (`GET/POST /marca`, `GET /marca/:id/modelos`,
+> `POST /modelo`, `GET/POST /subtipo`) também liberam o `cadastrador`.
 
 - `GET /:id` itens por empresa
 - `GET /inativos/:id`
 - `GET /workstation/:id`
 - `GET /full/:id` detalhe completo
-- `POST /` **multipart** (anexos)
+- `POST /` **multipart** (anexos) — **cadastrador** + adm
 - `POST /importar` importação em massa (JSON, itens não-desktop)
 - `POST /coletar-desktop` coleta automatizada de desktop (JSON: item + peças por nome, em transação)
 - `PUT /:id` **multipart** (editar + anexos)

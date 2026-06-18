@@ -13,6 +13,8 @@ server/db/
   pendentes.js        função pura: migrations ainda não aplicadas (testada)
   migrations/0001_init.sql   baseline consolidado das 11 tabelas
   migrations/0002_marcas_modelos.sql   cadastro central marcas/modelos/subtipos + FKs em itens/pecas
+  migrations/0003_serie_unica_ignora_desktop.sql   série única ignora desktop (coluna gerada)
+  migrations/0004_role_cadastrador.sql   ENUM usuario_tipo += 'cadastrador' (app mobile)
   README.md           uso rápido dos comandos
 server/test/unit/db/pendentes.spec.js   teste da função pura
 ```
@@ -80,6 +82,15 @@ só insere as colunas declaradas). Regra de negócio: [inventario.md](inventario
   `IF EXISTS`): se aplicar mas o processo morrer **antes** do `INSERT` em
   `schema_migrations`, o re-run falha no `DROP INDEX` e barra o boot — garanta que o 1º
   deploy com ela conclua sem interrupção (ou rode num *pre-deploy command* em multi-réplica).
+
+## Migração 0004 — role cadastrador
+`0004_role_cadastrador.sql`. Forward-only e **aditiva** (não toca linhas existentes):
+`ALTER TABLE usuarios MODIFY usuario_tipo ENUM('adm','usuario','cadastrador') NOT NULL`.
+Acrescenta o valor `cadastrador` ao ENUM, na **mesma ordem** do model (`models/usuarios.js`).
+Suporta o app de cadastro mobile (PWA/TWA) com um papel restrito — autorização por verbo
+nas rotas, ver [auth-usuarios.md](auth-usuarios.md). **Ordem de deploy:** migração → deploy
+do backend → criar usuário(s) `cadastrador` (seed/manual) → distribuir o APK. A string
+`"cadastrador"` é idêntica em ENUM, middleware e seed.
 
 ## Decisões de schema (baseline vs. SQL antigo)
 - `pecas.peca_empresa_id` → empresas **CASCADE** (corrige o `NO ACTION` antigo; alinha ao

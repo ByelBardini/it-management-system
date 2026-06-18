@@ -95,6 +95,47 @@ antes de subir a API.
 - **backend:** normalmente **sem** domínio público (acessado só pelo front via rede interna).
   Só publique se for usar o `BACKEND_URL` apontando para o domínio público.
 
+## 5b. App de cadastro mobile (PWA instalável + APK via TWA)
+
+A rota `/cadastro-mobile` é um PWA instalável, empacotável como **APK fora de loja** via TWA
+(Bubblewrap/PWABuilder). Roda na **mesma origem** do front (nginx serve o app e faz proxy de
+`/api`), então o cookie `SameSite=Strict` trafega e **nenhuma credencial vai no APK**.
+
+**Pré-requisitos de deploy:**
+- **HTTPS obrigatório** (o Coolify já provê via Let's Encrypt). SW e TWA exigem origem segura.
+- **`CORS_ORIGIN` do backend DEVE conter a origem pública EXATA do app** (esquema+host, sem
+  barra final), ex.: `CORS_ORIGIN=https://app.seudominio.com`. **Sem isso, `origemConfiavel`
+  barra TODA mutação do cadastrador (e o login) com 403 "Origem não permitida"**, mesmo com
+  cookie válido. A fila offline trata 403 como *bloqueio* (não como sessão), então não entra em
+  loop de re-login — mas os cadastros não sobem até a origem ser liberada. Use o **mesmo
+  hostname** do app web; se o cadastro usar subdomínio próprio, inclua-o também.
+- O `nginx.conf.template` já serve `/sw.js`, `/registerSW.js`, `/manifest.webmanifest` (no-cache)
+  e `/.well-known/assetlinks.json` (`application/json`, match exato) **antes** do fallback SPA;
+  `/assets/` com cache imutável. O `Dockerfile` faz `COPY .well-known/assetlinks.json` para a
+  raiz servida (o Vite não copia dot-dirs de `public/` de forma confiável).
+
+**Ícones (passo manual antes do build/empacotamento):** o manifest referencia PNGs
+(`pwa-192x192.png`, `pwa-512x512.png`, `maskable-icon-512x512.png`, `apple-touch-icon-180x180.png`).
+Gere-os a partir de `client/public/icon.svg`:
+```
+cd client && npx @vite-pwa/assets-generator --preset minimal-2023 public/icon.svg
+```
+(isso também substitui o `favicon.ico` atual, que é um PNG grande renomeado). Sem os PNGs o
+PWA ainda instala (via `icon.svg`), mas o Bubblewrap costuma exigir raster para gerar o APK.
+
+**Procedimento do APK (TWA, fora do repo):**
+1. `bubblewrap init --manifest=https://app.seudominio.com/manifest.webmanifest`
+   (`applicationId` = `br.com.evolutivasistemas.infrahub.cadastro`, igual ao `package_name` do
+   `assetlinks.json`).
+2. `bubblewrap build` → **guarde o keystore** (a perda impede atualizar o APK).
+3. `keytool -printcert -jarfile app-release-signed.apk` → copie o **SHA-256** e cole em
+   `client/.well-known/assetlinks.json` (substituindo o placeholder), depois **redeploy do front**.
+4. `adb install app-release-signed.apk` e valide em Android real.
+
+**Criar usuário(s) `cadastrador`:** passo manual/seed (a UI de Usuários ainda só oferece
+`adm`/`usuario`). A migração `0004` adiciona o valor ao ENUM — aplique-a antes (roda no
+`db:migrate` do start). Não embarque credencial `adm` no APK.
+
 ## 6. Checklist de validação pós-deploy
 
 - [ ] `https://app.seudominio.com` carrega o login.
@@ -103,6 +144,9 @@ antes de subir a API.
 - [ ] Upload e download de anexo funcionam; após um **redeploy**, o anexo continua lá (volume ok).
 - [ ] Logout limpa o cookie e volta para o login.
 - [ ] `GET /api/health` (ou o `/health` interno) responde `{ status: "ok" }`.
+- [ ] (mobile) `https://app.seudominio.com/cadastro-mobile` instala como PWA; abre offline.
+- [ ] (mobile) a origem do app está em `CORS_ORIGIN`: login e `POST /item` do cadastrador **não** dão 403.
+- [ ] (mobile) `GET /.well-known/assetlinks.json` responde JSON com o SHA-256 real; o APK do TWA abre **sem barra de URL**.
 
 ## Validação local (antes do Coolify)
 

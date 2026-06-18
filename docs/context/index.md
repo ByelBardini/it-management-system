@@ -27,5 +27,7 @@ Estes documentos são a **fonte de verdade leve** para os agentes (`/plan`, `/ex
 | Manutenções e dashboard | [manutencoes.md](manutencoes.md) | `manutencaoController`, `dashboardController` | `Manutencoes`, `App` (dashboard) |
 | Empresas, setores, workstations | [empresas-setores-workstations.md](empresas-setores-workstations.md) | `empresaController`, `setorController`, `workstationController` | `Empresas`, `Workstations`, `Configuracoes` |
 
+> **App de cadastro mobile (PWA/TWA):** rota standalone `/cadastro-mobile` que só cria itens com o papel restrito `cadastrador`, com fila offline (IndexedDB). Atravessa auth (papel + `autorizarQualquerRole`), inventário (cadastro) e frontend-core (PWA/`vite-plugin-pwa`) — ver [auth-usuarios.md](auth-usuarios.md), [frontend-core.md](frontend-core.md) e [../deploy/coolify.md](../deploy/coolify.md).
+
 ## Hierarquia de dados
 `Empresa → Setor → Workstation → Item` (com Características, Anexos e Peças pendurados no Item). A **empresa ativa** é escolhida em `Empresas` e guardada em `localStorage["empresa_id"]`, usada por todas as outras telas.
