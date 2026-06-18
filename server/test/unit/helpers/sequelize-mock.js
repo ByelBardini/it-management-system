@@ -31,6 +31,7 @@ export const MODEL_NAMES = [
   "Marca",
   "Modelo",
   "Subtipo",
+  "ColetorToken",
 ];
 
 // Métodos estáticos de model usados pelos controllers
