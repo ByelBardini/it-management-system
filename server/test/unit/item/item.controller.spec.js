@@ -4,8 +4,11 @@ import {
   getItens,
   postItem,
   importarItens,
+  coletarDesktop,
+  putItem,
 } from "../../../controllers/itemController.js";
 import { mockReq, mockRes } from "../helpers/http-mock.js";
+import { mockInstance } from "../helpers/sequelize-mock.js";
 
 vi.mock("../../../models/index.js", async () => {
   const { createModelsMock } = await import("../helpers/sequelize-mock.js");
@@ -336,6 +339,324 @@ describe("itemController", () => {
       expect(db.Marca.findOne).toHaveBeenCalledTimes(1);
       expect(db.Marca.create).toHaveBeenCalledTimes(1);
       expect(db.Item.create).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("coletarDesktop", () => {
+    // Por padrão marca/modelo ainda não existem e são criados na resolução.
+    function mockResolucaoCadastro() {
+      db.Marca.findOne.mockResolvedValue(null);
+      db.Marca.create.mockResolvedValue({ marca_id: 1 });
+      db.Modelo.findOne.mockResolvedValue(null);
+      db.Modelo.create.mockResolvedValue({ modelo_id: 1 });
+    }
+
+    function corpoValido(over = {}) {
+      return {
+        item_empresa_id: 1,
+        etiqueta: "DSK-014",
+        marca: "Dell",
+        modelo: "OptiPlex 7090",
+        pecas: [
+          { tipo: "processador", marca: "Intel", modelo: "Core i5", preco: "100" },
+          { tipo: "ram", marca: "Kingston", preco: "200" },
+        ],
+        ...over,
+      };
+    }
+
+    it("cria o desktop com peças, resolvendo marca/modelo por nome e somando o preço", async () => {
+      mockResolucaoCadastro();
+      db.Item.create.mockResolvedValue({ item_id: 50 });
+      db.Peca.create.mockResolvedValue({ peca_id: 1 });
+
+      const req = mockReq({ body: corpoValido() });
+      const res = mockRes();
+
+      await coletarDesktop(req, res);
+
+      const [itemArgs] = db.Item.create.mock.calls[0];
+      expect(itemArgs).toMatchObject({
+        item_tipo: "desktop",
+        item_num_serie: "N/A",
+        item_preco: 300,
+      });
+      expect(db.Peca.create).toHaveBeenCalledTimes(2);
+      const [peca0] = db.Peca.create.mock.calls[0];
+      expect(peca0).toMatchObject({
+        peca_item_id: 50,
+        peca_em_uso: 1,
+        peca_ativa: 1,
+      });
+      expect(res.status).toHaveBeenCalledWith(201);
+      const corpo = res.json.mock.calls[0][0];
+      expect(corpo).toMatchObject({ item_id: 50, pecas_criadas: 2 });
+    });
+
+    it("usa defaults de série e preço quando a peça não os traz", async () => {
+      mockResolucaoCadastro();
+      db.Item.create.mockResolvedValue({ item_id: 51 });
+      db.Peca.create.mockResolvedValue({ peca_id: 1 });
+
+      const req = mockReq({
+        body: corpoValido({
+          marca: "",
+          modelo: "",
+          pecas: [{ tipo: "ram", marca: "Kingston" }],
+        }),
+      });
+      const res = mockRes();
+
+      await coletarDesktop(req, res);
+
+      const [itemArgs] = db.Item.create.mock.calls[0];
+      expect(itemArgs).toMatchObject({ item_preco: 0 });
+      const [peca0] = db.Peca.create.mock.calls[0];
+      expect(peca0).toMatchObject({ peca_num_serie: "N/A", peca_preco: 0 });
+    });
+
+    it("cria o desktop sem marca/modelo quando não informados", async () => {
+      db.Item.create.mockResolvedValue({ item_id: 52 });
+      db.Peca.create.mockResolvedValue({ peca_id: 1 });
+
+      const req = mockReq({
+        body: corpoValido({ marca: "", modelo: "", pecas: [{ tipo: "ram" }] }),
+      });
+      const res = mockRes();
+
+      await coletarDesktop(req, res);
+
+      const [itemArgs] = db.Item.create.mock.calls[0];
+      expect(itemArgs).toMatchObject({
+        item_marca_id: null,
+        item_modelo_id: null,
+      });
+      expect(res.status).toHaveBeenCalledWith(201);
+    });
+
+    it("reaproveita a marca repetida das peças uma única vez (cache do lote)", async () => {
+      mockResolucaoCadastro();
+      db.Marca.create.mockResolvedValue({ marca_id: 7 });
+      db.Item.create.mockResolvedValue({ item_id: 53 });
+      db.Peca.create.mockResolvedValue({ peca_id: 1 });
+
+      const req = mockReq({
+        body: corpoValido({
+          marca: "",
+          modelo: "",
+          pecas: [
+            { tipo: "ram", marca: "Kingston" },
+            { tipo: "ram", marca: "Kingston" },
+          ],
+        }),
+      });
+      const res = mockRes();
+
+      await coletarDesktop(req, res);
+
+      expect(db.Marca.findOne).toHaveBeenCalledTimes(1);
+      expect(db.Marca.create).toHaveBeenCalledTimes(1);
+      expect(db.Peca.create).toHaveBeenCalledTimes(2);
+    });
+
+    it("recusa o cadastro quando não há peças", async () => {
+      const req = mockReq({ body: corpoValido({ pecas: [] }) });
+      const res = mockRes();
+
+      await expect(coletarDesktop(req, res)).rejects.toMatchObject({
+        status: 400,
+      });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+
+    it("recusa o cadastro quando falta a empresa", async () => {
+      const req = mockReq({ body: corpoValido({ item_empresa_id: undefined }) });
+      const res = mockRes();
+
+      await expect(coletarDesktop(req, res)).rejects.toMatchObject({
+        status: 400,
+      });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+
+    it("recusa o cadastro quando uma peça tem tipo inválido", async () => {
+      const req = mockReq({ body: corpoValido({ pecas: [{ tipo: "teclado" }] }) });
+      const res = mockRes();
+
+      await expect(coletarDesktop(req, res)).rejects.toMatchObject({
+        status: 400,
+      });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+
+    it("recusa 400 (e não 500) quando uma peça do payload é null", async () => {
+      const req = mockReq({ body: corpoValido({ pecas: [null] }) });
+      const res = mockRes();
+
+      await expect(coletarDesktop(req, res)).rejects.toMatchObject({
+        status: 400,
+      });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+
+    it("valida o setor pela empresa e cria o item quando ele existe", async () => {
+      mockResolucaoCadastro();
+      db.Setor.findOne.mockResolvedValue({ setor_id: 3 });
+      db.Item.create.mockResolvedValue({ item_id: 60 });
+      db.Peca.create.mockResolvedValue({ peca_id: 1 });
+
+      const req = mockReq({ body: corpoValido({ setor_id: 3 }) });
+      const res = mockRes();
+
+      await coletarDesktop(req, res);
+
+      expect(db.Setor.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { setor_id: 3, setor_empresa_id: 1 },
+        })
+      );
+      const [itemArgs] = db.Item.create.mock.calls[0];
+      expect(itemArgs).toMatchObject({ item_setor_id: 3 });
+      expect(res.status).toHaveBeenCalledWith(201);
+    });
+
+    it("recusa 400 quando o setor informado não existe na empresa", async () => {
+      mockResolucaoCadastro();
+      db.Setor.findOne.mockResolvedValue(null);
+
+      const req = mockReq({ body: corpoValido({ setor_id: 999 }) });
+      const res = mockRes();
+
+      await expect(coletarDesktop(req, res)).rejects.toMatchObject({
+        status: 400,
+      });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+
+    it("valida o workstation pela empresa e cria o item quando ele existe", async () => {
+      mockResolucaoCadastro();
+      db.Workstation.findOne.mockResolvedValue({ workstation_id: 9 });
+      db.Item.create.mockResolvedValue({ item_id: 61 });
+      db.Peca.create.mockResolvedValue({ peca_id: 1 });
+
+      const req = mockReq({ body: corpoValido({ workstation_id: 9 }) });
+      const res = mockRes();
+
+      await coletarDesktop(req, res);
+
+      expect(db.Workstation.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { workstation_id: 9, workstation_empresa_id: 1 },
+        })
+      );
+      const [itemArgs] = db.Item.create.mock.calls[0];
+      expect(itemArgs).toMatchObject({ item_workstation_id: 9 });
+      expect(res.status).toHaveBeenCalledWith(201);
+    });
+
+    it("recusa 400 quando o workstation informado não existe na empresa", async () => {
+      mockResolucaoCadastro();
+      db.Workstation.findOne.mockResolvedValue(null);
+
+      const req = mockReq({ body: corpoValido({ workstation_id: 999 }) });
+      const res = mockRes();
+
+      await expect(coletarDesktop(req, res)).rejects.toMatchObject({
+        status: 400,
+      });
+      expect(db.Item.create).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("putItem", () => {
+    it("valida o setor pela empresa do item e salva quando ele existe", async () => {
+      const item = mockInstance({
+        item_id: 10,
+        item_empresa_id: 1,
+        item_tipo: "notebook",
+      });
+      db.Item.findByPk.mockResolvedValue(item);
+      db.Setor.findOne.mockResolvedValue({ setor_id: 5 });
+      db.Anexo.findAll.mockResolvedValue([]);
+
+      const req = mockReq({
+        params: { id: "10" },
+        body: { item_setor_id: "5" },
+      });
+      const res = mockRes();
+
+      await putItem(req, res);
+
+      expect(db.Setor.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { setor_id: "5", setor_empresa_id: 1 },
+        })
+      );
+      expect(item.item_setor_id).toBe("5");
+      expect(item.save).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(200);
+    });
+
+    it("recusa 400 quando o setor informado não existe na empresa do item", async () => {
+      const item = mockInstance({
+        item_id: 10,
+        item_empresa_id: 1,
+        item_tipo: "notebook",
+      });
+      db.Item.findByPk.mockResolvedValue(item);
+      db.Setor.findOne.mockResolvedValue(null);
+
+      const req = mockReq({
+        params: { id: "10" },
+        body: { item_setor_id: "999" },
+      });
+      const res = mockRes();
+
+      await expect(putItem(req, res)).rejects.toMatchObject({ status: 400 });
+      expect(item.save).not.toHaveBeenCalled();
+    });
+
+    it("recusa 400 quando o workstation informado não existe na empresa do item", async () => {
+      const item = mockInstance({
+        item_id: 10,
+        item_empresa_id: 2,
+        item_tipo: "monitor",
+      });
+      db.Item.findByPk.mockResolvedValue(item);
+      db.Workstation.findOne.mockResolvedValue(null);
+
+      const req = mockReq({
+        params: { id: "10" },
+        body: { item_workstation_id: "77" },
+      });
+      const res = mockRes();
+
+      await expect(putItem(req, res)).rejects.toMatchObject({ status: 400 });
+      expect(item.save).not.toHaveBeenCalled();
+    });
+
+    it("limpa o vínculo (null) sem consultar setor/workstation", async () => {
+      const item = mockInstance({
+        item_id: 10,
+        item_empresa_id: 1,
+        item_tipo: "notebook",
+      });
+      db.Item.findByPk.mockResolvedValue(item);
+      db.Anexo.findAll.mockResolvedValue([]);
+
+      const req = mockReq({
+        params: { id: "10" },
+        body: { item_setor_id: "null", item_workstation_id: "null" },
+      });
+      const res = mockRes();
+
+      await putItem(req, res);
+
+      expect(db.Setor.findOne).not.toHaveBeenCalled();
+      expect(db.Workstation.findOne).not.toHaveBeenCalled();
+      expect(item.item_setor_id).toBeNull();
+      expect(item.item_workstation_id).toBeNull();
+      expect(res.status).toHaveBeenCalledWith(200);
     });
   });
 });
