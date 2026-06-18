@@ -13,6 +13,7 @@ import Configuracoes from "./pages/Configuracoes.jsx";
 import Workstations from "./pages/Workstations.jsx";
 import CadastroItem from "./pages/CadastroItem.jsx";
 import CadastroMobile from "./pages/CadastroMobile.jsx";
+import Coletor from "./pages/Coletor.jsx";
 import Perfil from "./pages/Perfil.jsx";
 import Usuarios from "./pages/Usuarios.jsx";
 import Pecas from "./pages/Pecas.jsx";
@@ -88,6 +89,14 @@ const router = createBrowserRouter([
     element: (
       <PageTransition>
         <CadastroMobile />
+      </PageTransition>
+    ),
+  },
+  {
+    path: "/coletor",
+    element: (
+      <PageTransition>
+        <Coletor />
       </PageTransition>
     ),
   },

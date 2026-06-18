@@ -10,12 +10,18 @@ export async function getUsuarios() {
   }
 }
 
-export async function postUsuario(usuario_nome, usuario_tipo, usuario_login) {
+export async function postUsuario(
+  usuario_nome,
+  usuario_tipo,
+  usuario_login,
+  usuario_empresa_id = null
+) {
   try {
     const response = await api.post("/usuario", {
       usuario_nome,
       usuario_tipo,
       usuario_login,
+      usuario_empresa_id,
     });
     return response.data;
   } catch (err) {

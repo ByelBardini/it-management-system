@@ -41,7 +41,7 @@ export default function Login() {
     } else {
       setCarregando(true);
       try {
-        await logar(login, senha);
+        const resposta = await logar(login, senha);
 
         setNotificacao({
           show: true,
@@ -58,7 +58,13 @@ export default function Login() {
             titulo: "",
             mensagem: "",
           });
-          navigate("/empresas", { replace: true });
+          // O papel "coletor" tem uma tela única (baixar o coletor); os demais
+          // seguem para a seleção de empresa.
+          if (resposta?.usuario_tipo === "coletor") {
+            navigate("/coletor", { replace: true });
+          } else {
+            navigate("/empresas", { replace: true });
+          }
         }, 1000);
       } catch (err) {
         if (err.message.includes("obrigatórios")) {
