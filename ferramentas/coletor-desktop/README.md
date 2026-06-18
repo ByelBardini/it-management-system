@@ -6,25 +6,37 @@ Script PowerShell que lê o hardware de uma máquina Windows e cadastra o **desk
 
 Em vez de criar cada peça à mão e depois montar o desktop, você roda o script na
 própria máquina-alvo: ele detecta marca/modelo do computador e as peças
-(processador, placa-mãe, memória, armazenamento, vídeo e rede), faz login na API e
-envia tudo de uma vez. Número de série e preço de peça que o hardware não informa
-caem nos defaults do backend (`"N/A"` e `0`).
+(processador, placa-mãe, memória, armazenamento, vídeo e rede) e envia tudo de uma
+vez. Número de série e preço de peça que o hardware não informa caem nos defaults
+do backend (`"N/A"` e `0`).
+
+## Dois modos
+
+- **Autoatendimento (`-Token`)** — para os **PCs da empresa**. O funcionário loga no
+  site com uma conta de papel **`coletor`**, clica em **Baixar coletor** e recebe um
+  ZIP com este script + um `Coletar.bat`. Ao dar duplo-clique no `.bat`, o script
+  autentica pelo **token embutido** (Bearer, revogável), pergunta **nome** e **setor**
+  e monta a etiqueta (3 letras do setor + `-` + iniciais do nome, ex.: `FIN-JCS`). A
+  empresa vem do token — sem login/senha/URL. Ver [auth-usuarios](../../docs/context/auth-usuarios.md).
+- **Manual (`-Login`/`-EmpresaId`/`-Etiqueta`)** — para **TI/dev**, com login adm.
 
 ## Pré-requisitos
 
 - **Windows** com **PowerShell 5.1+** (já incluso no Windows 10/11) ou PowerShell 7.
 - Leitura de WMI/CIM (rodar como um usuário normal costuma bastar).
-- Uma conta **adm** no InfraHub e a URL base da API acessível pela máquina.
+- Autoatendimento: uma conta **`coletor`** (criada na tela de Usuários, vinculada a uma
+  empresa). Manual: uma conta **adm** e a URL base da API acessível pela máquina.
 
 ## Parâmetros
 
 | Parâmetro | Obrigatório | Descrição |
 |---|---|---|
 | `-ApiBase` | sim | URL base da API, **sem barra final**. Ex.: `http://localhost:3032` ou `https://infrahub.suaempresa.com/api` |
-| `-Login` | sim | Login de um usuário adm |
+| `-Token` | autoatendimento | Token de coleta (Bearer). Dispensa `-Login`/`-EmpresaId`/`-Etiqueta`; já vem embutido no `Coletar.bat` do ZIP |
+| `-Login` | manual | Login de um usuário adm |
 | `-Senha` | não | Senha do adm. Se omitida, é pedida de forma segura no console |
-| `-EmpresaId` | sim | Id da empresa dona do desktop |
-| `-Etiqueta` | sim | Etiqueta do desktop (máx. 10 caracteres) |
+| `-EmpresaId` | manual | Id da empresa dona do desktop |
+| `-Etiqueta` | manual | Etiqueta do desktop (máx. 10 caracteres) |
 | `-SetorId` | não | Id do setor a vincular |
 | `-WorkstationId` | não | Id do workstation a vincular |
 | `-Marca` | não | Sobrescreve a marca do desktop detectada no hardware |

@@ -5,26 +5,36 @@
   POST /item/coletar-desktop.
 
 .DESCRIPTION
-  Faz login na API (o cookie de sessão httpOnly é capturado via -SessionVariable),
-  coleta marca/modelo do desktop e as peças (processador, placa-mãe, memória,
+  Coleta marca/modelo do desktop e as peças (processador, placa-mãe, memória,
   armazenamento, vídeo e rede) via CIM/WMI e envia tudo como JSON. Número de série
   e preço das peças são OPCIONAIS — o backend aplica os defaults ("N/A" e 0).
+
+  Dois modos de autenticação:
+   - AUTOATENDIMENTO (-Token): usado pelos PCs da empresa. O token (embutido no ZIP
+     baixado) autentica por Bearer; a empresa vem do token e a etiqueta é montada a
+     partir do nome e do setor perguntados em runtime. Não exige login/empresa.
+   - MANUAL (-Login/-EmpresaId/-Etiqueta): para TI/dev. Faz login adm (cookie de
+     sessão httpOnly capturado via -SessionVariable).
 
 .PARAMETER ApiBase
   URL base da API, sem barra final. Ex.: http://localhost:3032 ou
   https://infrahub.suaempresa.com/api (atrás do nginx que faz proxy de /api).
 
+.PARAMETER Token
+  Token de coleta (modo autoatendimento). Enviado como Authorization: Bearer.
+  Quando informado, dispensa -Login/-EmpresaId/-Etiqueta.
+
 .PARAMETER Login
-  Login de um usuário adm.
+  Login de um usuário adm (modo manual).
 
 .PARAMETER Senha
   Senha do usuário adm. Se omitida, é pedida de forma segura no console.
 
 .PARAMETER EmpresaId
-  Id da empresa dona do desktop. Obrigatório.
+  Id da empresa dona do desktop (modo manual).
 
 .PARAMETER Etiqueta
-  Etiqueta do desktop (máximo 10 caracteres). Obrigatório.
+  Etiqueta do desktop (máximo 10 caracteres, modo manual).
 
 .PARAMETER SetorId
   Id do setor (opcional).
@@ -58,10 +68,15 @@
 [CmdletBinding()]
 param(
   [Parameter(Mandatory = $true)] [string] $ApiBase,
-  [Parameter(Mandatory = $true)] [string] $Login,
+  # Modo AUTOATENDIMENTO: token de coleta (Bearer). Quando informado, o script não faz
+  # login nem exige empresa/etiqueta — a identidade/empresa vêm do token e a etiqueta é
+  # montada a partir do nome e do setor perguntados em runtime.
+  [string] $Token,
+  # Modo MANUAL (TI/dev): login adm + empresa + etiqueta.
+  [string] $Login,
   [string] $Senha,
-  [Parameter(Mandatory = $true)] [int] $EmpresaId,
-  [Parameter(Mandatory = $true)] [string] $Etiqueta,
+  [int] $EmpresaId,
+  [string] $Etiqueta,
   [int] $SetorId,
   [int] $WorkstationId,
   [string] $Marca,
@@ -79,6 +94,34 @@ try {
 } catch { }
 
 $ApiBase = $ApiBase.TrimEnd('/')
+$ModoToken = -not [string]::IsNullOrWhiteSpace($Token)
+
+# Monta a etiqueta a partir do setor e do nome: 3 primeiras letras do setor (maiúsculas)
+# + "-" + iniciais do nome. Respeita o limite de 10 caracteres da coluna.
+function MontarEtiqueta($nome, $setor) {
+  $set = ($setor -replace '[^A-Za-z]', '').ToUpper()
+  $pref = if ($set.Length -ge 3) { $set.Substring(0, 3) }
+          elseif ($set.Length -gt 0) { $set }
+          else { 'XXX' }
+  $partes = $nome -split '\s+' | Where-Object { $_ -ne '' }
+  $iniciais = ($partes | ForEach-Object { $_.Substring(0, 1).ToUpper() }) -join ''
+  $etq = if ($iniciais) { "$pref-$iniciais" } else { $pref }
+  if ($etq.Length -gt 10) { $etq = $etq.Substring(0, 10) }
+  return $etq
+}
+
+if ($ModoToken) {
+  # Autoatendimento: pergunta nome e setor para montar a etiqueta deste PC.
+  $nomePessoa = Read-Host "Seu nome completo"
+  $setorPessoa = Read-Host "Seu setor"
+  $Etiqueta = MontarEtiqueta $nomePessoa $setorPessoa
+  Write-Host ("Etiqueta gerada: {0}" -f $Etiqueta) -ForegroundColor Cyan
+} else {
+  # Modo manual (TI/dev): exige login, empresa e etiqueta.
+  if (-not $Login) { throw "Informe -Login (ou use -Token para o modo autoatendimento)." }
+  if (-not $EmpresaId) { throw "Informe -EmpresaId no modo manual." }
+  if (-not $Etiqueta) { throw "Informe -Etiqueta no modo manual." }
+}
 
 if ($Etiqueta.Length -gt 10) {
   Write-Warning "A etiqueta tem mais de 10 caracteres; o backend vai recusar."
@@ -303,17 +346,6 @@ if ($DryRun) {
   return
 }
 
-# Senha: se não veio por parâmetro, pede de forma segura.
-if (-not $Senha) {
-  $secure = Read-Host "Senha de $Login" -AsSecureString
-  $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
-  try {
-    $Senha = [Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr)
-  } finally {
-    [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
-  }
-}
-
 function Get-MensagemErro($err) {
   # PS 7 expõe o corpo do erro em ErrorDetails.Message; PS 5.1 exige ler o stream.
   if ($err.ErrorDetails -and $err.ErrorDetails.Message) {
@@ -331,24 +363,49 @@ function Get-MensagemErro($err) {
   return $err.Exception.Message
 }
 
-Write-Host "`nAutenticando em $ApiBase/login..." -ForegroundColor Cyan
-$loginJson = @{ usuario_login = $Login; usuario_senha = $Senha } | ConvertTo-Json
-try {
-  Invoke-RestMethod -Uri "$ApiBase/login" -Method Post -Body $loginJson `
-    -ContentType 'application/json' -SessionVariable session | Out-Null
-} catch {
-  throw "Falha no login: $(Get-MensagemErro $_)"
-}
+if ($ModoToken) {
+  # Autoatendimento: autentica pelo token (Bearer); a empresa vem do token no backend.
+  Write-Host "`nEnviando este computador para $ApiBase/item/coletar-desktop/token..." -ForegroundColor Cyan
+  try {
+    $resposta = Invoke-RestMethod -Uri "$ApiBase/item/coletar-desktop/token" -Method Post `
+      -Body $json -ContentType 'application/json' `
+      -Headers @{ Authorization = "Bearer $Token" }
+  } catch {
+    throw "Falha ao enviar a coleta: $(Get-MensagemErro $_)"
+  }
+} else {
+  # Modo manual (TI/dev): senha (prompt seguro se omitida) + login por cookie de sessão.
+  if (-not $Senha) {
+    $secure = Read-Host "Senha de $Login" -AsSecureString
+    $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
+    try {
+      $Senha = [Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr)
+    } finally {
+      [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
+    }
+  }
 
-Write-Host "Enviando o desktop para $ApiBase/item/coletar-desktop..." -ForegroundColor Cyan
-try {
-  $resposta = Invoke-RestMethod -Uri "$ApiBase/item/coletar-desktop" -Method Post `
-    -Body $json -ContentType 'application/json' -WebSession $session
-} catch {
-  throw "Falha ao cadastrar o desktop: $(Get-MensagemErro $_)"
+  Write-Host "`nAutenticando em $ApiBase/login..." -ForegroundColor Cyan
+  $loginJson = @{ usuario_login = $Login; usuario_senha = $Senha } | ConvertTo-Json
+  try {
+    Invoke-RestMethod -Uri "$ApiBase/login" -Method Post -Body $loginJson `
+      -ContentType 'application/json' -SessionVariable session | Out-Null
+  } catch {
+    throw "Falha no login: $(Get-MensagemErro $_)"
+  }
+
+  Write-Host "Enviando o desktop para $ApiBase/item/coletar-desktop..." -ForegroundColor Cyan
+  try {
+    $resposta = Invoke-RestMethod -Uri "$ApiBase/item/coletar-desktop" -Method Post `
+      -Body $json -ContentType 'application/json' -WebSession $session
+  } catch {
+    throw "Falha ao cadastrar o desktop: $(Get-MensagemErro $_)"
+  }
 }
 
 Write-Host "`nOK - $($resposta.message)" -ForegroundColor Green
 Write-Host ("  item_id: {0} | pecas criadas: {1}" -f $resposta.item_id, $resposta.pecas_criadas)
+
+
 
 
