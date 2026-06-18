@@ -1,40 +1,21 @@
-﻿<#
+<#
 .SYNOPSIS
-  Coletor de desktop do InfraHub — lê o hardware desta máquina Windows e cadastra
-  o desktop (item + peças) no inventário numa única chamada ao endpoint
+  Coletor de desktop do InfraHub - le o hardware desta maquina Windows e cadastra
+  o desktop (item + pecas) no inventario numa unica chamada ao endpoint
   POST /item/coletar-desktop.
 
 .DESCRIPTION
-  Coleta marca/modelo do desktop e as peças (processador, placa-mãe, memória,
-  armazenamento, vídeo e rede) via CIM/WMI e envia tudo como JSON. Número de série
-  e preço das peças são OPCIONAIS — o backend aplica os defaults ("N/A" e 0).
-
-  Dois modos de autenticação:
-   - AUTOATENDIMENTO (-Token): usado pelos PCs da empresa. O token (embutido no ZIP
-     baixado) autentica por Bearer; a empresa vem do token e a etiqueta é montada a
-     partir do nome e do setor perguntados em runtime. Não exige login/empresa.
-   - MANUAL (-Login/-EmpresaId/-Etiqueta): para TI/dev. Faz login adm (cookie de
-     sessão httpOnly capturado via -SessionVariable).
+  Coleta marca/modelo do desktop e as pecas (processador, placa-mae, memoria,
+  armazenamento, video e rede) via CIM/WMI e envia tudo como JSON.
+  Autentica com usuario e senha fixos (coletor / 123456).
 
 .PARAMETER ApiBase
   URL base da API, sem barra final. Ex.: http://localhost:3032 ou
-  https://infrahub.suaempresa.com/api (atrás do nginx que faz proxy de /api).
-
-.PARAMETER Token
-  Token de coleta (modo autoatendimento). Enviado como Authorization: Bearer.
-  Quando informado, dispensa -Login/-EmpresaId/-Etiqueta.
-
-.PARAMETER Login
-  Login de um usuário adm (modo manual).
-
-.PARAMETER Senha
-  Senha do usuário adm. Se omitida, é pedida de forma segura no console.
+  https://infrahub.suaempresa.com/api.
 
 .PARAMETER EmpresaId
-  Id da empresa dona do desktop (modo manual).
-
-.PARAMETER Etiqueta
-  Etiqueta do desktop (máximo 10 caracteres, modo manual).
+  Id da empresa dona do desktop. Se omitido, o script lista as empresas apos o login
+  e pede para escolher.
 
 .PARAMETER SetorId
   Id do setor (opcional).
@@ -55,48 +36,44 @@
   Coleta e imprime o JSON que SERIA enviado, sem autenticar nem enviar nada.
 
 .EXAMPLE
-  .\coletar-desktop.ps1 -ApiBase http://localhost:3032 -Login admin -Senha admin123 -EmpresaId 1 -Etiqueta DSK-014
+  .\coletar-desktop.ps1 -ApiBase http://localhost:3032 -EmpresaId 1
 
 .EXAMPLE
-  .\coletar-desktop.ps1 -ApiBase http://localhost:3032 -Login admin -EmpresaId 1 -Etiqueta DSK-014 -DryRun
+  .\coletar-desktop.ps1 -ApiBase http://localhost:3032
+  (lista as empresas disponiveis e pede para escolher)
 
 .NOTES
-  Requer Windows + PowerShell 5.1+ e permissão de leitura WMI (um usuário normal
-  costuma bastar). Para rodar sem mexer na política da máquina:
+  Requer Windows + PowerShell 5.1+ e permissao de leitura WMI (um usuario normal
+  costuma bastar). Para rodar sem mexer na politica da maquina:
     powershell -ExecutionPolicy Bypass -File .\coletar-desktop.ps1 ...
 #>
 [CmdletBinding()]
 param(
   [Parameter(Mandatory = $true)] [string] $ApiBase,
-  # Modo AUTOATENDIMENTO: token de coleta (Bearer). Quando informado, o script não faz
-  # login nem exige empresa/etiqueta — a identidade/empresa vêm do token e a etiqueta é
-  # montada a partir do nome e do setor perguntados em runtime.
-  [string] $Token,
-  # Modo MANUAL (TI/dev): login adm + empresa + etiqueta.
-  [string] $Login,
-  [string] $Senha,
-  [int] $EmpresaId,
-  [string] $Etiqueta,
-  [int] $SetorId,
-  [int] $WorkstationId,
+  [int]    $EmpresaId,
+  [int]    $SetorId,
+  [int]    $WorkstationId,
   [string] $Marca,
   [string] $Modelo,
-  [bool] $EmUso = $true,
+  [bool]   $EmUso = $true,
   [switch] $DryRun
 )
 
 $ErrorActionPreference = 'Stop'
 
-# Windows PowerShell 5.1 pode negociar TLS antigo; força TLS 1.2 para HTTPS moderno.
+# Credenciais fixas do usuario coletor
+$LOGIN = 'coletor'
+$SENHA = '123456'
+
+# Windows PowerShell 5.1 pode negociar TLS antigo; forca TLS 1.2 para HTTPS moderno.
 try {
   [Net.ServicePointManager]::SecurityProtocol =
     [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 } catch { }
 
 $ApiBase = $ApiBase.TrimEnd('/')
-$ModoToken = -not [string]::IsNullOrWhiteSpace($Token)
 
-# Monta a etiqueta a partir do setor e do nome: 3 primeiras letras do setor (maiúsculas)
+# Monta a etiqueta a partir do setor e do nome: 3 primeiras letras do setor (maiusculas)
 # + "-" + iniciais do nome. Respeita o limite de 10 caracteres da coluna.
 function MontarEtiqueta($nome, $setor) {
   $set = ($setor -replace '[^A-Za-z]', '').ToUpper()
@@ -110,24 +87,16 @@ function MontarEtiqueta($nome, $setor) {
   return $etq
 }
 
-if ($ModoToken) {
-  # Autoatendimento: pergunta nome e setor para montar a etiqueta deste PC.
-  $nomePessoa = Read-Host "Seu nome completo"
-  $setorPessoa = Read-Host "Seu setor"
-  $Etiqueta = MontarEtiqueta $nomePessoa $setorPessoa
-  Write-Host ("Etiqueta gerada: {0}" -f $Etiqueta) -ForegroundColor Cyan
-} else {
-  # Modo manual (TI/dev): exige login, empresa e etiqueta.
-  if (-not $Login) { throw "Informe -Login (ou use -Token para o modo autoatendimento)." }
-  if (-not $EmpresaId) { throw "Informe -EmpresaId no modo manual." }
-  if (-not $Etiqueta) { throw "Informe -Etiqueta no modo manual." }
-}
+$nomePessoa = Read-Host "Seu nome completo"
+$setorPessoa = Read-Host "Seu setor"
+$Etiqueta = MontarEtiqueta $nomePessoa $setorPessoa
+Write-Host ("Etiqueta gerada: {0}" -f $Etiqueta) -ForegroundColor Cyan
 
 if ($Etiqueta.Length -gt 10) {
   Write-Warning "A etiqueta tem mais de 10 caracteres; o backend vai recusar."
 }
 
-# Valores-placeholder comuns de BIOS/OEM que não valem como marca/modelo reais.
+# Valores-placeholder comuns de BIOS/OEM que nao valem como marca/modelo reais.
 $PLACEHOLDERS = @(
   'to be filled by o.e.m.', 'system manufacturer', 'system product name',
   'default string', 'o.e.m.', 'oem', 'none', 'not applicable', 'n/a', 'unknown',
@@ -137,7 +106,6 @@ $PLACEHOLDERS = @(
 function Limpar([string] $valor) {
   if ([string]::IsNullOrWhiteSpace($valor)) { return '' }
   $v = $valor.Trim()
-  # Compara sem parênteses nas pontas (ex.: "(Standard disk drives)").
   $chave = $v.ToLower().Trim('(', ')', ' ')
   if ($PLACEHOLDERS -contains $chave) { return '' }
   return $v
@@ -146,9 +114,6 @@ function Limpar([string] $valor) {
 function New-Peca($tipo, $marca, $modelo, $numSerie, $especificacoes) {
   $m  = Limpar $marca
   $mo = Limpar $modelo
-  # O backend recusa "modelo sem marca"; se a marca sumiu (vazia ou placeholder),
-  # descarta o modelo junto — a peça grava marca/modelo nulos em vez de derrubar
-  # o lote inteiro com erro 400.
   if (-not $m) { $mo = '' }
   $obj = [ordered]@{
     tipo      = $tipo
@@ -157,16 +122,12 @@ function New-Peca($tipo, $marca, $modelo, $numSerie, $especificacoes) {
     num_serie = Limpar $numSerie
     preco     = ''
   }
-  # especificacoes (capacidade, velocidade/DDR, mídia/conexão, etc.) é OPCIONAL: só
-  # entra no payload se houver ao menos um campo, mantendo retrocompatibilidade.
   if ($especificacoes -and $especificacoes.Count -gt 0) {
     $obj['especificacoes'] = $especificacoes
   }
   return $obj
 }
 
-# Converte bytes em texto legível (GB, ou TB para discos grandes). Vazio se não houver
-# tamanho. Usado em capacidade de RAM/armazenamento e memória de vídeo.
 function FormatarTamanho($bytes) {
   $b = [double]($bytes)
   if (-not $b -or $b -le 0) { return '' }
@@ -175,9 +136,6 @@ function FormatarTamanho($bytes) {
   return "{0} MB" -f [math]::Round($b / 1MB, 0)
 }
 
-# Marcas conhecidas de armazenamento, procuradas (em ordem) no FriendlyName/Model do
-# disco — cuja coluna Manufacturer quase sempre é pseudo. Sem isso, o modelo do disco
-# seria descartado (regra "modelo sem marca"). Pares [trecho em minúsculas, marca].
 $MARCAS_DISCO = @(
   @('western digital', 'Western Digital'),
   @('wdc', 'Western Digital'),
@@ -208,12 +166,11 @@ function DerivarMarcaDisco([string] $texto) {
   return ''
 }
 
-# Tipo de memória pelo código SMBIOSMemoryType (mais confiável que MemoryType).
 $DDR_POR_CODIGO = @{
   20 = 'DDR'; 21 = 'DDR2'; 24 = 'DDR3'; 26 = 'DDR4'; 34 = 'DDR5'
 }
 
-Write-Host "Coletando hardware desta máquina..." -ForegroundColor Cyan
+Write-Host "Coletando hardware desta maquina..." -ForegroundColor Cyan
 
 $cs = Get-CimInstance Win32_ComputerSystem
 $desktopMarca  = if ($Marca)  { $Marca }  else { Limpar $cs.Manufacturer }
@@ -221,7 +178,6 @@ $desktopModelo = if ($Modelo) { $Modelo } else { Limpar $cs.Model }
 
 $pecas = New-Object System.Collections.Generic.List[object]
 
-# Processador(es) — núcleos, threads e clock
 foreach ($cpu in Get-CimInstance Win32_Processor) {
   $espec = [ordered]@{}
   if ($cpu.NumberOfCores)              { $espec['nucleos'] = "$($cpu.NumberOfCores)" }
@@ -230,17 +186,14 @@ foreach ($cpu in Get-CimInstance Win32_Processor) {
   $pecas.Add( (New-Peca 'processador' $cpu.Manufacturer $cpu.Name $cpu.ProcessorId $espec) )
 }
 
-# Placa-mãe
 foreach ($mb in Get-CimInstance Win32_BaseBoard) {
   $pecas.Add( (New-Peca 'placa-mae' $mb.Manufacturer $mb.Product $mb.SerialNumber) )
 }
 
-# Memória (uma peça por pente) — capacidade, velocidade e tipo (DDR)
 foreach ($mem in Get-CimInstance Win32_PhysicalMemory) {
   $espec = [ordered]@{}
   $cap = FormatarTamanho $mem.Capacity
   if ($cap) { $espec['capacidade'] = $cap }
-  # ConfiguredClockSpeed = velocidade efetiva; Speed = nominal (fallback).
   $clk = if ($mem.ConfiguredClockSpeed) { $mem.ConfiguredClockSpeed } else { $mem.Speed }
   if ($clk) { $espec['velocidade'] = "{0} MHz" -f $clk }
   $tipoMem = $DDR_POR_CODIGO[[int]$mem.SMBIOSMemoryType]
@@ -248,10 +201,6 @@ foreach ($mem in Get-CimInstance Win32_PhysicalMemory) {
   $pecas.Add( (New-Peca 'ram' $mem.Manufacturer $mem.PartNumber $mem.SerialNumber $espec) )
 }
 
-# Armazenamento — capacidade, mídia (HDD/SSD) e conexão (SATA/NVMe/USB).
-# Fonte preferida: Get-PhysicalDisk (módulo Storage, Win8/2012+), que lista discos
-# físicos reais (sem leitores de cartão/slots vazios do Win32_DiskDrive) e expõe
-# MediaType/BusType. Fallback para Win32_DiskDrive em PowerShell/SO antigos.
 $discos = $null
 try { $discos = @(Get-PhysicalDisk -ErrorAction Stop) } catch { $discos = $null }
 
@@ -266,16 +215,12 @@ if ($discos) {
     if ($midia -and $midia -ne 'Unspecified') { $espec['midia'] = $midia }
     $conexao = "$($d.BusType)"
     if ($conexao -and $conexao -ne 'Unspecified') { $espec['conexao'] = $conexao }
-    # Se a marca não foi derivada, o modelo seria descartado (regra "modelo sem
-    # marca"); preserva-o na descrição para não perder a identidade do disco.
     if (-not $marca -and $modelo) { $espec['descricao'] = $modelo }
     $pecas.Add( (New-Peca 'armazenamento' $marca $modelo $d.SerialNumber $espec) )
   }
 } else {
   foreach ($disk in Get-CimInstance Win32_DiskDrive |
       Where-Object { $_.InterfaceType -ne 'USB' -and $_.MediaType -notmatch 'Removable' }) {
-    # Win32_DiskDrive.Manufacturer quase sempre é um pseudo-fabricante do Windows
-    # (ex.: "(Standard disk drives)", inclusive localizado) — não vale como marca real.
     $modelo = Limpar $disk.Model
     $marca  = DerivarMarcaDisco $modelo
     $espec  = [ordered]@{}
@@ -287,10 +232,8 @@ if ($discos) {
   }
 }
 
-# Placa de vídeo — memória de vídeo (best-effort)
 foreach ($gpu in Get-CimInstance Win32_VideoController | Where-Object { $_.Name }) {
   $espec = [ordered]@{}
-  # AdapterRAM é uint32 e satura em ~4 GB para placas maiores — valor aproximado.
   if ($gpu.AdapterRAM -and [double]$gpu.AdapterRAM -gt 0) {
     $mem = FormatarTamanho $gpu.AdapterRAM
     if ($mem) { $espec['memoria'] = $mem }
@@ -298,11 +241,9 @@ foreach ($gpu in Get-CimInstance Win32_VideoController | Where-Object { $_.Name 
   $pecas.Add( (New-Peca 'placa-video' $gpu.AdapterCompatibility $gpu.Name $null $espec) )
 }
 
-# Placa de rede (apenas adaptadores físicos, sem virtuais) — velocidade do enlace
 foreach ($nic in Get-CimInstance Win32_NetworkAdapter |
     Where-Object { $_.PhysicalAdapter -and $_.PNPDeviceID -and $_.PNPDeviceID -notlike 'ROOT\*' }) {
   $espec = [ordered]@{}
-  # Speed é em bits/s e só é confiável com o link ativo (0/nulo quando desconectado).
   if ($nic.Speed -and [double]$nic.Speed -gt 0) {
     $mbps = [math]::Round([double]$nic.Speed / 1000000, 0)
     if ($mbps -ge 1000) { $espec['velocidade'] = "{0} Gbps" -f [math]::Round($mbps / 1000, 0) }
@@ -312,7 +253,7 @@ foreach ($nic in Get-CimInstance Win32_NetworkAdapter |
 }
 
 if ($pecas.Count -eq 0) {
-  throw "Nenhuma peça coletada — o desktop precisa de ao menos uma peça."
+  throw "Nenhuma peca coletada - o desktop precisa de ao menos uma peca."
 }
 
 $payload = [ordered]@{
@@ -326,11 +267,10 @@ $payload = [ordered]@{
 if ($PSBoundParameters.ContainsKey('SetorId'))       { $payload['setor_id'] = $SetorId }
 if ($PSBoundParameters.ContainsKey('WorkstationId')) { $payload['workstation_id'] = $WorkstationId }
 
-# Depth 8: payload -> pecas -> peca -> especificacoes -> valores.
 $json = $payload | ConvertTo-Json -Depth 8
 
 Write-Host ("Desktop: {0} {1}" -f $desktopMarca, $desktopModelo) -ForegroundColor Green
-Write-Host ("Peças coletadas: {0}" -f $pecas.Count) -ForegroundColor Green
+Write-Host ("Pecas coletadas: {0}" -f $pecas.Count) -ForegroundColor Green
 foreach ($p in $pecas) {
   Write-Host ("  - {0}: {1} {2}" -f $p.tipo, $p.marca, $p.modelo)
   if ($p.Contains('especificacoes')) {
@@ -347,7 +287,6 @@ if ($DryRun) {
 }
 
 function Get-MensagemErro($err) {
-  # PS 7 expõe o corpo do erro em ErrorDetails.Message; PS 5.1 exige ler o stream.
   if ($err.ErrorDetails -and $err.ErrorDetails.Message) {
     try { return (($err.ErrorDetails.Message | ConvertFrom-Json).message) }
     catch { return $err.ErrorDetails.Message }
@@ -363,49 +302,55 @@ function Get-MensagemErro($err) {
   return $err.Exception.Message
 }
 
-if ($ModoToken) {
-  # Autoatendimento: autentica pelo token (Bearer); a empresa vem do token no backend.
-  Write-Host "`nEnviando este computador para $ApiBase/item/coletar-desktop/token..." -ForegroundColor Cyan
+Write-Host "`nAutenticando em $ApiBase/login..." -ForegroundColor Cyan
+$loginJson = @{ usuario_login = $LOGIN; usuario_senha = $SENHA } | ConvertTo-Json
+try {
+  Invoke-RestMethod -Uri "$ApiBase/login" -Method Post -Body $loginJson `
+    -ContentType 'application/json' -SessionVariable session | Out-Null
+} catch {
+  throw "Falha no login: $(Get-MensagemErro $_)"
+}
+
+# Se EmpresaId nao foi informado, lista as empresas e pede para escolher.
+if (-not $EmpresaId) {
+  Write-Host "`nBuscando empresas cadastradas..." -ForegroundColor Cyan
   try {
-    $resposta = Invoke-RestMethod -Uri "$ApiBase/item/coletar-desktop/token" -Method Post `
-      -Body $json -ContentType 'application/json' `
-      -Headers @{ Authorization = "Bearer $Token" }
+    $empresas = Invoke-RestMethod -Uri "$ApiBase/empresa" -Method Get -WebSession $session
   } catch {
-    throw "Falha ao enviar a coleta: $(Get-MensagemErro $_)"
-  }
-} else {
-  # Modo manual (TI/dev): senha (prompt seguro se omitida) + login por cookie de sessão.
-  if (-not $Senha) {
-    $secure = Read-Host "Senha de $Login" -AsSecureString
-    $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
-    try {
-      $Senha = [Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr)
-    } finally {
-      [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
-    }
+    throw "Falha ao listar empresas: $(Get-MensagemErro $_)"
   }
 
-  Write-Host "`nAutenticando em $ApiBase/login..." -ForegroundColor Cyan
-  $loginJson = @{ usuario_login = $Login; usuario_senha = $Senha } | ConvertTo-Json
-  try {
-    Invoke-RestMethod -Uri "$ApiBase/login" -Method Post -Body $loginJson `
-      -ContentType 'application/json' -SessionVariable session | Out-Null
-  } catch {
-    throw "Falha no login: $(Get-MensagemErro $_)"
+  if (-not $empresas -or $empresas.Count -eq 0) {
+    throw "Nenhuma empresa encontrada na API."
   }
 
-  Write-Host "Enviando o desktop para $ApiBase/item/coletar-desktop..." -ForegroundColor Cyan
-  try {
-    $resposta = Invoke-RestMethod -Uri "$ApiBase/item/coletar-desktop" -Method Post `
-      -Body $json -ContentType 'application/json' -WebSession $session
-  } catch {
-    throw "Falha ao cadastrar o desktop: $(Get-MensagemErro $_)"
+  Write-Host ""
+  Write-Host "Empresas disponiveis:" -ForegroundColor Yellow
+  foreach ($e in $empresas) {
+    Write-Host ("  [{0}] {1}" -f $e.empresa_id, $e.empresa_nome)
   }
+  Write-Host ""
+
+  do {
+    $entrada = Read-Host "Digite o ID da empresa"
+    $EmpresaId = [int]($entrada -replace '[^0-9]', '')
+    $valida = $empresas | Where-Object { $_.empresa_id -eq $EmpresaId }
+  } while (-not $valida)
+
+  Write-Host ("Empresa selecionada: [{0}] {1}" -f $valida.empresa_id, $valida.empresa_nome) -ForegroundColor Cyan
+
+  # Atualiza o payload com o EmpresaId escolhido.
+  $payload['item_empresa_id'] = $EmpresaId
+  $json = $payload | ConvertTo-Json -Depth 8
+}
+
+Write-Host "Enviando o desktop para $ApiBase/item/coletar-desktop..." -ForegroundColor Cyan
+try {
+  $resposta = Invoke-RestMethod -Uri "$ApiBase/item/coletar-desktop" -Method Post `
+    -Body $json -ContentType 'application/json' -WebSession $session
+} catch {
+  throw "Falha ao cadastrar o desktop: $(Get-MensagemErro $_)"
 }
 
 Write-Host "`nOK - $($resposta.message)" -ForegroundColor Green
 Write-Host ("  item_id: {0} | pecas criadas: {1}" -f $resposta.item_id, $resposta.pecas_criadas)
-
-
-
-
