@@ -92,6 +92,18 @@ nas rotas, ver [auth-usuarios.md](auth-usuarios.md). **Ordem de deploy:** migra�
 do backend → criar usuário(s) `cadastrador` (seed/manual) → distribuir o APK. A string
 `"cadastrador"` é idêntica em ENUM, middleware e seed.
 
+## Migração 0006 — papel coletor + tokens de coleta
+`0006_papel_coletor.sql`. Forward-only e **aditiva**: `usuario_tipo` ENUM += `coletor`
+(mesma ordem do model), `usuarios` += `usuario_empresa_id` (FK→`empresas`, `ON DELETE SET
+NULL`) e nova tabela **`coletor_tokens`** (`token_id` PK, `token_usuario_id` FK→usuarios
+CASCADE, `token_empresa_id` FK→empresas CASCADE, `token_hash` CHAR(64) UNIQUE, `token_ativo`,
+`token_expira_em` null, `token_criado_em`, `token_ultimo_uso`). Suporta o **autoatendimento
+da coleta de desktop** (papel `coletor` + token revogável embutido no ZIP) — ver
+[auth-usuarios.md](auth-usuarios.md). **Env nova:** `COLETOR_API_BASE` (URL pública que os PCs
+acessam) e, em prod, `COLETOR_SCRIPT_PATH` se o script do coletor não estiver no diretório
+padrão (`../ferramentas/coletor-desktop/`). **Ordem de deploy:** migração → deploy do backend
+→ criar conta(s) `coletor` (com empresa) na tela de Usuários → o funcionário baixa o ZIP.
+
 ## Decisões de schema (baseline vs. SQL antigo)
 - `pecas.peca_empresa_id` → empresas **CASCADE** (corrige o `NO ACTION` antigo; alinha ao
   `models/index.js`).

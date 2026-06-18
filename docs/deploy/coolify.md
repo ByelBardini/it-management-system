@@ -45,9 +45,17 @@ Docker). Use o nome/endereço interno que o Coolify mostra para cada recurso.
 | `COOKIE_SECURE` | `true` | cookie só em HTTPS (Coolify provê TLS) |
 | `SECRET_KEY_LOGIN` | `<aleatório forte>` | segredo do JWT |
 | `SECRET_KEY_PASSWORD` | `<exatamente 32 chars>` | AES-256-CBC; o app **não sobe** se o tamanho estiver errado |
+| `COLETOR_API_BASE` | `https://app.seudominio.com/api` | **URL pública** que os PCs da empresa acessam; embutida no `Coletar.bat` do ZIP do coletor. Sem ela, `GET /item/coletar-desktop/download` retorna 500 |
+| `COLETOR_SCRIPT_PATH` | _(opcional)_ | caminho do `coletar-desktop.ps1` na imagem, se não estiver no padrão `../ferramentas/coletor-desktop/` (ver nota abaixo) |
 
 > O backend **valida os segredos no boot** (`validarAmbiente`) — se faltar `SECRET_KEY_LOGIN`
 > ou o `SECRET_KEY_PASSWORD` não tiver 32 caracteres, o container falha de propósito.
+
+> **Coletor (autoatendimento):** o endpoint de download monta o ZIP a partir do template
+> `ferramentas/coletor-desktop/coletar-desktop.ps1`. Se a imagem do backend **não** incluir
+> essa pasta, copie o script para a imagem (ex.: `COPY ferramentas ...` no Dockerfile) ou
+> aponte `COLETOR_SCRIPT_PATH` para onde ele estiver. Após o deploy, crie a(s) conta(s)
+> `coletor` (vinculadas à empresa) pela tela de **Usuários**. Ver [auth-usuarios.md](../context/auth-usuarios.md).
 
 ### frontend (Application — Dockerfile, base dir `client/`)
 
