@@ -17,9 +17,11 @@ import { ApiError } from "../middlewares/ApiError.js";
 import {
   TIPOS_ITEM_COM_SUBTIPO,
   errosLoteItens,
+  errosColetaDesktop,
   parseEmUso,
   resolverMarcaModelo,
   novoCacheResolucao,
+  texto,
 } from "./helpers/importacao.js";
 
 export async function getItens(req, res) {
@@ -416,16 +418,19 @@ export async function putItem(req, res) {
     item.item_modelo_id =
       item_modelo_id === "null" || item_modelo_id === "" ? null : item_modelo_id;
   }
-  if (item_setor_id != "null") {
-    item.item_setor_id = item_setor_id;
-  } else {
-    item.item_setor_id = null;
-  }
-  if (item_workstation_id != "null") {
-    item.item_workstation_id = item_workstation_id;
-  } else {
-    item.item_workstation_id = null;
-  }
+  // setor/workstation são opcionais; "null" limpa o vínculo. Quando um id concreto é
+  // informado, valida existência + escopo por empresa (mesma defesa do coletar-desktop)
+  // para devolver 400 acionável em vez de estourar ForeignKeyConstraintError (500) no save.
+  const setorAlvo = item_setor_id != "null" ? item_setor_id : null;
+  const workstationAlvo =
+    item_workstation_id != "null" ? item_workstation_id : null;
+  await validarVinculoEmpresa({
+    setor_id: setorAlvo,
+    workstation_id: workstationAlvo,
+    empresa_id: item.item_empresa_id,
+  });
+  item.item_setor_id = setorAlvo;
+  item.item_workstation_id = workstationAlvo;
   item.item_em_uso = item_em_uso;
 
   item.save({ usuarioId: req.usuario.id });
@@ -682,6 +687,137 @@ export async function importarItens(req, res) {
   return res
     .status(201)
     .json({ message: "Itens importados com sucesso", criados });
+}
+
+// Valida o vínculo opcional a setor/workstation ANTES de criar o item: se o id
+// vier, precisa existir E pertencer à mesma empresa (hierarquia Empresa → Setor →
+// Workstation → Item). Sem isso, um id inexistente estouraria como
+// ForeignKeyConstraintError dentro da transação (500) em vez de um 400 acionável.
+async function validarVinculoEmpresa({ setor_id, workstation_id, empresa_id }, t) {
+  if (setor_id) {
+    const setor = await Setor.findOne({
+      where: { setor_id, setor_empresa_id: empresa_id },
+      transaction: t,
+    });
+    if (!setor) throw ApiError.badRequest("Setor não encontrado para esta empresa");
+  }
+  if (workstation_id) {
+    const ws = await Workstation.findOne({
+      where: { workstation_id, workstation_empresa_id: empresa_id },
+      transaction: t,
+    });
+    if (!ws)
+      throw ApiError.badRequest("Workstation não encontrado para esta empresa");
+  }
+}
+
+// Cria um desktop (item composto) + suas peças numa única transação, recebendo
+// marca/modelo por NOME (resolvidos no cadastro central). É o caminho "uma tacada
+// só" usado pelo coletor de hardware: ao contrário do POST /item, não exige peças
+// pré-existentes nem ids; ao contrário da importação CSV, num_serie/preço/data das
+// peças são opcionais (caem em default). O preço do item é a soma das peças.
+export async function coletarDesktop(req, res) {
+  const b = req.body;
+
+  const erros = errosColetaDesktop(b);
+  if (erros.length) {
+    throw ApiError.badRequest(
+      `${erros.length} problema(s) na coleta do desktop`,
+      erros
+    );
+  }
+
+  const hoje = new Date().toISOString().slice(0, 10);
+  const pecas = b.pecas;
+  const item_preco = pecas.reduce((s, p) => s + (Number(p.preco) || 0), 0);
+
+  let resultado;
+  await sequelize.transaction(async (t) => {
+    await validarVinculoEmpresa(
+      {
+        setor_id: b.setor_id,
+        workstation_id: b.workstation_id,
+        empresa_id: b.item_empresa_id,
+      },
+      t
+    );
+
+    const cache = novoCacheResolucao();
+
+    const { marca_id, modelo_id } = await resolverMarcaModelo(
+      {
+        dominio: "item",
+        tipo: "desktop",
+        subtipo: "",
+        marcaNome: b.marca,
+        modeloNome: b.modelo,
+      },
+      t,
+      req.usuario.id,
+      cache
+    );
+
+    const item = await Item.create(
+      {
+        item_empresa_id: b.item_empresa_id,
+        item_marca_id: marca_id,
+        item_modelo_id: modelo_id,
+        item_tipo: "desktop",
+        item_etiqueta: texto(b.etiqueta),
+        item_num_serie: "N/A",
+        item_preco,
+        item_setor_id: b.setor_id || null,
+        item_workstation_id: b.workstation_id || null,
+        item_em_uso: parseEmUso(b.em_uso) ? 1 : 0,
+        item_data_aquisicao: texto(b.data_aquisicao) || hoje,
+        item_ultima_manutencao: texto(b.ultima_manutencao) || hoje,
+        item_intervalo_manutencao: texto(b.intervalo_manutencao)
+          ? Number(b.intervalo_manutencao)
+          : 0,
+      },
+      { transaction: t, usuarioId: req.usuario.id }
+    );
+
+    for (const p of pecas) {
+      const tipo = texto(p.tipo);
+      const { marca_id: peca_marca_id, modelo_id: peca_modelo_id } =
+        await resolverMarcaModelo(
+          {
+            dominio: "peca",
+            tipo,
+            subtipo: "",
+            marcaNome: p.marca,
+            modeloNome: p.modelo,
+          },
+          t,
+          req.usuario.id,
+          cache
+        );
+
+      await Peca.create(
+        {
+          peca_empresa_id: b.item_empresa_id,
+          peca_item_id: item.item_id,
+          peca_ativa: 1,
+          peca_tipo: tipo,
+          peca_marca_id,
+          peca_modelo_id,
+          peca_num_serie: texto(p.num_serie) || "N/A",
+          peca_preco: Number(p.preco) || 0,
+          peca_em_uso: 1,
+          peca_data_aquisicao: texto(p.data_aquisicao) || null,
+        },
+        { transaction: t, usuarioId: req.usuario.id }
+      );
+    }
+
+    resultado = { item_id: item.item_id, pecas_criadas: pecas.length };
+  });
+
+  return res.status(201).json({
+    message: "Desktop coletado e cadastrado com sucesso",
+    ...resultado,
+  });
 }
 
 export async function inativaItem(req, res) {

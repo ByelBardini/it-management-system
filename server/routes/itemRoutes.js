@@ -10,6 +10,7 @@ import {
   getItensWorkstation,
   removerWorkstation,
   importarItens,
+  coletarDesktop,
 } from "../controllers/itemController.js";
 import { autenticar, autorizarRole } from "../middlewares/autenticaToken.js";
 
@@ -22,6 +23,7 @@ router.get("/inativos/:id", getItensInativos);
 router.get("/workstation/:id", getItensWorkstation);
 router.get("/full/:id", getItemFull);
 router.post("/importar", importarItens);
+router.post("/coletar-desktop", coletarDesktop);
 router.post("/", anexosUpload, postItem);
 router.put("/:id", anexosUpload, putItem);
 router.put("/inativa/:id", inativaItem);

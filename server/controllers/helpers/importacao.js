@@ -62,7 +62,7 @@ const RE_NUMERO = /^\d+(\.\d+)?$/; // não-negativo, ponto decimal (formato já 
 const RE_INTEIRO = /^\d+$/;
 const RE_DATA = /^\d{4}-\d{2}-\d{2}$/; // ISO
 
-function texto(valor) {
+export function texto(valor) {
   return (valor ?? "").toString().trim();
 }
 
@@ -189,6 +189,90 @@ export function errosLotePecas(pecas) {
     const motivos = validarLinhaPeca(linha);
     if (motivos.length) erros.push({ linha: i + 1, motivo: motivos.join("; ") });
   });
+  return erros;
+}
+
+// --- Coleta de desktop (POST /item/coletar-desktop) ---------------------------
+// Diferente da importação CSV de peça (validarLinhaPeca), aqui num_serie, preço e
+// data são OPCIONAIS: uma coleta de hardware raramente conhece o serial da RAM ou
+// o preço, então o controller aplica defaults ("N/A" / 0). Só validamos o que veio.
+export function validarPecaColetada(peca) {
+  const motivos = [];
+  // Guarda contra entrada malformada: uma peça que não é objeto (null, primitivo,
+  // array) derrubaria o acesso a peca.tipo com TypeError fora da transação (500).
+  if (!peca || typeof peca !== "object" || Array.isArray(peca))
+    return ["peça inválida (esperado um objeto)"];
+  const tipo = texto(peca.tipo);
+  const num_serie = texto(peca.num_serie);
+  const marca = texto(peca.marca);
+  const modelo = texto(peca.modelo);
+
+  if (!tipo) motivos.push("tipo da peça é obrigatório");
+  else if (!TIPOS_PECA.includes(tipo)) motivos.push(`tipo inválido: ${tipo}`);
+
+  if (num_serie.length > LIMITES.PECA_NUM_SERIE)
+    motivos.push("número de série excede 150 caracteres");
+  if (marca.length > LIMITES.MARCA) motivos.push("marca excede 100 caracteres");
+  if (modelo.length > LIMITES.MODELO)
+    motivos.push("modelo excede 100 caracteres");
+  if (modelo && !marca) motivos.push("modelo informado sem marca");
+
+  if (texto(peca.preco) && !numeroValido(peca.preco))
+    motivos.push("preço inválido (use ponto decimal, ex.: 499.90)");
+  if (texto(peca.data_aquisicao) && !dataValida(peca.data_aquisicao))
+    motivos.push("data de aquisição inválida (use AAAA-MM-DD)");
+
+  return motivos;
+}
+
+// Valida o payload da coleta de desktop. Retorna [{ indice, motivo }]: indice = null
+// para erros do desktop em si; indice = posição (0-based) para erros de uma peça.
+export function errosColetaDesktop(payload) {
+  const erros = [];
+  const push = (motivo, indice = null) => erros.push({ indice, motivo });
+
+  if (!payload.item_empresa_id) push("empresa é obrigatória");
+
+  const etiqueta = texto(payload.etiqueta);
+  if (!etiqueta) push("etiqueta é obrigatória");
+  else if (etiqueta.length > LIMITES.ETIQUETA)
+    push("etiqueta deve ter no máximo 10 caracteres");
+
+  const marca = texto(payload.marca);
+  const modelo = texto(payload.modelo);
+  if (marca.length > LIMITES.MARCA)
+    push("marca do desktop excede 100 caracteres");
+  if (modelo.length > LIMITES.MODELO)
+    push("modelo do desktop excede 100 caracteres");
+  if (modelo && !marca) push("modelo do desktop informado sem marca");
+
+  // Datas e intervalo são opcionais (têm default no controller) — só validam se vierem.
+  if (texto(payload.data_aquisicao) && !dataValida(payload.data_aquisicao))
+    push("data de aquisição inválida (use AAAA-MM-DD)");
+  if (texto(payload.ultima_manutencao) && !dataValida(payload.ultima_manutencao))
+    push("última manutenção inválida (use AAAA-MM-DD)");
+  if (
+    texto(payload.intervalo_manutencao) &&
+    !inteiroValido(payload.intervalo_manutencao)
+  )
+    push("intervalo de manutenção inválido (meses, número inteiro)");
+
+  // setor/workstation são opcionais; valida só o TIPO aqui (id inteiro). A
+  // EXISTÊNCIA (e o escopo por empresa) é verificada no controller, com acesso ao banco.
+  if (texto(payload.setor_id) && !inteiroValido(payload.setor_id))
+    push("setor inválido (id inteiro)");
+  if (texto(payload.workstation_id) && !inteiroValido(payload.workstation_id))
+    push("workstation inválido (id inteiro)");
+
+  const pecas = payload.pecas;
+  if (!Array.isArray(pecas) || pecas.length === 0) {
+    push("informe ao menos uma peça do desktop");
+  } else {
+    pecas.forEach((peca, i) => {
+      for (const motivo of validarPecaColetada(peca)) push(motivo, i);
+    });
+  }
+
   return erros;
 }
 
