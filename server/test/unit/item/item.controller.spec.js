@@ -415,6 +415,49 @@ describe("itemController", () => {
       expect(peca0).toMatchObject({ peca_num_serie: "N/A", peca_preco: 0 });
     });
 
+    it("persiste peca_especificacoes quando a peça as traz", async () => {
+      mockResolucaoCadastro();
+      db.Item.create.mockResolvedValue({ item_id: 70 });
+      db.Peca.create.mockResolvedValue({ peca_id: 1 });
+
+      const req = mockReq({
+        body: corpoValido({
+          pecas: [
+            {
+              tipo: "ram",
+              marca: "Kingston",
+              especificacoes: { capacidade: "8 GB", tipo: "DDR4" },
+            },
+          ],
+        }),
+      });
+      const res = mockRes();
+
+      await coletarDesktop(req, res);
+
+      const [peca0] = db.Peca.create.mock.calls[0];
+      expect(peca0).toMatchObject({
+        peca_especificacoes: { capacidade: "8 GB", tipo: "DDR4" },
+      });
+      expect(res.status).toHaveBeenCalledWith(201);
+    });
+
+    it("grava peca_especificacoes null quando a peça não as traz", async () => {
+      mockResolucaoCadastro();
+      db.Item.create.mockResolvedValue({ item_id: 71 });
+      db.Peca.create.mockResolvedValue({ peca_id: 1 });
+
+      const req = mockReq({
+        body: corpoValido({ pecas: [{ tipo: "ram", marca: "Kingston" }] }),
+      });
+      const res = mockRes();
+
+      await coletarDesktop(req, res);
+
+      const [peca0] = db.Peca.create.mock.calls[0];
+      expect(peca0).toMatchObject({ peca_especificacoes: null });
+    });
+
     it("cria o desktop sem marca/modelo quando não informados", async () => {
       db.Item.create.mockResolvedValue({ item_id: 52 });
       db.Peca.create.mockResolvedValue({ peca_id: 1 });

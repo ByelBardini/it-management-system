@@ -70,6 +70,66 @@ describe("pecasController", () => {
       expect(dados).not.toHaveProperty("peca_nome");
       expect(res.status).toHaveBeenCalledWith(201);
     });
+
+    it("persiste peca_especificacoes quando o corpo as traz", async () => {
+      db.Peca.create.mockResolvedValue({ peca_id: 3 });
+      const req = mockReq({
+        body: {
+          id_empresa: "1",
+          tipo: "ram",
+          preco: "150",
+          data_aquisicao: "2024-01-01",
+          numSerie: "PCA-2",
+          especificacoes: { capacidade: "8 GB", tipo: "DDR4" },
+        },
+      });
+      const res = mockRes();
+
+      await postPeca(req, res);
+
+      const [dados] = db.Peca.create.mock.calls[0];
+      expect(dados).toMatchObject({
+        peca_especificacoes: { capacidade: "8 GB", tipo: "DDR4" },
+      });
+      expect(res.status).toHaveBeenCalledWith(201);
+    });
+
+    it("grava peca_especificacoes null quando ausente ou vazio", async () => {
+      db.Peca.create.mockResolvedValue({ peca_id: 4 });
+      const req = mockReq({
+        body: {
+          id_empresa: "1",
+          tipo: "ram",
+          preco: "150",
+          data_aquisicao: "2024-01-01",
+          numSerie: "PCA-3",
+          especificacoes: {},
+        },
+      });
+      const res = mockRes();
+
+      await postPeca(req, res);
+
+      const [dados] = db.Peca.create.mock.calls[0];
+      expect(dados).toMatchObject({ peca_especificacoes: null });
+    });
+
+    it("recusa 400 quando especificacoes não é um objeto", async () => {
+      const req = mockReq({
+        body: {
+          id_empresa: "1",
+          tipo: "ram",
+          preco: "150",
+          data_aquisicao: "2024-01-01",
+          numSerie: "PCA-4",
+          especificacoes: "DDR4",
+        },
+      });
+      const res = mockRes();
+
+      await expect(postPeca(req, res)).rejects.toMatchObject({ status: 400 });
+      expect(db.Peca.create).not.toHaveBeenCalled();
+    });
   });
 
   describe("importarPecas", () => {

@@ -2,7 +2,34 @@ import { describe, it, expect } from "vitest";
 import {
   validarPecaColetada,
   errosColetaDesktop,
+  validarEspecificacoes,
 } from "../../../controllers/helpers/importacao.js";
+
+describe("validarEspecificacoes", () => {
+  it("aceita ausência (undefined/null) e objeto válido", () => {
+    expect(validarEspecificacoes(undefined)).toEqual([]);
+    expect(validarEspecificacoes(null)).toEqual([]);
+    expect(validarEspecificacoes({ capacidade: "8 GB" })).toEqual([]);
+  });
+
+  it("recusa valor que não é objeto simples", () => {
+    expect(
+      validarEspecificacoes("DDR4").some((m) => m.includes("especificações inválidas"))
+    ).toBe(true);
+    expect(
+      validarEspecificacoes([1, 2]).some((m) => m.includes("especificações inválidas"))
+    ).toBe(true);
+  });
+
+  it("recusa objeto acima do tamanho máximo", () => {
+    const grande = {};
+    for (let i = 0; i < 200; i++) grande[`c${i}`] = "X".repeat(50);
+
+    expect(
+      validarEspecificacoes(grande).some((m) => m.includes("especificações excedem"))
+    ).toBe(true);
+  });
+});
 
 // Validadores puros da coleta de desktop. Diferente da importação CSV, a coleta
 // de hardware tem num_serie/preço/data OPCIONAIS (caem em default no controller).
@@ -37,6 +64,50 @@ describe("validarPecaColetada", () => {
 
     expect(motivosNumero).toEqual(["peça inválida (esperado um objeto)"]);
     expect(motivosString).toEqual(["peça inválida (esperado um objeto)"]);
+  });
+
+  it("aceita especificações válidas (objeto de rótulo/valor)", () => {
+    const motivos = validarPecaColetada({
+      tipo: "ram",
+      marca: "Kingston",
+      especificacoes: { capacidade: "8 GB", tipo: "DDR4" },
+    });
+
+    expect(motivos).toEqual([]);
+  });
+
+  it("aceita peça sem o campo especificacoes (opcional, retrocompatível)", () => {
+    const motivos = validarPecaColetada({ tipo: "ram", marca: "Kingston" });
+
+    expect(motivos).toEqual([]);
+  });
+
+  it("recusa especificações que não são um objeto simples", () => {
+    const motivosString = validarPecaColetada({
+      tipo: "ram",
+      especificacoes: "DDR4",
+    });
+    const motivosArray = validarPecaColetada({
+      tipo: "ram",
+      especificacoes: [1, 2],
+    });
+
+    expect(motivosString.some((m) => m.includes("especificações inválidas"))).toBe(
+      true
+    );
+    expect(motivosArray.some((m) => m.includes("especificações inválidas"))).toBe(
+      true
+    );
+  });
+
+  it("recusa especificações acima do tamanho máximo", () => {
+    const grande = {};
+    for (let i = 0; i < 200; i++) grande[`campo${i}`] = "X".repeat(50);
+    const motivos = validarPecaColetada({ tipo: "ram", especificacoes: grande });
+
+    expect(
+      motivos.some((m) => m.includes("especificações excedem"))
+    ).toBe(true);
   });
 });
 
@@ -116,5 +187,21 @@ describe("errosColetaDesktop", () => {
     expect(erros.some((e) => e.motivo.includes("workstation inválido"))).toBe(
       false
     );
+  });
+
+  it("aponta o índice da peça com especificações inválidas", () => {
+    const erros = errosColetaDesktop(
+      payloadValido({
+        pecas: [
+          { tipo: "ram", marca: "Kingston" },
+          { tipo: "ram", especificacoes: [] },
+        ],
+      })
+    );
+
+    const erroPeca = erros.find((e) =>
+      e.motivo.includes("especificações inválidas")
+    );
+    expect(erroPeca).toMatchObject({ indice: 1 });
   });
 });
